@@ -8,6 +8,7 @@ import (
 	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/delivery/http"
+	"kassech/backend/pkg/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,6 +16,7 @@ import (
 func init() {
 	// Load environment variables
 	config.LoadEnv()
+	service.InitJWTSecret()
 }
 
 func main() {
@@ -33,7 +35,9 @@ func main() {
 	// Initialize database connection
 	database.Connect()
 	// Run migrations
-	database.Migrate()
+
+	// database.Migrate()
+	// database.SeedDB()
 
 	// Setup Gin router
 	r := gin.Default()
