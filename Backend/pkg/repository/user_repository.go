@@ -7,11 +7,16 @@ import (
 
 type UserRepository struct{}
 
-func (ur *UserRepository) Create(user *models.User) error {
-	return database.DB.Create(user).Error
+func (ur *UserRepository) Create(user *models.User) (*models.User, error) {
+	// Attempt to create the user in the database
+	if err := database.DB.Create(user).Error; err != nil {
+		return nil, err
+	}
+	// Return the created user along with nil error if the creation was successful
+	return user, nil
 }
 
-func (ur *UserRepository) FindByEmailOrPhone(email, phone string) (*models.User, error) {
+func (ur *UserRepository) FindByEmailOrPhone(email string, phone string) (*models.User, error) {
 	var user models.User
 	err := database.DB.Where("email = ? OR phone_number = ?", email, phone).First(&user).Error
 	if err != nil {
