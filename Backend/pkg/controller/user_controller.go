@@ -19,12 +19,19 @@ func (uc *UserController) Register(c *gin.Context) {
 		return
 	}
 
-	if err := uc.Service.Register(&user); err != nil {
+	createdUser, token, err := uc.Service.Register(&user)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "registration successful"})
+	// Return the response with the created user and the token
+	c.JSON(http.StatusOK, gin.H{
+		"message": "registration successful",
+		"user":    createdUser,
+		"token":   token,
+	})
+
 }
 
 func (uc *UserController) Login(c *gin.Context) {
