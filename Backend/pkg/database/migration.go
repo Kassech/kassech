@@ -3,16 +3,14 @@ package database
 import (
 	models "kassech/backend/pkg/model"
 	"log"
-
-	"gorm.io/gorm"
 )
 
-func Migrate(db *gorm.DB) {
-	if db == nil {
+func Migrate() {
+	if DB == nil {
 		log.Fatal("Database connection is nil. Ensure Connect() is called before Migrate().")
 	}
 
-	err := db.AutoMigrate(
+	err := DB.AutoMigrate(
 		&models.User{},
 		&models.Role{},
 		&models.Permission{},
