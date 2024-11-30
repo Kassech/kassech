@@ -34,6 +34,7 @@ func Migrate() {
 		&models.AutoDriverAssignmentHistory{},
 		&models.VehicleType{},
 		&models.NotificationToken{},
+		&models.VehicleType{},
 	)
 
 	if err != nil {

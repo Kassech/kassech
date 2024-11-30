@@ -9,6 +9,7 @@ import (
 	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/delivery/http"
 	"kassech/backend/pkg/service"
+	scripts "kassech/backend/script"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,9 +36,7 @@ func main() {
 	// Initialize database connection
 	database.Connect()
 	// Run migrations
-
-	// database.Migrate()
-	// database.SeedDB()
+	scripts.HandleScriptCommands()
 
 	// Setup Gin router
 	r := gin.Default()

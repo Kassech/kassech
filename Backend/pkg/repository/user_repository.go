@@ -33,3 +33,19 @@ func (ur *UserRepository) FindByID(userID uint) (*models.User, error) {
 	}
 	return &user, nil
 }
+
+func (ur *UserRepository) LogLoginEvent(loginLog *models.UserLoginLog) error {
+	// Insert the new login event into the database
+	if err := database.DB.Create(loginLog).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// Update updates the user's last login time in the database
+func (ur *UserRepository) Update(user *models.User) error {
+	if err := database.DB.Save(user).Error; err != nil {
+		return err
+	}
+	return nil
+}
