@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"kassech/backend/pkg/service"
 	"net/http"
 	"strings"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func AuthMiddleware(secret string) gin.HandlerFunc {
+func AuthMiddleware() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -20,7 +21,7 @@ func AuthMiddleware(secret string) gin.HandlerFunc {
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
 		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-			return []byte(secret), nil
+			return []byte(service.JwtSecret), nil
 		})
 
 		if err != nil || !token.Valid {
