@@ -3,6 +3,7 @@ package controller
 import (
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/service"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -78,4 +79,31 @@ func (uc *UserController) RefreshToken(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"access_token": accessToken,
 	})
+}
+
+func (uc *UserController) VerifyAuth(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	log.Println(token)
+
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token missing"})
+		return
+	}
+
+	// Remove the "Bearer " prefix, if it exists
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:] // Remove "Bearer " from the token string
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+		return
+	}
+
+	// Verify the token (e.g., using a JWT library or custom logic)
+	user, err := service.VerifyAccessToken(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user_id": user.UserID})
 }

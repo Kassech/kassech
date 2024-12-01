@@ -1,5 +1,8 @@
+// CardWrapper.tsx
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Card } from "../ui/card";
 
 interface CardWrapperProps {
   label: string;
@@ -16,12 +19,14 @@ const CardWrapper: React.FC<CardWrapperProps> = ({
   backButtonLabel,
   children,
 }) => {
+  const { t } = useTranslation();
+
   return (
-    <div className="w-full max-w-md mx-auto my-auto bg-white shadow-md rounded-md overflow-hidden">
+    <Card className="w-full max-w-md mx-auto my-auto overflow-hidden">
       <div className="px-6 py-4 border-b">
         <div className="text-center">
           <h2 className="text-xl font-semibold">{title}</h2>
-          <p className="text-gray-600 text-sm">{label}</p>
+          <p className="text-sm">{label}</p>
         </div>
       </div>
       <div className="p-6">{children}</div>
@@ -30,10 +35,10 @@ const CardWrapper: React.FC<CardWrapperProps> = ({
           to={backButtonHref}
           className="text-blue-950 hover:text-blue-800 text-sm font-medium"
         >
-          {backButtonLabel}
+          {t(backButtonLabel)}
         </Link>
       </div>
-    </div>
+    </Card>
   );
 };
 
