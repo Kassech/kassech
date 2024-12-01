@@ -1,37 +1,51 @@
 package repository
 
 import (
-	"context"
-	"errors"
-	"kassech/backend/pkg/domain"
-
-	"gorm.io/gorm"
+	"kassech/backend/pkg/database"
+	models "kassech/backend/pkg/model"
 )
 
-type userRepository struct {
-	db *gorm.DB
-}
+type UserRepository struct{}
 
-// NewUserRepository creates a new instance of UserRepository
-func NewUserRepository(db *gorm.DB) *userRepository {
-	return &userRepository{db: db}
-}
-
-// GetUserByEmail fetches a user by their email
-func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
-	var user domain.User
-	result := r.db.WithContext(ctx).Where("email = ?", email).First(&user)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("user not found")
+func (ur *UserRepository) Create(user *models.User) (*models.User, error) {
+	// Attempt to create the user in the database
+	if err := database.DB.Create(user).Error; err != nil {
+		return nil, err
 	}
-	if result.Error != nil {
-		return nil, result.Error
+	// Return the created user along with nil error if the creation was successful
+	return user, nil
+}
+
+func (ur *UserRepository) FindByEmailOrPhone(email string, phone string) (*models.User, error) {
+	var user models.User
+	err := database.DB.Where("email = ? OR phone_number = ?", email, phone).First(&user).Error
+	if err != nil {
+		return nil, err
 	}
 	return &user, nil
 }
 
-// CreateUser creates a new user in the database
-func (r *userRepository) CreateUser(ctx context.Context, user *domain.User) error {
-	result := r.db.WithContext(ctx).Create(user)
-	return result.Error
+func (ur *UserRepository) FindByID(userID uint) (*models.User, error) {
+	var user models.User
+	err := database.DB.First(&user, userID).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (ur *UserRepository) LogLoginEvent(loginLog *models.UserLoginLog) error {
+	// Insert the new login event into the database
+	if err := database.DB.Create(loginLog).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// Update updates the user's last login time in the database
+func (ur *UserRepository) Update(user *models.User) error {
+	if err := database.DB.Save(user).Error; err != nil {
+		return err
+	}
+	return nil
 }

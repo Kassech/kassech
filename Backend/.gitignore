@@ -42,6 +42,3 @@ Desktop.ini
 # JetBrains IDE files (IntelliJ, GoLand, etc.)
 .idea/
 
-# Go module files (optional, can be kept depending on your preference)
-go.sum
-go.mod
