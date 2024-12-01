@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/database"
@@ -11,6 +12,7 @@ import (
 	"kassech/backend/pkg/service"
 	scripts "kassech/backend/script"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,6 +42,14 @@ func main() {
 
 	// Setup Gin router
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"}, // Allow frontend to access the backend
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true, // If you're sending credentials like cookies
+		MaxAge:           12 * time.Hour,
+	}))
 
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 

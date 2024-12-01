@@ -12,6 +12,11 @@ var JwtSecret string
 var AccessTokenExpiration time.Duration
 var RefreshTokenExpiration time.Duration
 
+type Claims struct {
+	UserID uint `json:"user_id"`
+	jwt.RegisteredClaims
+}
+
 // Initialize JWT Secret and expiration times when the app starts.
 func InitJWTSecret() error {
 	// Get JWT secret from environment variables
@@ -119,4 +124,41 @@ func RefreshTokenService(refreshToken string) (string, error) {
 
 	// Return the newly generated access token
 	return accessToken, nil
+}
+
+// ValidateToken validates the given JWT token and returns the user information if valid
+func VerifyAccessToken(tokenString string) (*Claims, error) {
+	// Ensure that the JWT secret is initialized
+	if JwtSecret == "" {
+		return nil, errors.New("JWT secret not initialized")
+	}
+
+	// Parse the token and validate the claims
+	claims := &Claims{}
+	// Parse the token with the claims
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		// Ensure that the signing method is HMAC and validate the signing key
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return []byte(JwtSecret), nil
+	})
+
+	// Check if there was an error parsing the token or if the token is invalid
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the token is valid (not expired)
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	// Check if the token has expired
+	if claims.ExpiresAt != nil && claims.ExpiresAt.Before(time.Now()) {
+		return nil, errors.New("token has expired")
+	}
+
+	// Return the claims (user info)
+	return claims, nil
 }

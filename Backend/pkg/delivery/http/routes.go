@@ -51,6 +51,7 @@ func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 	api.POST("/register", ctrl.Register)
 	api.POST("/login", ctrl.Login)
 	api.POST("/refresh", ctrl.RefreshToken)
+	api.POST("/validate", ctrl.VerifyAuth)
 
 	// Middleware to check auth before user-related routes
 	api.Use(middleware.AuthMiddleware())
