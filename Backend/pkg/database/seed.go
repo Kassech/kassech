@@ -3,6 +3,8 @@ package database
 import (
 	models "kassech/backend/pkg/model"
 	"log"
+
+	"gorm.io/gorm"
 )
 
 func SeedDB() {
@@ -47,6 +49,32 @@ func SeedDB() {
 		if err := DB.FirstOrCreate(&models.RolePermission{}, rolePermission).Error; err != nil {
 			log.Printf("Failed to seed role-permission mapping: %v\n", err)
 		}
+	}
+	user := models.User{
+		FirstName:   "Abeselom",
+		LastName:    "Solomon",
+		Email:       "abeselomsolomon106@example.com",
+		PhoneNumber: "+251984852481",
+		IsOnline:    false,
+		Password:    "$2a$10$pkluPLasY7LCXOK25EBkmeUsQDuZwrOhKMhu5EXfN4W0YOZPqST7S", // hashed password
+		IsVerified:  false,
+	}
+
+	// Check if user exists, if not, create it
+	var existingUser models.User
+	if err := DB.Where("email = ?", user.Email).First(&existingUser).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			// Create the new user
+			if err := DB.Create(&user).Error; err != nil {
+				log.Printf("Failed to seed user: %v\n", err)
+			} else {
+				log.Println("User seeded successfully.")
+			}
+		} else {
+			log.Printf("Error checking for existing user: %v\n", err)
+		}
+	} else {
+		log.Println("User already exists.")
 	}
 
 	log.Println("Database seeding completed.")

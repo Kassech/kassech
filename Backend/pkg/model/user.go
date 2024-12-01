@@ -9,14 +9,14 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName         string  `gorm:"not null" validate:"required"`
-	LastName          string  `gorm:"not null" validate:"required"`
-	Email             *string `gorm:"unique;default:null" validate:"omitempty,email"`
-	PhoneNumber       string  `gorm:"size:20;not null;unique" validate:"required,e164"`
-	IsOnline          bool    `gorm:"default:false"`
-	Password          string  `gorm:"not null" validate:"required,min=6"`
-	PreviousPassword1 string  `gorm:"size:255"`
-	PreviousPassword2 string  `gorm:"size:255"`
+	FirstName         string `gorm:"not null" validate:"required"`
+	LastName          string `gorm:"not null" validate:"required"`
+	Email             string `gorm:"unique;default:null" validate:"omitempty,email"`
+	PhoneNumber       string `gorm:"size:20;not null;unique" validate:"required,e164"`
+	IsOnline          bool   `gorm:"default:false"`
+	Password          string `gorm:"not null" validate:"required,min=6"`
+	PreviousPassword1 string `gorm:"size:255"`
+	PreviousPassword2 string `gorm:"size:255"`
 	ProfilePicture    *string
 	IsVerified        bool      `gorm:"default:false"`
 	LastLoginDate     time.Time `gorm:"default:null"`
