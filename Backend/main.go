@@ -41,7 +41,10 @@ func main() {
 	// Setup Gin router
 	r := gin.Default()
 
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
+
 	// Register routes
+	r.Static("/uploads", "./uploads")
 	http.RegisterRoutes(r)
 
 	// Start the server
