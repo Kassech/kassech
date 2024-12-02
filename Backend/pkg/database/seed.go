@@ -36,13 +36,13 @@ func SeedDB() {
 		}
 	}
 
-	// Seed role-permission mappings (Admin has all permissions, User has limited permissions)
+	// Seed role-permission mappings
 	rolePermissions := []models.RolePermission{
-		{RoleID: 1, PermissionID: 1}, // Admin can CreateUser
-		{RoleID: 1, PermissionID: 2}, // Admin can DeleteUser
-		{RoleID: 1, PermissionID: 3}, // Admin can UpdateUser
-		{RoleID: 1, PermissionID: 4}, // Admin can ViewReports
-		{RoleID: 2, PermissionID: 4}, // User can ViewReports
+		{RoleID: 1, PermissionID: 1},
+		{RoleID: 1, PermissionID: 2},
+		{RoleID: 1, PermissionID: 3},
+		{RoleID: 1, PermissionID: 4},
+		{RoleID: 2, PermissionID: 4},
 	}
 
 	for _, rolePermission := range rolePermissions {
@@ -50,6 +50,8 @@ func SeedDB() {
 			log.Printf("Failed to seed role-permission mapping: %v\n", err)
 		}
 	}
+
+	// Seed user
 	user := models.User{
 		FirstName:   "Abeselom",
 		LastName:    "Solomon",
@@ -75,6 +77,24 @@ func SeedDB() {
 		}
 	} else {
 		log.Println("User already exists.")
+		user = existingUser // Use the existing user from the database
+	}
+
+	// Set the user's role as 'Admin' (super admin)
+	var adminRole models.Role
+	if err := DB.Where("role_name = ?", "Admin").First(&adminRole).Error; err != nil {
+		log.Printf("Failed to find Admin role: %v\n", err)
+	} else {
+		// Create a UserRole association
+		userRole := models.UserRole{
+			UserID: user.ID,
+			RoleID: adminRole.ID,
+		}
+		if err := DB.FirstOrCreate(&userRole).Error; err != nil {
+			log.Printf("Failed to assign Admin role to user: %v\n", err)
+		} else {
+			log.Println("User assigned the Admin role successfully.")
+		}
 	}
 
 	log.Println("Database seeding completed.")

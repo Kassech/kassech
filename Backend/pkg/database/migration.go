@@ -5,12 +5,14 @@ import (
 	"log"
 )
 
-func Migrate() {
+// Migrate performs database migrations based on the specified migration type.
+func Migrate(migrationType string) {
 	if DB == nil {
 		log.Fatal("Database connection is nil. Ensure Connect() is called before Migrate().")
 	}
 
-	err := DB.AutoMigrate(
+	// List of models to migrate
+	modelsToMigrate := []interface{}{
 		&models.User{},
 		&models.Role{},
 		&models.Permission{},
@@ -34,12 +36,29 @@ func Migrate() {
 		&models.AutoDriverAssignmentHistory{},
 		&models.VehicleType{},
 		&models.NotificationToken{},
-		&models.VehicleType{},
-	)
-
-	if err != nil {
-		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
-	log.Println("Migrations completed!")
+	switch migrationType {
+	case "clean":
+		// Drop all tables before running AutoMigrate
+		log.Println("Performing clean migration: dropping existing tables...")
+		for _, model := range modelsToMigrate {
+			if err := DB.Migrator().DropTable(model); err != nil {
+				log.Printf("Failed to drop table for model %T: %v", model, err)
+			} else {
+				log.Printf("Dropped table for model %T successfully.", model)
+			}
+		}
+		// Run AutoMigrate after dropping tables
+		fallthrough // Proceed to auto migrate after dropping tables
+
+	case "auto":
+		log.Println("Performing auto migration: applying changes...")
+		if err := DB.AutoMigrate(modelsToMigrate...); err != nil {
+			log.Fatalf("Failed to run migrations: %v", err)
+		}
+		log.Println("Migrations completed successfully!")
+	default:
+		log.Printf("Unknown migration type: %s. Use 'auto' or 'clean'.", migrationType)
+	}
 }

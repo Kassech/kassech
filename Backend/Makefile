@@ -27,6 +27,7 @@ else
 endif
 
 # Target to clean up the binary file (if any)
+.PHONY: clean
 clean:
 ifeq ($(OS),Windows_NT)
 	$(RM) "$(ROOT_DIR)$(PATH_SEP)tmp$(PATH_SEP)main.exe"
@@ -35,6 +36,7 @@ else
 endif
 
 # Target to build the application binary
+.PHONY: build
 build:
 ifeq ($(OS),Windows_NT)
 	$(GO_BUILD) -o "$(ROOT_DIR)$(PATH_SEP)tmp$(PATH_SEP)main.exe" "$(ROOT_DIR)$(PATH_SEP)cmd"
@@ -50,4 +52,4 @@ migrate:
 # Target to run database seeding
 .PHONY: seed
 seed:
-	$(GO_RUN) "$(ROOT_DIR)$(PATH_SEP)main.go" seed
+	$(GO_RUN) $(ROOT_DIR)/main.go seed
