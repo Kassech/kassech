@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Card } from "../ui/card";
+import { Card } from "@/components/ui/card";
 
 interface CardWrapperProps {
   label: string;
