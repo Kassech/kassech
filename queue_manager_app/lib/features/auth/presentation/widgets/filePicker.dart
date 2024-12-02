@@ -1,62 +1,76 @@
-import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-class FilePickerWidget extends StatefulWidget {
-  const FilePickerWidget({super.key});
+class FileSelectorWidget extends StatefulWidget {
+  final String label; // The label to differentiate the file selector
+
+  const FileSelectorWidget({required this.label});
 
   @override
-  State<FilePickerWidget> createState() => _FilePickerWidgetState();
+  _FileSelectorWidgetState createState() => _FileSelectorWidgetState();
 }
 
-class _FilePickerWidgetState extends State<FilePickerWidget> {
-  String? _fileName;
+class _FileSelectorWidgetState extends State<FileSelectorWidget> {
+  String? _selectedFilePath;
 
+  // Method to open the file picker
   Future<void> _pickFile() async {
+    // Open the file picker
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
+    // Check if a file was selected
     if (result != null) {
       setState(() {
-        _fileName = result.files.single.name;
+        _selectedFilePath = result.files.single.path;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(25.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: _pickFile,
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.white,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _fileName ?? 'No file selected',
-                      style: TextStyle(
-                        color: _fileName != null ? Colors.black : Colors.grey,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const Icon(Icons.attach_file, color: Colors.blue),
-                  ],
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(18.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.label, // Display the label for the file selector
+            style:const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: _pickFile, // Open file picker when tapped
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 22),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black87),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedFilePath == null
+                        ? 'Select a file'
+                        : _selectedFilePath!
+                            .split('/')
+                            .last, // Show file name if selected
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                  const Icon(Icons.attach_file, color: Colors.grey),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          if (_selectedFilePath != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 25),
+              child: Text(
+                'Selected File: ${_selectedFilePath!.split('/').last}', // Display selected file name
+                style: const TextStyle(fontSize: 12, color: Colors.green),
+              ),
+            ),
+        ],
       ),
     );
   }

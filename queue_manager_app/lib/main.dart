@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/signinpage.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/signuppage.dart';
-import 'package:queue_manager_app/features/splash/splash.dart';
+import 'package:queue_manager_app/features/queue/presentation/pages/home.dart';
+// import 'package:queue_manager_app/features/splash/splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      home: const Splash(),
+      //home: const Splash(),
+      home: const HomeQueueManager(),
       routes: _buildRoutes(),
     );
   }
@@ -24,6 +26,7 @@ class MyApp extends StatelessWidget {
     return {
       '/signin': (context) => SigninPage(),
       '/signup': (context) => SignUpPage(),
+      '/home': (context) => HomeQueueManager(),
     };
   }
 }
