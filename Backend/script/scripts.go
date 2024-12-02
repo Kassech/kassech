@@ -17,8 +17,9 @@ func HandleScriptCommands() {
 	// Run migrations or seed data based on command-line argument
 	switch os.Args[1] {
 	case "migrate":
-		database.Migrate()
-
+		database.Migrate("auto")
+	case "fresh":
+		database.Migrate("clean")
 	case "seed":
 		database.SeedDB()
 

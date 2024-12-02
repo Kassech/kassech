@@ -22,7 +22,7 @@ func (us *UserService) Register(user *models.User) (*models.User, string, string
 		return nil, "", "", err
 	}
 
-	existingUser, _ := us.Repo.FindByEmailOrPhone(*user.Email, user.PhoneNumber)
+	existingUser, _ := us.Repo.FindByEmailOrPhone(user.Email, user.PhoneNumber)
 	if existingUser != nil {
 		// User already exists
 		return nil, "", "", errors.New("user with that email or phone number already exists")
