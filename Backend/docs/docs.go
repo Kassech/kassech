@@ -9,73 +9,32 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "Team Kassech"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {
-        "/": {
-            "get": {
-                "description": "This function initializes and registers all the API routes for users, roles, permissions, and role permissions.",
-                "tags": [
-                    "Initialization"
-                ],
-                "summary": "Initialize routes",
-                "responses": {}
-            }
-        },
-        "/api/permissions": {
-            "post": {
-                "description": "Defines all the routes related to permission operations such as creating, updating, deleting, and associating roles with permissions.",
-                "tags": [
-                    "Permission"
-                ],
-                "summary": "Register permission routes",
-                "responses": {}
-            }
-        },
-        "/api/role_permissions": {
-            "post": {
-                "description": "Defines all the routes related to managing role-permission associations.",
-                "tags": [
-                    "RolePermission"
-                ],
-                "summary": "Register role permission routes",
-                "responses": {}
-            }
-        },
-        "/api/roles": {
-            "post": {
-                "description": "Defines all the routes related to role operations such as creating, updating, and deleting roles.",
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Register role routes",
-                "responses": {}
-            }
-        },
-        "/api/user": {
-            "post": {
-                "description": "Defines all the routes related to user operations such as registration, login, token refresh, etc.",
-                "tags": [
-                    "User"
-                ],
-                "summary": "Register user routes",
-                "responses": {}
-            }
+    "paths": {},
+    "securityDefinitions": {
+        "JWT": {
+            "description": "JWT security accessToken. Please add it in the format \"Bearer {AccessToken}\" to authorize your requests.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Version:          "1.0",
+	Host:             "localhost:5000/",
+	BasePath:         "api",
+	Schemes:          []string{"http", "https"},
+	Title:            "Kassech Transport Management API",
+	Description:      "A comprehensive API for managing cars, offering endpoints for creation, update, deletion, and retrieval of transport data.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

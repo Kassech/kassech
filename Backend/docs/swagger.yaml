@@ -1,43 +1,21 @@
+basePath: api
+host: localhost:5000/
 info:
-  contact: {}
-paths:
-  /:
-    get:
-      description: This function initializes and registers all the API routes for
-        users, roles, permissions, and role permissions.
-      responses: {}
-      summary: Initialize routes
-      tags:
-      - Initialization
-  /api/permissions:
-    post:
-      description: Defines all the routes related to permission operations such as
-        creating, updating, deleting, and associating roles with permissions.
-      responses: {}
-      summary: Register permission routes
-      tags:
-      - Permission
-  /api/role_permissions:
-    post:
-      description: Defines all the routes related to managing role-permission associations.
-      responses: {}
-      summary: Register role permission routes
-      tags:
-      - RolePermission
-  /api/roles:
-    post:
-      description: Defines all the routes related to role operations such as creating,
-        updating, and deleting roles.
-      responses: {}
-      summary: Register role routes
-      tags:
-      - Role
-  /api/user:
-    post:
-      description: Defines all the routes related to user operations such as registration,
-        login, token refresh, etc.
-      responses: {}
-      summary: Register user routes
-      tags:
-      - User
+  contact:
+    name: Team Kassech
+  description: A comprehensive API for managing cars, offering endpoints for creation,
+    update, deletion, and retrieval of transport data.
+  title: Kassech Transport Management API
+  version: "1.0"
+paths: {}
+schemes:
+- http
+- https
+securityDefinitions:
+  JWT:
+    description: JWT security accessToken. Please add it in the format "Bearer {AccessToken}"
+      to authorize your requests.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
