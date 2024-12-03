@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:queue_manager_app/config/route/route.dart';
 import 'package:queue_manager_app/features/auth/presentation/widgets/authButton.dart';
 import 'package:queue_manager_app/features/auth/presentation/widgets/filePicker.dart';
 import 'package:queue_manager_app/features/auth/presentation/widgets/mytextfield.dart';
@@ -24,6 +25,14 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: IconButton(
+              onPressed: () {
+                AppRouter.router.go('/signin');
+              },
+              icon: const Icon(Icons.arrow_back)),
+        ),
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Center(
@@ -80,7 +89,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 FileSelectorWidget(label: 'Upload Kebele ID'),
                 FileSelectorWidget(label: 'Upload Queue Manager ID'),
-                const AuthButton(label: 'Register')
+                AuthButton(
+                    label: 'Register',
+                    onPressed: () {
+                      AppRouter.router.go('/');
+                    }),
               ],
             )),
           ),
