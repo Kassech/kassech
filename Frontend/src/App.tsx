@@ -7,6 +7,10 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Dashboard from "./pages/dashboard";
 import NotFoundPage from "./pages/error/404";
 import Error500Page from "./pages/error/500";
+import VehicleRegistration from"./pages/Vehicle Registration";
+import DriverForm from "./pages/DriverForm";
+import QueueManagerForm from"./pages/QueueManagerForm";
+import Users from "./pages/Users";
 
 
 function App() {
@@ -25,7 +29,14 @@ function App() {
 
           {/* Dashboard routes */}
           <Route element={<DashboardLayout />}>
-            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/VehicleRegistration"
+              element={<VehicleRegistration />}
+            />
+            <Route path="/driverForm" element={<DriverForm />} />
+            <Route path="/queueManagerForm" element={<QueueManagerForm />} />
+            <Route path="/user" element={<Users />} />
           </Route>
 
           {/* Catch-all route for 404 */}
