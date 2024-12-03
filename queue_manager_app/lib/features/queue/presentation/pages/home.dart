@@ -10,8 +10,8 @@ class HomeQueueManager extends StatefulWidget {
 class _HomeQueueManagerState extends State<HomeQueueManager> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      
+    return  Scaffold(
+      backgroundColor: Colors.green[200],
     );
   }
 }
