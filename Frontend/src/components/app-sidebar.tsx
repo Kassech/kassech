@@ -36,33 +36,33 @@ const data = {
   },
   navMain: [
     {
-      title: "Playground",
+      title: "Registration",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Vehicle Registration",
+          url: "/vehicleRegistration",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Driver Registration",
+          url: "/driverForm",
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "Queue Manager Registration",
+          url: "/queueManagerForm",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Users",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Users",
+          url: "/user",
         },
         {
           title: "Explorer",

@@ -43,11 +43,11 @@ func main() {
 	// Setup Gin router
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"}, // Allow frontend to access the backend
+		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true, // If you're sending credentials like cookies
+		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
 
