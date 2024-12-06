@@ -1,4 +1,7 @@
+// app_router.dart
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/features/auth/domain/usecase/auth_service.dart';
+import 'package:queue_manager_app/features/auth/presentation/pages/errorpage.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/forgotpassword.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/signinpage.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/signuppage.dart';
@@ -8,15 +11,44 @@ import 'package:queue_manager_app/features/splash/splash.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
+    // redirect: (context, state) async {
+    //   // Check if the user is authenticated
+    //   final isLoggedIn = await checkUserAuthentication();
+
+    //   // Protect /home and any authenticated routes
+    //   final isGoingToProtectedRoute = state.path?.startsWith('/home');
+    //   if (isGoingToProtectedRoute! && !isLoggedIn) {
+    //     return '/signin'; // Redirect to sign-in if unauthenticated
+    //   }
+
+    //   return null;
+    // },
+    errorBuilder: (context, state) => const ErrorPage(),
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const Splash()),
-      GoRoute(path: '/signin', builder: (context, state) => SigninPage()),
-      GoRoute(path: '/signup', builder: (context, state) => SignUpPage()),
       GoRoute(
-          path: '/home', builder: (context, state) => const HomeQueueManager()),
+        path: '/',
+        name: 'splash',
+        builder: (context, state) => const Splash(),
+      ),
       GoRoute(
-          path: '/forgotpassword',
-          builder: (context, state) => ForgotPassword())
+        path: '/signin',
+        name: 'signin',
+        builder: (context, state) => SigninPage(),
+      ),
+      GoRoute(
+        path: '/signup',
+        name: 'signup',
+        builder: (context, state) => SignUpPage(),
+      ),
+      GoRoute(
+        path: '/forgotpassword',
+        builder: (context, state) => ForgotPassword(),
+      ),
+      GoRoute(
+        path: '/home',
+        name: 'home',
+        builder: (context, state) => const HomeQueueManager(),
+      ),
     ],
   );
 }

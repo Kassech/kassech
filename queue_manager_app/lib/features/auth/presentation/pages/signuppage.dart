@@ -87,8 +87,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                FileSelectorWidget(label: 'Upload Kebele ID'),
-                FileSelectorWidget(label: 'Upload Queue Manager ID'),
+                const FileSelectorWidget(label: 'Upload Kebele ID'),
+                const FileSelectorWidget(label: 'Upload Queue Manager ID'),
                 AuthButton(
                     label: 'Register',
                     onPressed: () {

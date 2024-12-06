@@ -14,7 +14,7 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
     // Wait for 3 seconds and navigate to the next page
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 3), () {
       context.go('/signin'); // Push replacement to move to sign-in
     });
   }
