@@ -5,6 +5,7 @@ import (
 	"kassech/backend/pkg/service"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -106,4 +107,70 @@ func (uc *UserController) VerifyAuth(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"user_id": user.UserID})
+}
+
+// ListUsers method (Read with Pagination and Search)
+func (uc *UserController) ListUsers(c *gin.Context) {
+	log.Println("log", "log")
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+
+	search := c.DefaultQuery("search", "")
+
+	users, total, err := uc.Service.ListUsers(page, limit, search)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users":       users,
+		"total_count": total,
+		"page":        page,
+		"limit":       limit,
+	})
+}
+
+// UpdateUser method (Update User by ID)
+func (uc *UserController) UpdateUser(c *gin.Context) {
+	userId := c.Param("id")
+
+	var user models.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedUser, err := uc.Service.UpdateUser(userId, &user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User updated successfully",
+		"user":    updatedUser,
+	})
+}
+
+// DeleteUser method (Delete User by ID)
+func (uc *UserController) DeleteUser(c *gin.Context) {
+	userId := c.Param("id")
+
+	err := uc.Service.DeleteUser(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User deleted successfully",
+	})
 }

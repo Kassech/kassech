@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"kassech/backend/pkg/service"
+	"log"
 	"net/http"
 	"strings"
 
@@ -20,6 +21,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+		log.Println("		log", tokenStr)
 		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 			return []byte(service.JwtSecret), nil
 		})
