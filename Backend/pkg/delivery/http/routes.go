@@ -57,6 +57,9 @@ func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 
 	api.Use(middleware.AuthMiddleware())
 	api.GET("/users", ctrl.ListUsers)
+
+	api.POST("/users", ctrl.CreateUser)
+	
 	api.PUT("/users/:id", ctrl.UpdateUser)
 
 	api.DELETE("/users/:id", ctrl.DeleteUser)

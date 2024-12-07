@@ -111,7 +111,6 @@ func (uc *UserController) VerifyAuth(c *gin.Context) {
 
 // ListUsers method (Read with Pagination and Search)
 func (uc *UserController) ListUsers(c *gin.Context) {
-	log.Println("log", "log")
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil || page < 1 {
 		page = 1
@@ -122,9 +121,11 @@ func (uc *UserController) ListUsers(c *gin.Context) {
 		limit = 10
 	}
 
+	typ := c.DefaultQuery("type", "active")
+	log.Println(typ)
 	search := c.DefaultQuery("search", "")
 
-	users, total, err := uc.Service.ListUsers(page, limit, search)
+	users, total, err := uc.Service.ListUsers(page, limit, search, typ)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
