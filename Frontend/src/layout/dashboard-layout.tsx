@@ -36,10 +36,6 @@ export default function DashboardLayout() {
     }
   }, [isAuthenticated, navigate]);
 
-
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
   // Render the layout only if the user is authenticated
   if (isAuthenticated === null || isAuthenticated === false) {
     return null; // You can optionally return a loading screen or redirect before this point.
@@ -51,7 +47,13 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <Outlet /> {/* Render the child route components */}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <LoadingSpinner /> {/* Spinner inside the dashboard area */}
+          </div>
+        ) : (
+          <Outlet /> /* Render the child route components */
+        )}
       </SidebarInset>
     </SidebarProvider>
   );
