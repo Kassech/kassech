@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -18,10 +29,24 @@ import {
 import { MoreHorizontal } from "lucide-react";
 
 import { fetchUserData } from "../../services/userService"; // Replace with your actual service
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Header from "@/components/header";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-// Define a type for user data
 interface User {
   ID: number;
   FirstName: string;
@@ -37,9 +62,11 @@ const UserList: React.FC = () => {
   const [search, setSearch] = useState<string>("");
   const [filter, setFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
   const itemsPerPage = 10;
 
-  // Fetch users from API
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -53,7 +80,6 @@ const UserList: React.FC = () => {
     fetchUsers();
   }, []);
 
-  // Filter and Search Logic
   const filteredUsers = users.filter((user) => {
     const matchesSearch = `${user.FirstName} ${user.LastName} ${user.Email}`
       .toLowerCase()
@@ -66,7 +92,6 @@ const UserList: React.FC = () => {
     return matchesSearch && matchesFilter;
   });
 
-  // Pagination Logic
   const totalItems = filteredUsers.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const paginatedUsers = filteredUsers.slice(
@@ -80,33 +105,45 @@ const UserList: React.FC = () => {
     }
   };
 
-
   const handleEdit = (user: User) => {
-  
-    console.log("Editing user:", user);
-
-    // editUserAPI(user);
+    setUserToEdit(user);
   };
 
-  const handleDelete = (userId: number) => {
-   
-    console.log("Deleting user with ID:", userId);
-    // deleteUserFromAPI(userId);
-  
-    // setUsers((prevUsers) => prevUsers.filter((u) => u.ID !== userId));
+  const saveEditedUser = () => {
+    if (userToEdit) {
+      console.log("Saving edited user:", userToEdit);
+      setUsers((prevUsers) =>
+        prevUsers.map((u) => (u.ID === userToEdit.ID ? userToEdit : u))
+      );
+      setUserToEdit(null);
+    }
   };
-   const paths = [
-     { name: "Home", href: "/" },
-     { name: "Dashboard", href: "/b" },
-   ];
+
+  const handleDeleteClick = (user: User) => {
+    setUserToDelete(user);
+    setDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (userToDelete) {
+      console.log("Deleting user with ID:", userToDelete.ID);
+      setUsers((prevUsers) =>
+        prevUsers.filter((u) => u.ID !== userToDelete.ID)
+      );
+      setDialogOpen(false);
+    }
+  };
+
+  const paths = [
+    { name: "Home", href: "/" },
+    { name: "Dashboard", href: "/b" },
+  ];
 
   return (
     <>
       <Header paths={paths} />
       <div className="p-6">
         <h1 className="text-xl font-semibold mb-4">User Management</h1>
-
-        {/* Search and Filter */}
         <div className="flex gap-4 mb-6">
           <Input
             type="text"
@@ -129,8 +166,6 @@ const UserList: React.FC = () => {
             </SelectContent>
           </Select>
         </div>
-
-        {/* Table or No User Found */}
         {filteredUsers.length > 0 ? (
           <Table>
             <TableHeader>
@@ -162,7 +197,6 @@ const UserList: React.FC = () => {
                     </span>
                   </TableCell>
                   <TableCell>
-                    {/* Actions */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -171,8 +205,14 @@ const UserList: React.FC = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEdit(user)}>
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteClick(user)}
+                        >
+                          Delete
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -185,8 +225,6 @@ const UserList: React.FC = () => {
             No users found matching your criteria.
           </div>
         )}
-
-        {/* Pagination */}
         <div className="mt-4 flex justify-center">
           <Button
             variant="outline"
@@ -207,6 +245,126 @@ const UserList: React.FC = () => {
           </Button>
         </div>
       </div>
+      {/* Edit User Sheet */}
+      {userToEdit && (
+        <Sheet
+          open={Boolean(userToEdit)}
+          onOpenChange={() => setUserToEdit(null)}
+        >
+          <Sheet
+            open={Boolean(userToEdit)}
+            onOpenChange={() => setUserToEdit(null)}
+          >
+            <SheetTrigger asChild>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Edit User</SheetTitle>
+                <SheetDescription>
+                  Modify the details of the selected user. Save the changes when
+                  you're done.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="firstName" className="text-right">
+                    First Name
+                  </Label>
+                  <Input
+                    id="firstName"
+                    value={userToEdit?.FirstName || ""}
+                    onChange={(e) =>
+                      setUserToEdit((prev) =>
+                        prev ? { ...prev, FirstName: e.target.value } : null
+                      )
+                    }
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="lastName" className="text-right">
+                    Last Name
+                  </Label>
+                  <Input
+                    id="lastName"
+                    value={userToEdit?.LastName || ""}
+                    onChange={(e) =>
+                      setUserToEdit((prev) =>
+                        prev ? { ...prev, LastName: e.target.value } : null
+                      )
+                    }
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="email" className="text-right">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    value={userToEdit?.Email || ""}
+                    onChange={(e) =>
+                      setUserToEdit((prev) =>
+                        prev ? { ...prev, Email: e.target.value } : null
+                      )
+                    }
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="phone" className="text-right">
+                    Phone Number
+                  </Label>
+                  <Input
+                    id="phone"
+                    value={userToEdit?.PhoneNumber || ""}
+                    onChange={(e) =>
+                      setUserToEdit((prev) =>
+                        prev ? { ...prev, PhoneNumber: e.target.value } : null
+                      )
+                    }
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button type="submit" onClick={saveEditedUser}>
+                    Save Changes
+                  </Button>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Button variant="outline" onClick={() => setUserToEdit(null)}>
+                    Cancel
+                  </Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+        </Sheet>
+      )}
+      {/* Alert Dialog for Deletion */}
+      {isDialogOpen && (
+        <AlertDialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this user? This action cannot be
+                undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setDialogOpen(false)}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDelete}>
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </>
   );
 };
