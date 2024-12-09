@@ -49,7 +49,13 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <Outlet /> {/* Render the child route components */}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <LoadingSpinner /> {/* Spinner inside the dashboard area */}
+          </div>
+        ) : (
+          <Outlet /> /* Render the child route components */
+        )}
       </SidebarInset>
     </SidebarProvider>
   );
