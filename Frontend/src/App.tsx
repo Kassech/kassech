@@ -12,6 +12,7 @@ import DriverForm from "./pages/DriverForm";
 import QueueManagerForm from"./pages/QueueManagerForm";
 import Users from "./pages/Users";
 
+import Map from "./pages/OSM"
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path="/driverForm" element={<DriverForm />} />
             <Route path="/queueManagerForm" element={<QueueManagerForm />} />
             <Route path="/user" element={<Users />} />
+            <Route path="/map" element={<Map />} />
           </Route>
 
           {/* Catch-all route for 404 */}
