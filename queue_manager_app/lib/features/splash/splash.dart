@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
 class Splash extends StatefulWidget {
@@ -13,15 +14,15 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
     // Wait for 3 seconds and navigate to the next page
-    Future.delayed(Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(
-          context, '/signin'); // Push replacement to move to sign-in
+    Future.delayed(const Duration(seconds: 3), () {
+      context.go('/signin'); // Push replacement to move to sign-in
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Lottie.asset(
           'assets/splash2.json', // Corrected asset path
