@@ -11,6 +11,7 @@ import VehicleRegistration from"./pages/Vehicle Registration";
 import DriverForm from "./pages/DriverForm";
 import QueueManagerForm from"./pages/QueueManagerForm";
 import Users from "./pages/Users";
+import LoadingSpinner from "./components/loading-spinner";
 
 
 function App() {
@@ -28,7 +29,7 @@ function App() {
           </Route>
 
           {/* Dashboard routes */}
-          <Route element={<DashboardLayout />}>
+          <Route element={<DashboardLayout />} loader={()=><LoadingSpinner/>}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route
               path="/VehicleRegistration"
