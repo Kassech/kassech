@@ -21,8 +21,7 @@ type User struct {
 	IsVerified        bool      `gorm:"default:false"`
 	LastLoginDate     time.Time `gorm:"default:null"`
 	SocketID          *string   `gorm:"size:255;default:null"`
-	Roles             []string  `json:"roles"` // Add this to capture role names as an array
-
+	Roles             string    `json:"roles"` // Store roles as a comma-separated string
 }
 
 // Validate will use the validator package to validate the User struct

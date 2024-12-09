@@ -109,23 +109,16 @@ func (ur *UserRepository) ListUsers(page, limit int, search string, typ string) 
 		return nil, 0, err
 	}
 
-	// Retrieve the users with roles and pagination
-	err = query.Offset((page - 1) * limit).Limit(limit).Group("users.id").Find(&users).Error
+	// Retrieve the users with roles and pagination using raw SQL query
+	err = query.Offset((page - 1) * limit).Limit(limit).Group("users.id").Scan(&users).Error
 	if err != nil {
 		return nil, 0, err
 	}
 
-	// Manually map the roles array from the query result into the User's Roles field
-	for i, user := range users {
-		var roles []string
-		err := database.DB.Table("user_roles").
-			Joins("JOIN roles ON roles.id = user_roles.role_id").
-			Where("user_roles.user_id = ?", user.ID).
-			Pluck("roles.role_name", &roles).Error
-		if err != nil {
-			return nil, 0, err
-		}
-		users[i].Roles = roles
+	// Convert roles from a comma-separated string to a slice of strings
+	for i := range users {
+		roles := users[i].Roles
+		users[i].Roles = roles // Split the comma-separated string into a slice of strings
 	}
 
 	return users, total, nil
