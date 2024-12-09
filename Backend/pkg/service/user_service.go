@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"kassech/backend/pkg/database"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/repository"
 	"kassech/backend/pkg/utils"
@@ -19,7 +18,7 @@ type UserService struct {
 }
 
 // Register a new user
-func (us *UserService) Register(user *models.User) (*models.User, string, string, error) {
+func (us *UserService) Register(user *models.User, role uint) (*models.User, string, string, error) {
 	if err := user.Validate(); err != nil {
 		return nil, "", "", err
 	}
@@ -37,7 +36,8 @@ func (us *UserService) Register(user *models.User) (*models.User, string, string
 	user.Password = string(hashedPassword)
 
 	// Create the user in the database
-	user, err = us.Repo.Create(user)
+	user, err = us.Repo.Create(user, role)
+
 	if err != nil {
 		return nil, "", "", err
 	}
@@ -54,42 +54,6 @@ func (us *UserService) Register(user *models.User) (*models.User, string, string
 	return user, accessToken, refreshToken, nil
 }
 
-
-// Create  a new user with Specific Role and data 
-func (us *UserService) CreateUser(user *models.User) (*models.User, string, string, error) {
-	if err := user.Validate(); err != nil {
-		return nil, "", "", err
-	}
-
-	existingUser, _ := us.Repo.FindByEmailOrPhone(user.Email, user.PhoneNumber)
-	if existingUser != nil {
-		// User already exists
-		return nil, "", "", errors.New("user with that email or phone number already exists")
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, "", "", errors.New("failed to hash password")
-	}
-	user.Password = string(hashedPassword)
-
-	// Create the user in the database
-	user, err = us.Repo.Create(user)
-	if err != nil {
-		return nil, "", "", err
-	}
-
-	// Generate the JWT tokens
-	accessToken, refreshToken, err := GenerateToken(user.ID)
-	if err != nil {
-		return nil, "", "", errors.New("failed to generate token")
-	}
-
-	// Log the registration login event
-	us.LogLoginEvent(user, nil) // No IP or UserAgent needed during registration
-
-	return user, accessToken, refreshToken, nil
-}
 // Login handles the user login
 func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*models.User, string, string, error) {
 	user, err := us.Repo.FindByEmailOrPhone(emailOrPhone, emailOrPhone)
@@ -104,6 +68,7 @@ func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*m
 
 	// Generate the JWT tokens
 	accessToken, refreshToken, err := GenerateToken(user.ID)
+
 	if err != nil {
 		return nil, "", "", errors.New("failed to generate token")
 	}
@@ -166,49 +131,9 @@ func (us *UserService) LogLoginEvent(user *models.User, r *http.Request) {
 	}
 }
 
-// ListUsers with Pagination and Search
 func (us *UserService) ListUsers(page, limit int, search string, typ string) ([]models.User, int64, error) {
-	// Define pagination parameters
-	offset := (page - 1) * limit
-	var users []models.User
-	var total int64
-
-	// Build the query with optional search filter
-	query := database.DB.Model(&models.User{})
-
-	// Apply the search filter (search by email or phone number)
-	if search != "" {
-		query = query.Where("email LIKE ? OR phone_number LIKE ?", "%"+search+"%", "%"+search+"%")
-	}
-
-	// Filter by the 'typ' parameter (active or deleted)
-	switch typ {
-	case "active":
-		// For active users, we want to check that 'deleted_at' is NULL
-		query = query.Where("deleted_at IS NULL")
-
-	case "deleted":
-		// For deleted users, we want to include those with a non-NULL 'deleted_at'
-		query = query.Unscoped().Where("deleted_at IS NOT NULL")
-
-	default:
-		// Default behavior: If 'typ' is not provided or an unknown value, treat it as 'active'
-		query = query.Where("deleted_at IS NULL")
-	}
-
-	// Get the total number of users based on the query with filters
-	err := query.Count(&total).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	// Retrieve users with pagination
-	err = query.Offset(offset).Limit(limit).Find(&users).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return users, total, nil
+	// Call the repository method
+	return us.Repo.ListUsers(page, limit, search, typ)
 }
 
 // UpdateUser updates a user by ID

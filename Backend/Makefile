@@ -50,6 +50,11 @@ endif
 migrate:
 		$(GO_RUN) "$(ROOT_DIR)$(PATH_SEP)main.go" migrate
 
+
+.PHONY: fresh
+fresh:
+		$(GO_RUN) "$(ROOT_DIR)$(PATH_SEP)main.go" fresh
+
 # Target to run database seeding
 .PHONY: seed
 seed:

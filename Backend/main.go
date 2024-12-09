@@ -16,15 +16,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func init() {
-	// Load environment variables
+func init() { // Load environment variables
 	config.LoadEnv()
 	service.InitJWTSecret()
 }
-
 func main() {
-	// Load PORT from .env or default to 5000
+	//Load PORT from .env or default to 5000
 	port := os.Getenv("PORT")
+
 	if port == "" {
 		port = "5000"
 	}

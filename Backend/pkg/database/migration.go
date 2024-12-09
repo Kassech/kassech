@@ -36,6 +36,7 @@ func Migrate(migrationType string) {
 		&models.AutoDriverAssignmentHistory{},
 		&models.VehicleType{},
 		&models.NotificationToken{},
+		&models.UserSession{},
 	}
 
 	switch migrationType {
