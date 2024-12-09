@@ -9,14 +9,13 @@ import { useAuthCheck } from "@/hooks/useAuth";
 import LoadingSpinner from "@/components/loading-spinner";
 
 export default function DashboardLayout() {
-  const { mutate, isLoading, isError} = useAuthCheck(); // Using the hook
+  const { mutate, isLoading, isError } = useAuthCheck(); // Using the hook
   const navigate = useNavigate(); // For redirection
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   // Check if the user is authenticated when the component mounts
   useEffect(() => {
-    // Trigger the auth check when the component is mounted
     const checkAuth = async () => {
       try {
         await mutate(); // This will trigger the auth check
@@ -27,26 +26,25 @@ export default function DashboardLayout() {
     };
 
     checkAuth();
-  }, [mutate]);
+  }, []);
 
-  // Redirect to login page if not authenticated
+  // Redirect to login page if not authenticated or error occurs
   useEffect(() => {
-    if (isAuthenticated === false) {
+    if (isAuthenticated === false || isError) {
       navigate("/login"); // Redirect to login page if not authenticated
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isError, navigate]);
 
-
-  if (isLoading) {
-    return <LoadingSpinner />
+  // Show loading spinner while authentication is being checked
+  if (isLoading || isAuthenticated === null) {
+    return <LoadingSpinner />;
   }
+
   // Render the layout only if the user is authenticated
-  if (isAuthenticated === null || isAuthenticated === false) {
-    return null; // You can optionally return a loading screen or redirect before this point.
+  if (isAuthenticated === false) {
+    return null; // Optionally, you could return a loading spinner here if you want a smoother experience
   }
-  if (isError) {
-    navigate("/login"); // Redirect to login page if not authenticated
-  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
