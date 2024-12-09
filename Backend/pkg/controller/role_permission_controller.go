@@ -11,12 +11,12 @@ import (
 )
 
 type RolePermissionController struct {
-	service *service.RolePermissionService
+	Service *service.RolePermissionService
 }
 
-func NewRolePermissionController(service *service.RolePermissionService) *RolePermissionController {
+func NewRolePermissionController(Service *service.RolePermissionService) *RolePermissionController {
 	return &RolePermissionController{
-		service: service,
+		Service: Service,
 	}
 }
 
@@ -30,8 +30,8 @@ func (c *RolePermissionController) CreateRolePermission(ctx *gin.Context) {
 		return
 	}
 
-	// Call the service to create the role permission
-	createdRolePermission, err := c.service.Create(&rolePermission)
+	// Call the Service to create the role permission
+	createdRolePermission, err := c.Service.Create(&rolePermission)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,8 +49,8 @@ func (c *RolePermissionController) GetRolePermissionByID(ctx *gin.Context) {
 		return
 	}
 
-	// Call the service to fetch the role permission
-	rolePermission, err := c.service.GetByID(uint(rolePermissionID))
+	// Call the Service to fetch the role permission
+	rolePermission, err := c.Service.GetByID(uint(rolePermissionID))
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "RolePermission not found"})
 		return
@@ -62,8 +62,8 @@ func (c *RolePermissionController) GetRolePermissionByID(ctx *gin.Context) {
 
 // GetAllRolePermissions handles fetching all RolePermissions
 func (c *RolePermissionController) GetAllRolePermissions(ctx *gin.Context) {
-	// Call the service to fetch all role permissions
-	rolePermissions, err := c.service.GetAll()
+	// Call the Service to fetch all role permissions
+	rolePermissions, err := c.Service.GetAll()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -81,8 +81,8 @@ func (c *RolePermissionController) DeleteRolePermission(ctx *gin.Context) {
 		return
 	}
 
-	// Call the service to delete the role permission
-	deletedRolePermission, err := c.service.DeleteByID(uint(rolePermissionID))
+	// Call the Service to delete the role permission
+	deletedRolePermission, err := c.Service.DeleteByID(uint(rolePermissionID))
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "RolePermission not found"})
 		return
@@ -106,8 +106,8 @@ func (c *RolePermissionController) DeleteRolePermissionByRoleAndPermission(ctx *
 		return
 	}
 
-	// Call the service to delete the role permission by role and permission
-	if err := c.service.DeleteByRoleAndPermission(uint(roleID), uint(permissionID)); err != nil {
+	// Call the Service to delete the role permission by role and permission
+	if err := c.Service.DeleteByRoleAndPermission(uint(roleID), uint(permissionID)); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
