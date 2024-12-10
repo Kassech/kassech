@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 final dio = Dio();
-String baseUrl = 'http://192.168.70.158:5000/api/';
+String baseUrl = 'http://192.168.169.158:5000/api/';
 
 void getHttp() async {
   try {

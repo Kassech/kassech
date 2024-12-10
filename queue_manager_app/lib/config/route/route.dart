@@ -11,18 +11,18 @@ import 'package:queue_manager_app/features/splash/splash.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
-    // redirect: (context, state) async {
-    //   // Check if the user is authenticated
-    //   final isLoggedIn = await checkUserAuthentication();
+    redirect: (context, state) async {
+      // Check if the user is authenticated
+      final isLoggedIn = await checkUserAuthentication();
 
-    //   // Protect /home and any authenticated routes
-    //   final isGoingToProtectedRoute = state.path?.startsWith('/home');
-    //   if (isGoingToProtectedRoute! && !isLoggedIn) {
-    //     return '/signin'; // Redirect to sign-in if unauthenticated
-    //   }
+      // Protect /home and any authenticated routes
+      final isGoingToProtectedRoute = state.path?.startsWith('/home');
+      if (isGoingToProtectedRoute != null && !isLoggedIn) {
+        return '/signin'; // Redirect to sign-in if unauthenticated
+      }
 
-    //   return null;
-    // },
+      return null;
+    },
     errorBuilder: (context, state) => const ErrorPage(),
     routes: [
       GoRoute(
@@ -47,7 +47,17 @@ class AppRouter {
       GoRoute(
         path: '/home',
         name: 'home',
-        builder: (context, state) => const HomeQueueManager(),
+        builder: (context, state) => HomeQueueManager(),
+      ),
+      GoRoute(
+        path: '/404',
+        name: '404',
+        builder: (context, state) => const ErrorPage(),
+      ),
+      GoRoute(
+        path: '/500',
+        name: '500',
+        builder: (context, state) => const ErrorPage(),
       ),
     ],
   );
