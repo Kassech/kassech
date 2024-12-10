@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Login from "@/pages/authentication/login-form";
 import SignUp from "@/pages/authentication/register-form";
 import AuthLayout from "./layout/auth-layout";
@@ -7,11 +12,13 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Dashboard from "./pages/dashboard";
 import NotFoundPage from "./pages/error/404";
 import Error500Page from "./pages/error/500";
-import VehicleRegistration from"./pages/Vehicle Registration";
+import VehicleRegistration from "./pages/Vehicle Registration";
 import DriverForm from "./pages/DriverForm";
-import QueueManagerForm from"./pages/QueueManagerForm";
+import QueueManagerForm from "./pages/QueueManagerForm";
 import Users from "./pages/Users";
+import LoadingSpinner from "./components/loading-spinner";
 
+import Map from "./pages/OSM";
 
 function App() {
   return (
@@ -37,6 +44,7 @@ function App() {
             <Route path="/driverForm" element={<DriverForm />} />
             <Route path="/queueManagerForm" element={<QueueManagerForm />} />
             <Route path="/user" element={<Users />} />
+            <Route path="/map" element={<Map />} />
           </Route>
 
           {/* Catch-all route for 404 */}

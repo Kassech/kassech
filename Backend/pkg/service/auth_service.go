@@ -1,7 +1,10 @@
 package service
 
 import (
+	"context"
 	"errors"
+	"fmt"
+	"kassech/backend/pkg/database"
 	"os"
 	"time"
 
@@ -115,6 +118,39 @@ func RefreshTokenService(refreshToken string) (string, error) {
 
 	// Extract the user ID from the refresh token
 	userID := uint(claims["user_id"].(float64))
+	fmt.Println("	ftm", userID)
+	// Redis key
+	ctx := context.Background()
+	redisKey := "refresh_token:" + fmt.Sprintf("%d", int(userID))
+
+	// Check token in Redis
+	val, redisErr := database.REDIS.Get(ctx, redisKey).Result()
+	if redisErr == nil && val == "active" {
+		// Token is valid in Redis, proceed to generate a new access token
+		accessToken, _, err := GenerateToken(userID)
+		if err != nil {
+			return "", errors.New("failed to cache refresh token in Redis")
+		}
+		return accessToken, nil
+
+	}
+
+	// If not in Redis, validate the token in the database
+	var isValid bool
+	err = database.DB.Raw(`
+	SELECT COUNT(*) > 0
+	FROM user_sessions
+	WHERE token = ? AND is_active = TRUE AND expires_at > NOW()
+`, refreshToken).Scan(&isValid).Error
+	if err != nil || !isValid {
+		return "", errors.New("refresh token is invalid or expired")
+	}
+
+	// Cache token in Redis for future requests
+	err = database.REDIS.Set(ctx, redisKey, "active", 24*time.Hour).Err()
+	if err != nil {
+		return "", errors.New("failed to cache refresh token in Redis")
+	}
 
 	// Generate a new access token
 	accessToken, _, err := GenerateToken(userID)
