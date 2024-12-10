@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"kassech/backend/pkg/database"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/repository"
 	"kassech/backend/pkg/utils"
@@ -19,7 +18,7 @@ type UserService struct {
 }
 
 // Register a new user
-func (us *UserService) Register(user *models.User) (*models.User, string, string, error) {
+func (us *UserService) Register(user *models.User, role uint) (*models.User, string, string, error) {
 	if err := user.Validate(); err != nil {
 		return nil, "", "", err
 	}
@@ -37,7 +36,8 @@ func (us *UserService) Register(user *models.User) (*models.User, string, string
 	user.Password = string(hashedPassword)
 
 	// Create the user in the database
-	user, err = us.Repo.Create(user)
+	user, err = us.Repo.Create(user, role)
+
 	if err != nil {
 		return nil, "", "", err
 	}
@@ -68,6 +68,7 @@ func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*m
 
 	// Generate the JWT tokens
 	accessToken, refreshToken, err := GenerateToken(user.ID)
+
 	if err != nil {
 		return nil, "", "", errors.New("failed to generate token")
 	}
@@ -130,33 +131,9 @@ func (us *UserService) LogLoginEvent(user *models.User, r *http.Request) {
 	}
 }
 
-// ListUsers with Pagination and Search
-func (us *UserService) ListUsers(page, limit int, search string) ([]models.User, int64, error) {
-	// Define pagination parameters
-	offset := (page - 1) * limit
-	var users []models.User
-	var total int64
-
-	// Build the query with optional search filter
-	query := database.DB.Model(&models.User{})
-	if search != "" {
-		// Search by name or email (or any other fields)
-		query = query.Where("email LIKE ? OR phone_number LIKE ?", "%"+search+"%", "%"+search+"%")
-	}
-
-	// Get the total number of users
-	err := query.Count(&total).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	// Retrieve users with pagination
-	err = query.Offset(offset).Limit(limit).Find(&users).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return users, total, nil
+func (us *UserService) ListUsers(page, limit int, search string, typ string) ([]models.User, int64, error) {
+	// Call the repository method
+	return us.Repo.ListUsers(page, limit, search, typ)
 }
 
 // UpdateUser updates a user by ID

@@ -13,13 +13,13 @@ import (
 
 // PermissionController defines the controller for handling permission-related requests
 type PermissionController struct {
-	permissionService *service.PermissionService
+	Service *service.PermissionService
 }
 
 // NewPermissionController creates a new PermissionController instance
-func NewPermissionController(permissionService *service.PermissionService) *PermissionController {
+func NewPermissionController(Service *service.PermissionService) *PermissionController {
 	return &PermissionController{
-		permissionService: permissionService,
+		Service: Service,
 	}
 }
 
@@ -31,7 +31,7 @@ func (pc *PermissionController) CreatePermission(c *gin.Context) {
 		return
 	}
 
-	createdPermission, err := pc.permissionService.CreatePermission(&permission)
+	createdPermission, err := pc.Service.CreatePermission(&permission)
 	if err != nil {
 		log.Println("Error creating permission:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create permission"})
@@ -49,7 +49,7 @@ func (pc *PermissionController) GetPermissionByID(c *gin.Context) {
 		return
 	}
 
-	permission, err := pc.permissionService.GetPermissionByID(uint(permissionID))
+	permission, err := pc.Service.GetPermissionByID(uint(permissionID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Permission not found"})
 		return
@@ -60,7 +60,7 @@ func (pc *PermissionController) GetPermissionByID(c *gin.Context) {
 
 // GetAllPermissions retrieves all permissions
 func (pc *PermissionController) GetAllPermissions(c *gin.Context) {
-	permissions, err := pc.permissionService.GetAllPermissions()
+	permissions, err := pc.Service.GetAllPermissions()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve permissions"})
 		return
@@ -84,7 +84,7 @@ func (pc *PermissionController) UpdatePermission(c *gin.Context) {
 	}
 	permission.ID = uint(permissionID)
 
-	updatedPermission, err := pc.permissionService.UpdatePermission(&permission)
+	updatedPermission, err := pc.Service.UpdatePermission(&permission)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update permission"})
 		return
@@ -101,7 +101,7 @@ func (pc *PermissionController) DeletePermission(c *gin.Context) {
 		return
 	}
 
-	deletedPermission, err := pc.permissionService.DeletePermission(uint(permissionID))
+	deletedPermission, err := pc.Service.DeletePermission(uint(permissionID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Permission not found"})
 		return
@@ -124,7 +124,7 @@ func (pc *PermissionController) AttachRoleToPermission(c *gin.Context) {
 		return
 	}
 
-	err = pc.permissionService.AttachRoleToPermission(uint(permissionID), uint(roleID))
+	err = pc.Service.AttachRoleToPermission(uint(permissionID), uint(roleID))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to attach role"})
 		return
@@ -147,7 +147,7 @@ func (pc *PermissionController) DetachRoleFromPermission(c *gin.Context) {
 		return
 	}
 
-	err = pc.permissionService.DetachRoleFromPermission(uint(permissionID), uint(roleID))
+	err = pc.Service.DetachRoleFromPermission(uint(permissionID), uint(roleID))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to detach role"})
 		return
