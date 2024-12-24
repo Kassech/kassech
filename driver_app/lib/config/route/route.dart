@@ -1,14 +1,11 @@
 // app_router.dart
+import 'package:driver_app/features/auth/domain/usecase/auth_service.dart';
+import 'package:driver_app/features/auth/presentation/pages/errorpage.dart';
+import 'package:driver_app/features/auth/presentation/pages/forgotpassword.dart';
+import 'package:driver_app/features/auth/presentation/pages/signinpage.dart';
+import 'package:driver_app/features/auth/presentation/pages/signuppage.dart';
+import 'package:driver_app/features/splash/splash.dart';
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/features/auth/domain/usecase/auth_service.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/errorpage.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/forgotpassword.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/signinpage.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/signuppage.dart';
-import 'package:queue_manager_app/features/queue/presentation/pages/home.dart';
-import 'package:queue_manager_app/features/queue/presentation/pages/profile.dart';
-import 'package:queue_manager_app/features/queue/presentation/pages/qmdetails.dart';
-import 'package:queue_manager_app/features/splash/splash.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -46,11 +43,7 @@ class AppRouter {
         path: '/forgotpassword',
         builder: (context, state) => ForgotPassword(),
       ),
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => HomeQueueManager(),
-      ),
+      
       GoRoute(
         path: '/404',
         name: '404',
@@ -61,11 +54,9 @@ class AppRouter {
         name: '500',
         builder: (context, state) => const ErrorPage(),
       ),
-      GoRoute(path: '/home/qmdetails', name: 'qmdetails', builder: (context, state) => const QueueManagerDetalils()),
-
-      GoRoute(path: '*', builder: (context, state) => const ErrorPage()), 
-
-      GoRoute(path: '/profile', builder: (context, state)=> const ProfilePage())
+      
+      GoRoute(path: '*', builder: (context, state) => const ErrorPage()),
+      
     ],
   );
 }
