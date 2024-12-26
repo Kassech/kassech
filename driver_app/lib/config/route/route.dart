@@ -4,6 +4,7 @@ import 'package:driver_app/features/auth/presentation/pages/errorpage.dart';
 import 'package:driver_app/features/auth/presentation/pages/forgotpassword.dart';
 import 'package:driver_app/features/auth/presentation/pages/signinpage.dart';
 import 'package:driver_app/features/auth/presentation/pages/signuppage.dart';
+import 'package:driver_app/features/driverhome/presentation/pages/frontpagemap.dart';
 import 'package:driver_app/features/splash/splash.dart';
 import 'package:go_router/go_router.dart';
 
@@ -43,7 +44,11 @@ class AppRouter {
         path: '/forgotpassword',
         builder: (context, state) => ForgotPassword(),
       ),
-      
+       GoRoute(
+        path: '/home',
+        name: 'home',
+        builder: (context, state) => DriverHome(),
+      ),
       GoRoute(
         path: '/404',
         name: '404',
