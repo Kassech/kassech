@@ -34,9 +34,9 @@ export default function DashboardLayout() {
   }, [isAuthenticated, isError, navigate]);
 
   // Show loading spinner while authentication is being checked
-  if (isLoading || isAuthenticated === null) {
-    return <LoadingSpinner />;
-  }
+  // if (isLoading || isAuthenticated === null) {
+  //   return <LoadingSpinner />;
+  // }
 
   // Render the layout only if the user is authenticated
   if (isAuthenticated === false) {
