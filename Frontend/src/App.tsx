@@ -14,6 +14,7 @@ import Users from "./pages/Users";
 import LoadingSpinner from "./components/loading-spinner";
 
 import Map from "./pages/OSM"
+import RoutesPage from "./pages/route"
 
 function App() {
   return (
@@ -23,7 +24,6 @@ function App() {
           {/* Redirect / to /dashboard */}
           <Route path="/" element={<Navigate to="/dashboard" />} />
 
-          {/* Authentication routes */}
           <Route element={<AuthLayout />}>
             <Route path="/register" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
@@ -40,9 +40,9 @@ function App() {
             <Route path="/queueManagerForm" element={<QueueManagerForm />} />
             <Route path="/user" element={<Users />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/routes" element={<RoutesPage />} />
           </Route>
 
-          {/* Catch-all route for 404 */}
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="/500" element={<Error500Page />} />
