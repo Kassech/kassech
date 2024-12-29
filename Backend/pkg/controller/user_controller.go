@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/service"
@@ -82,6 +83,7 @@ func (uc *UserController) Login(c *gin.Context) {
 	}
 
 	user, accessToken, refreshToken, err := uc.Service.Login(input.EmailOrPhone, input.Password, c.Request)
+	fmt.Println("user, accessToken, refreshToken:", user, accessToken, refreshToken)
 	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -114,14 +116,14 @@ func (uc *UserController) RefreshToken(c *gin.Context) {
 	// Get the refresh token from the HTTP-only cookie
 	refreshToken, err := c.Cookie("refresh_token")
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Refresh token is missing"})
+		c.JSON(http.StatusForbidden, gin.H{"error": "Refresh token is missing"})
 		return
 	}
 
 	// Call the service to refresh the token
 	accessToken, err := service.RefreshTokenService(refreshToken)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
 

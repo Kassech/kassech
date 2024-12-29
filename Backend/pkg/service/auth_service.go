@@ -37,8 +37,8 @@ func InitJWTSecret() error {
 
 	// Parse access token expiration time
 	parsedAccessTokenExp, err := time.ParseDuration(accessTokenExp)
-	if err != nil {
-		return errors.New("invalid format for ACCESS_TOKEN_EXPIRATION")
+	if err != nil || parsedAccessTokenExp <= 0 {
+		return errors.New("invalid format or value for ACCESS_TOKEN_EXPIRATION")
 	}
 	AccessTokenExpiration = parsedAccessTokenExp
 
@@ -49,8 +49,8 @@ func InitJWTSecret() error {
 
 	// Parse refresh token expiration time
 	parsedRefreshTokenExp, err := time.ParseDuration(refreshTokenExp)
-	if err != nil {
-		return errors.New("invalid format for REFRESH_TOKEN_EXPIRATION")
+	if err != nil || parsedRefreshTokenExp <= 0 {
+		return errors.New("invalid format or value for REFRESH_TOKEN_EXPIRATION")
 	}
 	RefreshTokenExpiration = parsedRefreshTokenExp
 
