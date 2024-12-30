@@ -8,7 +8,8 @@ import (
 
 	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/database"
-	"kassech/backend/pkg/delivery/http"
+	routes "kassech/backend/pkg/delivery/http"
+	"kassech/backend/pkg/delivery/socket"
 	"kassech/backend/pkg/service"
 	scripts "kassech/backend/script"
 
@@ -20,10 +21,10 @@ func init() { // Load environment variables
 	config.LoadEnv()
 	service.InitJWTSecret()
 }
-func main() {
-	//Load PORT from .env or default to 5000
-	port := os.Getenv("PORT")
 
+func main() {
+	// Load PORT from .env or default to 5000
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = "5000"
 	}
@@ -54,7 +55,10 @@ func main() {
 
 	// Register routes
 	r.Static("/uploads", "./uploads")
-	http.RegisterRoutes(r)
+	routes.RegisterRoutes(r)
+
+	// WebSocket endpoint
+	r.GET("/websocket", socket.WebsocketHandler)
 
 	// Start the server
 	serverAddress := fmt.Sprintf(":%s", port)
