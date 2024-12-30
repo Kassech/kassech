@@ -18,6 +18,7 @@ func RegisterRoutes(r *gin.Engine) {
 	userRoleRepo := &repository.UserRoleRepository{}
 	sessionRepo := &repository.UserSessionsRepository{}
 	stationRepo := &repository.StationRepository{}
+	routeRepo := &repository.RouteRepository{}
 
 	// Initialize Services
 	userSvc := &service.UserService{Repo: userRepo}
@@ -27,7 +28,7 @@ func RegisterRoutes(r *gin.Engine) {
 	userRoleSvc := &service.UserRoleService{Repo: userRoleRepo}
 	sessionService := &service.UserSessionsService{Repo: sessionRepo}
 	stationSvc := &service.StationService{Repo: stationRepo}
-
+	routeSvc := &service.RouteService{Repo: routeRepo}
 	// Initialize Controllers
 	userCtrl := &controller.UserController{Service: userSvc, SessionService: sessionService}
 	roleCtrl := &controller.RoleController{Service: roleSvc}
@@ -36,6 +37,7 @@ func RegisterRoutes(r *gin.Engine) {
 	userRoleCtrl := &controller.UserRoleController{Service: userRoleSvc}
 	sessionController := &controller.UserSessionController{Service: sessionService}
 	stationCtrl := &controller.StationController{Service: stationSvc}
+	routeCtrl := &controller.RouteController{Service: routeSvc}
 
 	// Group API routes
 	api := r.Group("/api")
@@ -59,6 +61,10 @@ func RegisterRoutes(r *gin.Engine) {
 
 		// station routes
 		stationRoutes(api, stationCtrl)
+
+		// route routes
+		routeRoutes(api, routeCtrl)
+
 	}
 }
 
@@ -66,6 +72,7 @@ func RegisterUserSessionRoutes(router *gin.RouterGroup, controller *controller.U
 	sessions := router.Group("/sessions")
 	{
 		sessions.DELETE("/:token", controller.InvalidateToken)        // Invalidate a specific token
+		
 		sessions.DELETE("/all/:id", controller.InvalidateAllSessions) // Invalidate all sessions for a user
 	}
 }
@@ -84,6 +91,21 @@ func stationRoutes(api *gin.RouterGroup, ctrl *controller.StationController) {
 		stationApi.GET("/:id", ctrl.FindStationByID)
 
 		stationApi.GET("/", ctrl.GetAllStations)
+
+		stationApi.GET("", ctrl.GetAllStations)
+	}
+}
+
+func routeRoutes(api *gin.RouterGroup, ctrl *controller.RouteController) {
+
+	routeApi := api.Group("/routes")
+	{
+
+		routeApi.POST("/", ctrl.CreateRoute)      // Create a route
+		routeApi.GET("/:id", ctrl.FindRouteByID)  // Get route by ID
+		routeApi.GET("/", ctrl.GetAllRoutes)      // Get all routes
+		routeApi.PUT("/:id", ctrl.UpdateRoute)    // Update a route by ID
+		routeApi.DELETE("/:id", ctrl.DeleteRoute) // Delete a route by ID
 	}
 }
 
