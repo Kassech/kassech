@@ -30,8 +30,8 @@ import {
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "TeamKassa",
+    email: "TeamKassa@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
@@ -75,7 +75,7 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
+      title: "View Report",
       url: "#",
       icon: BookOpen,
       items: [
@@ -135,17 +135,17 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Delegation",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      name: "Active Driver",
       url: "#",
       icon: PieChart,
     },
     {
-      name: "Travel",
+      name: "Report",
       url: "#",
       icon: Map,
     },
