@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/repository"
 	"time"
@@ -11,11 +12,13 @@ type UserSessionsService struct {
 }
 
 func (s *UserSessionsService) CreateSession(userID uint, token string, expiresAt time.Time) error {
+
 	session := &models.UserSession{
 		UserID:    userID,
 		Token:     token,
 		ExpiresAt: expiresAt,
 	}
+	fmt.Println("	ftm", session)
 	return s.Repo.CreateSession(session)
 }
 

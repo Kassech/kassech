@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -68,6 +69,7 @@ func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*m
 
 	// Generate the JWT tokens
 	accessToken, refreshToken, err := GenerateToken(user.ID)
+	fmt.Println("accessToken, refreshToken, err:", accessToken, refreshToken, err)
 
 	if err != nil {
 		return nil, "", "", errors.New("failed to generate token")
