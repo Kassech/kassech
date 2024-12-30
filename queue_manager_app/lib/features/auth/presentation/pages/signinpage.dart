@@ -91,7 +91,7 @@ class SigninPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.only(left: 260),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(
                     children: [
                       TextButton(

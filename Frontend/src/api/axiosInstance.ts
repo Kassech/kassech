@@ -9,13 +9,26 @@ const api = axios.create({
 // Token helpers
 const getAccessToken = () => localStorage.getItem('accessToken');
 
-const refreshAccessToken = async () => {
-  const response = await axios.post('/refresh');
-  const { accessToken } = response.data;
 
-  localStorage.setItem('accessToken', accessToken);
-  return accessToken;
+const refreshAccessToken = async () => {
+  try {
+    const response = await api.post(
+      '/refresh',
+    );
+
+    const { access_token } = response.data;
+    console.log("🚀 ~ refreshaccess_token ~ access_token:", access_token);
+    if(!access_token){
+      throw "un-auth"
+    }
+    localStorage.setItem('accessToken', access_token);
+    return access_token;
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+    throw error;
+  }
 };
+
 
 // Request interceptor
 api.interceptors.request.use(
@@ -39,6 +52,9 @@ api.interceptors.response.use(
 
     // If the status is 401 and the route is not login/register, handle token refresh
     if (error.response?.status === 401 && !isLoginOrRegisterRoute && !originalRequest._retry) {
+      console.log("🚀 ~ originalRequest._retry:", !originalRequest._retry)
+      console.log("🚀 ~ isLoginOrRegisterRoute:", isLoginOrRegisterRoute)
+      console.log("🚀 ~ error.response?.status:", error.response?.status)
       originalRequest._retry = true;
       try {
         // Attempt to refresh the access token

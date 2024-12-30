@@ -1,12 +1,10 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuthCheck } from "@/hooks/useAuth";
 import LoadingSpinner from "@/components/loading-spinner";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function DashboardLayout() {
   const { mutate, isLoading, isError } = useAuthCheck(); // Using the hook
@@ -57,6 +55,7 @@ export default function DashboardLayout() {
           <Outlet /> /* Render the child route components */
         )}
       </SidebarInset>
+        <Toaster />
     </SidebarProvider>
   );
 }
