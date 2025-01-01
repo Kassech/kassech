@@ -5,10 +5,10 @@ class ProfileField extends StatelessWidget {
   final String value;
 
   const ProfileField({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +27,12 @@ class ProfileField extends StatelessWidget {
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               value.isNotEmpty ? value : 'N/A',
               style: TextStyle(

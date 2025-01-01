@@ -26,7 +26,7 @@ class ApiClient {
         // Handle successful responses
         handler.next(response);
       },
-      onError: (DioError error, handler) async {
+      onError: (DioException error, handler) async {
         // Handle token expiration
         if (error.response?.statusCode == 401) {
           // Try refreshing the token

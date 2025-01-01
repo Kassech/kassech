@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 
 class HomeQueueManager extends StatefulWidget {
+  const HomeQueueManager({super.key});
+
   @override
   _HomeQueueManagerState createState() => _HomeQueueManagerState();
 }
@@ -52,32 +54,32 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
               onTap: () {
                 // Handle item tap
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
               onTap: () {
                 // Handle item tap
                 AppRouter.router.go('/profile'); // Close the drawer
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
               onTap: () {
                 // Handle item tap
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
-              leading:Icon(Icons.logout),
-              title: Text('Logout'),
+              leading:const Icon(Icons.logout),
+              title: const Text('Logout'),
               onTap: () {
                 // Handle item tap
                 Navigator.pop(context); // Close the drawer
@@ -105,7 +107,7 @@ class QueueCard extends StatefulWidget {
   final String routeId;
   final int initialCount;
 
-  QueueCard({
+  const QueueCard({super.key, 
     required this.routeName,
     required this.routeId,
     required this.initialCount,
@@ -160,17 +162,17 @@ class _QueueCardState extends State<QueueCard> {
                 children: [
                   Text(
                     widget.routeName,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     'Route ID: ${widget.routeId}',
-                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     'Queue: $queueCount',
-                    style: TextStyle(color: Colors.orange, fontSize: 16),
+                    style: const TextStyle(color: Colors.orange, fontSize: 16),
                   ),
                 ],
               ),
@@ -179,11 +181,11 @@ class _QueueCardState extends State<QueueCard> {
               Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.remove, color: Colors.red),
+                    icon: const Icon(Icons.remove, color: Colors.red),
                     onPressed: decrementQueue,
                   ),
                   IconButton(
-                    icon: Icon(Icons.add, color: Colors.green),
+                    icon: const Icon(Icons.add, color: Colors.green),
                     onPressed: incrementQueue,
                   ),
                 ],
