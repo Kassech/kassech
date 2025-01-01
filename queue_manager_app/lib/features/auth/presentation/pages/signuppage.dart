@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 import 'package:queue_manager_app/features/auth/presentation/widgets/authButton.dart';
 import 'package:queue_manager_app/features/auth/presentation/widgets/filePicker.dart';
