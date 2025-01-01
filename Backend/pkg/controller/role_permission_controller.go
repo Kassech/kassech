@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -26,6 +27,8 @@ func (c *RolePermissionController) CreateRolePermission(ctx *gin.Context) {
 
 	// Bind JSON body to RolePermission struct
 	if err := ctx.ShouldBindJSON(&rolePermission); err != nil {
+		fmt.Println("err:", err)
+
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}

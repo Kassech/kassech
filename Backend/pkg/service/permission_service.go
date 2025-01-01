@@ -7,20 +7,13 @@ import (
 )
 
 type PermissionService struct {
-	permissionRepo *repository.PermissionRepository
-}
-
-// NewPermissionService creates a new instance of PermissionService
-func NewPermissionService(permissionRepo *repository.PermissionRepository) *PermissionService {
-	return &PermissionService{
-		permissionRepo: permissionRepo,
-	}
+	Repo *repository.PermissionRepository
 }
 
 // CreatePermission creates a new permission
 func (ps *PermissionService) CreatePermission(permission *models.Permission) (*models.Permission, error) {
 	// Use repository to create permission
-	createdPermission, err := ps.permissionRepo.Create(permission)
+	createdPermission, err := ps.Repo.Create(permission)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +22,7 @@ func (ps *PermissionService) CreatePermission(permission *models.Permission) (*m
 
 // GetPermissionByID retrieves a permission by ID
 func (ps *PermissionService) GetPermissionByID(permissionID uint) (*models.Permission, error) {
-	permission, err := ps.permissionRepo.FindByID(permissionID)
+	permission, err := ps.Repo.FindByID(permissionID)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +31,7 @@ func (ps *PermissionService) GetPermissionByID(permissionID uint) (*models.Permi
 
 // GetAllPermissions retrieves all permissions
 func (ps *PermissionService) GetAllPermissions() (*[]models.Permission, error) {
-	permissions, err := ps.permissionRepo.GetAll()
+	permissions, err := ps.Repo.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -48,13 +41,13 @@ func (ps *PermissionService) GetAllPermissions() (*[]models.Permission, error) {
 // UpdatePermission updates an existing permission
 func (ps *PermissionService) UpdatePermission(permission *models.Permission) (*models.Permission, error) {
 	// Check if permission exists first
-	_, err := ps.permissionRepo.FindByID(permission.ID)
+	_, err := ps.Repo.FindByID(permission.ID)
 	if err != nil {
 		return nil, errors.New("permission not found")
 	}
 
 	// Update the permission
-	updatedPermission, err := ps.permissionRepo.Update(permission)
+	updatedPermission, err := ps.Repo.Update(permission)
 	if err != nil {
 		return nil, err
 	}
@@ -64,13 +57,13 @@ func (ps *PermissionService) UpdatePermission(permission *models.Permission) (*m
 // DeletePermission deletes a permission by ID
 func (ps *PermissionService) DeletePermission(permissionID uint) (*models.Permission, error) {
 	// Check if permission exists first
-	_, err := ps.permissionRepo.FindByID(permissionID)
+	_, err := ps.Repo.FindByID(permissionID)
 	if err != nil {
 		return nil, errors.New("permission not found")
 	}
 
 	// Delete the permission
-	deletedPermission, err := ps.permissionRepo.DeleteByID(permissionID)
+	deletedPermission, err := ps.Repo.DeleteByID(permissionID)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +73,7 @@ func (ps *PermissionService) DeletePermission(permissionID uint) (*models.Permis
 // AttachRoleToPermission attaches a role to a permission
 func (ps *PermissionService) AttachRoleToPermission(permissionID uint, roleID uint) error {
 	// Attach role to permission
-	err := ps.permissionRepo.AttachRoleToPermission(permissionID, roleID)
+	err := ps.Repo.AttachRoleToPermission(permissionID, roleID)
 	if err != nil {
 		return err
 	}
@@ -90,7 +83,7 @@ func (ps *PermissionService) AttachRoleToPermission(permissionID uint, roleID ui
 // DetachRoleFromPermission detaches a role from a permission
 func (ps *PermissionService) DetachRoleFromPermission(permissionID uint, roleID uint) error {
 	// Detach role from permission
-	err := ps.permissionRepo.DetachRoleFromPermission(permissionID, roleID)
+	err := ps.Repo.DetachRoleFromPermission(permissionID, roleID)
 	if err != nil {
 		return err
 	}
