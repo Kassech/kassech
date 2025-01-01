@@ -18,7 +18,7 @@ import QueueManagerForm from "./pages/QueueManagerForm";
 import Users from "./pages/Users";
 import LoadingSpinner from "./components/loading-spinner";
 
-import Map from "./pages/OSM";
+import Map from "./pages/Station Managing";
 
 function App() {
   return (

@@ -37,3 +37,23 @@ export interface LoginResponse {
 
 // Type for the mutation response (e.g., user data or undefined)
 export type MutationResponse<T = unknown> = T | undefined;
+
+
+export interface Station {
+  id: number;
+  LocationName: string;
+  Latitude: number;
+  Longitude: number;
+}
+
+// Type for the data used to create or update a station
+export interface StationInput {
+  LocationName: string;
+  Latitude: number;
+  Longitude: number;
+}
+
+// Type for the response when fetching a list of stations
+export interface StationsResponse {
+  stations: Station[];
+}

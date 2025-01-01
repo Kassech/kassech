@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:circular_menu/circular_menu.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -13,15 +12,15 @@ class DriverHome extends StatefulWidget {
 class _DriverHomeState extends State<DriverHome> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Stack(
+    return Scaffold(
+        body: Stack(
       children: [
         FlutterMap(
-          options: const MapOptions(
-            center: LatLng(9.030093, 38.762791),
+          options: MapOptions(
+            initialCenter: LatLng(9.030093, 38.762791),
             minZoom: 15,
           ),
           children: [
-            openStreetMapTileLayer,
             MarkerLayer(
               markers: [
                 Marker(
