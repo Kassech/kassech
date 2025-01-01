@@ -15,31 +15,31 @@ class ProfilePage extends StatelessWidget {
             onPressed: () {
               AppRouter.router.go('/home');
             },
-            icon: Icon(Icons.arrow_back)),
-        title: Text('Profile'),
+            icon: const Icon(Icons.arrow_back)),
+        title: const Text('Profile'),
       ),
       body: SafeArea(
           child: Center(
               child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 50,
             backgroundImage: AssetImage('assets/test.jpg'),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Container(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.0),
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Column(
                 children: [
-                  ProfileField(label: 'Name', value: 'John Doe'),
-                  ProfileField(label: 'Phone', value: '+251 123 456 789'),
-                  ProfileField(label: 'Email', value: 'jojo@example.com'),
-                  ProfileField(label: 'Vehicle Type', value: 'Sedan'),
-                  ProfileField(label: 'License Plate', value: 'ABC123'),
+                  const ProfileField(label: 'Name', value: 'John Doe'),
+                  const ProfileField(label: 'Phone', value: '+251 123 456 789'),
+                  const ProfileField(label: 'Email', value: 'jojo@example.com'),
+                  const ProfileField(label: 'Vehicle Type', value: 'Sedan'),
+                  const ProfileField(label: 'License Plate', value: 'ABC123'),
                   AuthButton(
                       label: 'Logout',
                       onPressed: () {

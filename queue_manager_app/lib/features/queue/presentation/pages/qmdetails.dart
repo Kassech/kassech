@@ -26,8 +26,8 @@ class _QueueManagerDetalilsState extends State<QueueManagerDetalils> {
             onPressed: () {
               AppRouter.router.go('/home');
             },
-            icon: Icon(Icons.arrow_back)),
-        title: Text('Route Details'),
+            icon: const Icon(Icons.arrow_back)),
+        title: const Text('Route Details'),
       ),
       body: SlidingUpPanel(
         panelBuilder: () => _buildPanel(),
@@ -42,7 +42,7 @@ class _QueueManagerDetalilsState extends State<QueueManagerDetalils> {
               MarkerLayer(
                 markers: [
                   Marker(
-                      point: LatLng(9.036151548242255, 38.7625160846566),
+                      point: const LatLng(9.036151548242255, 38.7625160846566),
                       child: Icon(
                         Icons.location_on_sharp,
                         size: 60,
@@ -61,7 +61,7 @@ class _QueueManagerDetalilsState extends State<QueueManagerDetalils> {
     ScrollController sc = ScrollController();
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.all(16), // Add padding for better spacing
+      padding: const EdgeInsets.all(16), // Add padding for better spacing
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -70,7 +70,7 @@ class _QueueManagerDetalilsState extends State<QueueManagerDetalils> {
             width: 100,
             height: 4, // Adjusted height for a better look
             color: Colors.black,
-            margin: EdgeInsets.only(bottom: 16), // Margin below the header
+            margin: const EdgeInsets.only(bottom: 16), // Margin below the header
           ),
           // Panel Content
           Expanded(
@@ -99,6 +99,6 @@ class _QueueManagerDetalilsState extends State<QueueManagerDetalils> {
 TileLayer get openStreetMapTileLayer => TileLayer(
       urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       userAgentPackageName: 'com.example.queue_manager_app',
-      subdomains: ['a', 'b', 'c'],
+      subdomains: const ['a', 'b', 'c'],
     );
 
