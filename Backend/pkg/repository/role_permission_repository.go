@@ -21,7 +21,7 @@ func (rpr *RolePermissionRepository) Create(rolePermission *models.RolePermissio
 // Find a RolePermission by ID
 func (rpr *RolePermissionRepository) FindByID(rolePermissionID uint) (*models.RolePermission, error) {
 	var rolePermission models.RolePermission
-	if err := database.DB.First(&rolePermission, rolePermissionID).Error; err != nil {
+	if err := database.DB.First(&rolePermission.RoleID, rolePermissionID).Error; err != nil {
 		return nil, err
 	}
 	return &rolePermission, nil

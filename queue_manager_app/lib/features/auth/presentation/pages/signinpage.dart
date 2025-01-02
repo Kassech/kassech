@@ -37,7 +37,7 @@ class SigninPage extends StatelessWidget {
       } else {
         // If login failed
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid credentials')),
+          const SnackBar(content: Text('Invalid credentials')),
         );
       }
     } catch (e) {

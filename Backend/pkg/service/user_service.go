@@ -55,6 +55,17 @@ func (us *UserService) Register(user *models.User, role uint) (*models.User, str
 	return user, accessToken, refreshToken, nil
 }
 
+// SaveNotificationToken saves the notification token for a user
+func (us *UserService) SaveNotificationToken(userID uint, token string, device_id string) error {
+	// Call the repository method to save the notification token
+	err := us.Repo.SaveNotificationToken(userID, token,device_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Login handles the user login
 func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*models.User, string, string, error) {
 	user, err := us.Repo.FindByEmailOrPhone(emailOrPhone, emailOrPhone)

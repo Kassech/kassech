@@ -159,6 +159,36 @@ func (uc *UserController) VerifyAuth(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"user_id": user.UserID})
 }
 
+// SaveNotificationToken method (Save Notification Token with DeviceID and IPAddress)
+func (uc *UserController) SaveNotificationToken(c *gin.Context) {
+	var input struct {
+		Token     string `json:"token"`
+		DeviceID  string `json:"device_id"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found"})
+		c.Abort()
+		return
+	}
+	userIDUint64, _ := strconv.ParseUint(fmt.Sprintf("%v", userID), 10, 32)
+	userIDUint := uint(userIDUint64)
+	fmt.Printf("🚀 ~ func SaveNotificationToken ~ userIDUint: %d, type: %T\n", userIDUint, userIDUint)
+
+	err := uc.Service.SaveNotificationToken(userIDUint, input.Token, input.DeviceID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Notification token saved successfully"})
+}
+
 // ListUsers method (Read with Pagination and Search)
 func (uc *UserController) ListUsers(c *gin.Context) {
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
