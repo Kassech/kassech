@@ -23,13 +23,13 @@ func RegisterRoutes(r *gin.Engine) {
 	// Initialize Services
 	userSvc := &service.UserService{Repo: userRepo}
 	roleSvc := &service.RoleService{Repo: roleRepo}
-	permissionSvc := service.NewPermissionService(permissionRepo)
-	rolePermissionSvc := service.NewRolePermissionService(rolePermissionRepo)
+	permissionSvc := &service.PermissionService{Repo: permissionRepo}
+	rolePermissionSvc := &service.RolePermissionService{Repo: rolePermissionRepo}
 	userRoleSvc := &service.UserRoleService{Repo: userRoleRepo}
 	sessionService := &service.UserSessionsService{Repo: sessionRepo}
 	stationSvc := &service.StationService{Repo: stationRepo}
 	routeSvc := &service.RouteService{Repo: routeRepo}
-	// Initialize Controllers
+	// Initialize Controllersz
 	userCtrl := &controller.UserController{Service: userSvc, SessionService: sessionService}
 	roleCtrl := &controller.RoleController{Service: roleSvc}
 	permissionCtrl := &controller.PermissionController{Service: permissionSvc}
@@ -71,8 +71,8 @@ func RegisterRoutes(r *gin.Engine) {
 func RegisterUserSessionRoutes(router *gin.RouterGroup, controller *controller.UserSessionController) {
 	sessions := router.Group("/sessions")
 	{
-		sessions.DELETE("/:token", controller.InvalidateToken)        // Invalidate a specific token
-		
+		sessions.DELETE("/:token", controller.InvalidateToken) // Invalidate a specific token
+
 		sessions.DELETE("/all/:id", controller.InvalidateAllSessions) // Invalidate all sessions for a user
 	}
 }
@@ -121,7 +121,7 @@ func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 
 	api.Use(middleware.AuthMiddleware())
 
-	// api.GET("/logout", ctrl.Logout)
+	api.POST("/notification", ctrl.SaveNotificationToken)
 
 	api.GET("/users", ctrl.ListUsers)
 

@@ -16,6 +16,7 @@ func Migrate(migrationType string) {
 		&models.User{},
 		&models.Role{},
 		&models.Permission{},
+		&models.RolePermission{},
 		&models.UserRole{},
 		&models.Driver{},
 		&models.Owner{},

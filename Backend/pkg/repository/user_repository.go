@@ -3,6 +3,8 @@ package repository
 import (
 	"kassech/backend/pkg/database"
 	models "kassech/backend/pkg/model"
+
+	"gorm.io/gorm"
 )
 
 type UserRepository struct{}
@@ -122,4 +124,35 @@ func (ur *UserRepository) ListUsers(page, limit int, search string, typ string) 
 	}
 
 	return users, total, nil
+}
+
+// SaveNotificationToken inserts a new notification token for the user or updates the existing one if the device ID matches
+func (ur *UserRepository) SaveNotificationToken(userID uint, token string, deviceID string) error {
+	var existingToken models.NotificationToken
+
+	// Check if a token with the same device ID already exists
+	err := database.DB.Where("user_id = ? AND device_id = ?", userID, deviceID).First(&existingToken).Error
+	if err == nil {
+		// Update the existing token
+		existingToken.Token = token
+		existingToken.Status = "active"
+		if err := database.DB.Save(&existingToken).Error; err != nil {
+			return err
+		}
+	} else if err == gorm.ErrRecordNotFound {
+		// Insert a new token
+		notificationToken := &models.NotificationToken{
+			UserID:   userID,
+			Token:    token,
+			Status:   "active",
+			DeviceID: deviceID,
+		}
+		if err := database.DB.Create(notificationToken).Error; err != nil {
+			return err
+		}
+	} else {
+		return err
+	}
+
+	return nil
 }
