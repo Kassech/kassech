@@ -1,11 +1,21 @@
 import 'package:dio/dio.dart';
 
-final dio = Dio();
-String baseUrl = 'http://10.0.2.2:5000/api/';
+class NetworkService {
+  NetworkService._privateConstructor();
+  static final NetworkService _instance = NetworkService._privateConstructor();
+  factory NetworkService() {
+    return _instance;
+  }
+
+  final dio = Dio();
+  String baseUrl = 'http://10.0.2.2:5000/api/';
+}
+
+final networkService = NetworkService();
 
 void getHttp() async {
   try {
-    final response = await dio.get(baseUrl);
+    final response = await networkService.dio.get(NetworkService().baseUrl);
   } catch (e) {
     print(e);
   }
@@ -17,7 +27,8 @@ Future<Response> login(String phoneNumber, String Password) async {
     'Password': Password,
   };
   try {
-    final response = await dio.post('${baseUrl}login', data: formData);
+    final response = await networkService.dio
+        .post('${NetworkService().baseUrl}login', data: formData);
     print(response);
     return response;
   } catch (e) {
@@ -32,7 +43,9 @@ Future<Response> register(String phoneNumber, String Password) async {
     'Password': Password,
   };
   try {
-    final response = await dio.post('${baseUrl}register', data: formData);
+    final response = await NetworkService()
+        .dio
+        .post('${networkService.baseUrl}register', data: formData);
     return response;
   } catch (e) {
     print(e);
@@ -40,9 +53,10 @@ Future<Response> register(String phoneNumber, String Password) async {
   }
 }
 
-Future <Response> logout() async {
+Future<Response> logout() async {
   try {
-    final response = await dio.post('${baseUrl}logout');
+    final response =
+        await NetworkService().dio.post('${networkService.baseUrl}logout');
     return response;
   } catch (e) {
     print(e);
@@ -50,9 +64,10 @@ Future <Response> logout() async {
   }
 }
 
-Future <Response <dynamic>> getLocation() async {
+Future<Response<dynamic>> getLocation() async {
   try {
-    final response = await dio.get('${baseUrl}location');
+    final response =
+        await NetworkService().dio.get('${networkService.baseUrl}location');
     return response;
   } catch (e) {
     print(e);

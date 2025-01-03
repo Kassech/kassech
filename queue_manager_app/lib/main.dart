@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:queue_manager_app/core/util/notification.dart';
+import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart';
+import 'package:queue_manager_app/features/auth/domain/usecase/auth_service.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -11,8 +14,37 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final NotificationService _notificationService = NotificationService();
+  final AuthenticationService _authService = AuthenticationService();
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    // Example usage of AuthService
+    await _authService.saveTokens('exampleAccessToken', 'exampleRefreshToken');
+    final accessToken = await _authService.getAccessToken();
+    final refreshToken = await _authService.getRefreshToken();
+    print('Access Token: $accessToken');
+    print('Refresh Token: $refreshToken');
+
+    if (accessToken != null && refreshToken != null) {
+      await _apiService.sendTokensToBackend(accessToken, refreshToken);
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
