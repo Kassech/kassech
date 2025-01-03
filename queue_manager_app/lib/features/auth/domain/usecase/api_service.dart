@@ -82,5 +82,12 @@ class ApiService {
     return path.contains('/login') || path.contains('/register');
   }
 
-  Dio get dio => _dio; // Expose Dio instance for making requests
+  Dio get dio => _dio;
+
+  sendTokensToBackend(String accessToken, String refreshToken) async {
+    await _dio.post('/tokens', data: {
+      'access_token': accessToken,
+      'refresh_token': refreshToken,
+    });
+  } // Expose Dio instance for making requests
 }
