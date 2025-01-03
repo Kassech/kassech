@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import * as L from "leaflet";
@@ -6,34 +6,27 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  fetchStations,
-  createStation,
-  updateStation,
-  deleteStation,
+  useDeleteStation,
+  useUpdateStation,
+  useCreateStation,
+  useGetAllStations,
 } from "../../services/stationService";
-
-interface Station {
-  ID: number;
-  LocationName: string;
-  Latitude: number;
-  Longitude: number;
-}
+import { useStationStore } from "../../store/stationStore";
 
 const SearchMap: React.FC = () => {
-  const [position, setPosition] = useState<L.LatLng | null>(null);
-  const [locationName, setLocationName] = useState<string>("");
-  const [stations, setStations] = useState<Station[]>([]);
-  const [editingStationId, setEditingStationId] = useState<number | null>(null);
+  const {
+    position,
+    LocationName,
+    editingStationId,
+    setPosition,
+    setLocationName,
+    setEditingStationId,
+  } = useStationStore();
 
-  const loadStations = async () => {
-    try {
-      const data = await fetchStations();
-      console.log("Fetched stations:", data); // Debug log
-      setStations(data); // Update the state with fetched stations
-    } catch (error) {
-      console.error("Failed to fetch stations:", error);
-    }
-  };
+  const { data: stations, refetch } = useGetAllStations();
+  const createStationMutation = useCreateStation();
+  const updateStationMutation = useUpdateStation();
+  const deleteStationMutation = useDeleteStation();
 
   const fetchLocationName = async (lat: number, lng: number) => {
     try {
@@ -63,65 +56,55 @@ const SearchMap: React.FC = () => {
     return null;
   };
 
-  const addStation = async () => {
-    if (position && locationName) {
-      const newStation = {
-        LocationName: locationName,
-        Latitude: position.lat,
-        Longitude: position.lng,
-      };
-      try {
-        const createdStation = await createStation(newStation);
-        console.log("Created station:", createdStation); // Debug log
-        setStations((prev) => [...prev, createdStation]); // Add to the local state
-        setPosition(null); // Clear selection
-        setLocationName("");
-      } catch (error) {
-        console.error("Failed to add station:", error);
-      }
+  const addStation = () => {
+    if (position && LocationName) {
+      createStationMutation.mutate(
+        {
+          LocationName,
+          Latitude: position.lat,
+          Longitude: position.lng,
+        },
+        {
+          onSuccess: () => {
+            refetch();
+            setPosition(null);
+            setLocationName("");
+          },
+        }
+      );
     }
   };
 
-  const updateStationInfo = async () => {
-    if (position && locationName && editingStationId !== null) {
-      const updatedData = {
-        LocationName: locationName,
-        Latitude: position.lat,
-        Longitude: position.lng,
-      };
-      try {
-        const updatedStation = await updateStation(
-          editingStationId,
-          updatedData
-        );
-        console.log("Updated station:", updatedStation); // Debug log
-        setStations((prev) =>
-          prev.map((station) =>
-            station.ID === editingStationId ? updatedStation : station
-          )
-        );
-        setEditingStationId(null);
-        setPosition(null);
-        setLocationName("");
-      } catch (error) {
-        console.error("Failed to update station:", error);
-      }
+  const updateStationInfo = () => {
+    if (position && LocationName && editingStationId !== null) {
+      updateStationMutation.mutate(
+        {
+          id: editingStationId,
+          updatedStation: {
+            LocationName,
+            Latitude: position.lat,
+            Longitude: position.lng,
+          },
+        },
+        {
+          onSuccess: () => {
+            refetch();
+            setEditingStationId(null);
+            setPosition(null);
+            setLocationName("");
+          },
+        }
+      );
     }
   };
 
-  const handleDeleteStation = async (id: number) => {
-    try {
-      console.log(`Deleting station with ID: ${id}`); // Debug log
-      await deleteStation(id);
-      setStations((prev) => prev.filter((station) => station.ID !== id)); // Remove from local state
-    } catch (error) {
-      console.error("Failed to delete station:", error);
-    }
+  const handleDeleteStation = (id: number) => {
+    deleteStationMutation.mutate(id, {
+      onSuccess: () => {
+        refetch();
+      },
+    });
   };
-
-  useEffect(() => {
-    loadStations();
-  }, []);
 
   return (
     <div>
@@ -161,7 +144,7 @@ const SearchMap: React.FC = () => {
             <Label htmlFor="location">Location Name</Label>
             <Input
               id="location"
-              value={locationName}
+              value={LocationName}
               readOnly
               className="mb-4"
             />
@@ -178,7 +161,7 @@ const SearchMap: React.FC = () => {
 
       <div className="p-4 bg-gray-100">
         <h3 className="text-lg font-bold">Managed Stations</h3>
-        {stations.length > 0 ? (
+        {stations && stations.length > 0 ? (
           <ul className="mt-2">
             {stations.map((station) => (
               <li
@@ -186,13 +169,25 @@ const SearchMap: React.FC = () => {
                 className="flex justify-between items-center p-2 bg-white shadow mb-2 rounded"
               >
                 <div>
-                  <p>
-                    <strong>{station.LocationName}</strong>
-                  </p>
-                  <p>
-                    Lat: {station.Latitude.toFixed(4)}, Lng:{" "}
-                    {station.Longitude.toFixed(4)}
-                  </p>
+                  {station ? (
+                    <>
+                      <p>
+                        <strong>
+                          {station.LocationName || "Unknown Location"}
+                        </strong>
+                      </p>
+                      {station.Latitude != null && station.Longitude != null ? (
+                        <p>
+                          Lat: {(station.Latitude ?? 0).toFixed(4)}, Lng:{" "}
+                          {(station.Longitude ?? 0).toFixed(4)}
+                        </p>
+                      ) : (
+                        <p>Coordinates not available</p>
+                      )}
+                    </>
+                  ) : (
+                    <p>Station data not available</p>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Button
