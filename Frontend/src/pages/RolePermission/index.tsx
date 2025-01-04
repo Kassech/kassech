@@ -32,6 +32,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDownCircle, ChevronRight } from "lucide-react";
+import { useState } from "react";
 
 export default function RolePermission() {
   const { toast } = useToast();
@@ -137,7 +138,7 @@ export default function RolePermission() {
         
           console.log("permissions",allPermissions);
       
-
+ const [isSelected, setIsSelected] = useState(null);
 
   return (
     <>
@@ -154,7 +155,17 @@ export default function RolePermission() {
                   key={role.ID ?? role.RoleName}
                   className="flex items-center gap-2"
                 >
-                  <Button variant="outline" className="relative">
+                  <Button
+                  key={role.ID}
+                    variant="outline"
+                    // className="relative"
+                    onClick={() => setSelectedRole(role.ID)} // Update state with the role's id
+                    className={`transition-colors duration-200 ease-in-out ${
+                      selectedRole === role.ID
+                        ? "bg-blue-500 text-white border-blue-700"
+                        : "bg-white text-black"
+                    }`}
+                  >
                     {role.RoleName}
                   </Button>
                   <DropdownMenu>
