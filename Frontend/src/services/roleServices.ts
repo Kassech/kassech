@@ -31,8 +31,8 @@ export const useCreateRole = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (newRole: Omit<Role, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>) => {
-      const response = await api.post('/roles', newRole);
+    async (pendingRole: Omit<Role, 'ID' | 'CreatedAt' | 'UpdatedAt' | 'DeletedAt' | 'Permission'>) => {
+      const response = await api.post('/roles/', pendingRole);
       return response.data;
     },
     {
@@ -49,6 +49,7 @@ export const useUpdateRole = () => {
 
   return useMutation(
     async ({ id, updateRole }: { id: number; updateRole: Partial<Role> }) => {
+      console.log(id,updateRole)
       const response = await api.put(`/roles/${id}`, updateRole);
       return response.data;
     },
