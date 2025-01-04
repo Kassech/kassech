@@ -31,6 +31,7 @@ import {
 } from "@/store/useRoleStore";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ChevronDownCircle, ChevronRight } from "lucide-react";
 
 export default function RolePermission() {
   const { toast } = useToast();
@@ -158,8 +159,8 @@ export default function RolePermission() {
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="px-2 border-none">
-                        ...
+                      <Button variant="ghost" size="icon">
+                        <ChevronDownCircle />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
@@ -352,17 +353,17 @@ export default function RolePermission() {
             allPermissions &&
             allPermissions.length > 0 && (
               <div className="grid grid-cols-3 gap-4">
-                {allPermissions.map((permission) => (
+                {allPermissions.map((permissions) => (
                   <div
-                    key={permission.ID ?? permission.PermissionName}
+                    key={permissions.ID ?? permissions.PermissionName}
                     className="border rounded-lg p-4"
                   >
                     <h2 className="text-lg font-medium">
-                      {permission.PermissionName}
+                      {permissions.PermissionName}
                     </h2>
-                    {/* <p className="text-sm text-gray-500">
-                      {permission.Description}
-                    </p> */}
+                    <p className="text-sm text-gray-500">
+                      {permissions.Description}
+                    </p>
                   </div>
                 ))}
               </div>
