@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"kassech/backend/pkg/constants"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/service"
+	"kassech/backend/pkg/utils"
 	"log"
 	"net/http"
 	"strconv"
@@ -23,7 +25,25 @@ func (uc *UserController) Register(c *gin.Context) {
 	var user models.User
 
 	// Read the request body
-	body, err := io.ReadAll(c.Request.Body)
+	body, _ := io.ReadAll(c.Request.Body)
+	// Extract and upload profile picture
+	file, _, err := c.Request.FormFile("profile_picture")
+	fmt.Println("file:", file)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Profile picture is required"})
+		return
+	}
+	defer file.Close()
+
+	profilePictureName, err := utils.UploadFile(c.Request, "profile_picture", constants.ProfilePictureDirectory)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload profile picture"})
+		return
+	}
+
+	// Assign the profile picture location to the user
+	user.ProfilePicture = &profilePictureName
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
@@ -162,8 +182,8 @@ func (uc *UserController) VerifyAuth(c *gin.Context) {
 // SaveNotificationToken method (Save Notification Token with DeviceID and IPAddress)
 func (uc *UserController) SaveNotificationToken(c *gin.Context) {
 	var input struct {
-		Token     string `json:"token"`
-		DeviceID  string `json:"device_id"`
+		Token    string `json:"token"`
+		DeviceID string `json:"device_id"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
