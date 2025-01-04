@@ -54,11 +54,10 @@ func main() {
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	// Register routes
+	socket.RegisterRoutes(r)
 	r.Static("/uploads", "./uploads")
 	routes.RegisterRoutes(r)
-
-	// WebSocket endpoint
-	r.GET("/websocket", socket.WebsocketHandler)
+	// r.Use(middleware.AuthMiddleware())
 
 	// Start the server
 	serverAddress := fmt.Sprintf(":%s", port)
