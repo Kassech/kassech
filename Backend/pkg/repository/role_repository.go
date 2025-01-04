@@ -18,7 +18,7 @@ func (rr *RoleRepository) Create(role *models.Role) (*models.Role, error) {
 // Find a role by ID
 func (rr *RoleRepository) FindByID(roleID uint) (*models.Role, error) {
 	var role models.Role
-	if err := database.DB.First(&role, roleID).Error; err != nil {
+	if err := database.DB.Preload("Permissions").First(&role, roleID).Error; err != nil {
 		return nil, err
 	}
 	return &role, nil
@@ -27,7 +27,7 @@ func (rr *RoleRepository) FindByID(roleID uint) (*models.Role, error) {
 // GetAll a role by ID
 func (rr *RoleRepository) GetAll() (*[]models.Role, error) {
 	var role []models.Role
-	if err := database.DB.Find(&role).Error; err != nil {
+	if err := database.DB.Preload("Permissions").Find(&role).Error; err != nil {
 		return nil, err
 	}
 	return &role, nil
