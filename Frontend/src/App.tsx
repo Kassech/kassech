@@ -16,9 +16,10 @@ import VehicleRegistration from "./pages/Vehicle Registration";
 import DriverForm from "./pages/DriverForm";
 import QueueManagerForm from "./pages/QueueManagerForm";
 import Users from "./pages/Users";
-import LoadingSpinner from "./components/loading-spinner";
+// import LoadingSpinner from "./components/loading-spinner";
 
 import Map from "./pages/Station Managing";
+import RolePermission from "./pages/RolePermission";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             <Route path="/queueManagerForm" element={<QueueManagerForm />} />
             <Route path="/user" element={<Users />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/rolepermission" element={<RolePermission />} />
           </Route>
 
           {/* Catch-all route for 404 */}
