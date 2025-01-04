@@ -14,15 +14,15 @@ type Permission = {
 
 // Fetch all stations
 export const useGetAllPermission = () => {
-  return useQuery<Permission[]>("role", async () => {
-    const response = await api.get("/permissions/");
+  return useQuery<Permission[]>("permissions", async () => {
+    const response = await api.get("/permissions");
     return response.data;
   });
 };
 // Fetch a station by ID
 export const useGetRoleById = (id: number) => {
-  return useQuery<Permission>(["role", id], async () => {
-    const response = await api.get(`/roles/${id}`);
+  return useQuery<Permission>(["permission", id], async () => {
+    const response = await api.get(`/permission/${id}`);
     return response.data;
   });
 };
