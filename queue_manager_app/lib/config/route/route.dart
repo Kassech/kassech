@@ -15,7 +15,7 @@ class AppRouter {
     initialLocation: '/',
     redirect: (context, state) async {
       // Check if the user is authenticated
-      final isLoggedIn = await checkUserAuthentication();
+      final isLoggedIn = await AuthenticationService().checkUserAuthentication();
 
       // Protect /home and any authenticated routes
       final isGoingToProtectedRoute = state.path?.startsWith('/home');
