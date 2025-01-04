@@ -103,12 +103,16 @@ func (uc *UserController) Login(c *gin.Context) {
 	}
 
 	user, accessToken, refreshToken, err := uc.Service.Login(input.EmailOrPhone, input.Password, c.Request)
-	fmt.Println("user, accessToken, refreshToken:", user, accessToken, refreshToken)
-	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		if err.Error() == "invalid credentials" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
+
+	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
 
 	c.JSON(http.StatusOK, gin.H{
@@ -116,21 +120,71 @@ func (uc *UserController) Login(c *gin.Context) {
 		"accessToken": accessToken,
 	})
 }
+func (uc *UserController) CreateUser(c *gin.Context) {
 
-// func (uc *UserController) Logout(c *gin.Context) {
+	var user models.User
 
-// 	uc.SessionService.Logout()
-// 	if err != nil {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
+	// Read the request body
+	body, _ := io.ReadAll(c.Request.Body)
+	// Extract and upload profile picture
+	file, _, err := c.Request.FormFile("profile_picture")
+	fmt.Println("file:", file)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Profile picture is required"})
+		return
+	}
+	defer file.Close()
 
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"user":        user,
-// 		"accessToken": accessToken,
-// 	})
-// }
+	profilePictureName, err := utils.UploadFile(c.Request, "profile_picture", constants.ProfilePictureDirectory)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload profile picture"})
+		return
+	}
+
+	// Assign the profile picture location to the user
+	user.ProfilePicture = &profilePictureName
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	// Parse the body to extract the role
+	var requestBody map[string]interface{}
+	if err := json.Unmarshal(body, &requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+		return
+	}
+
+	// Check if "role" exists and is valid
+	roleFloat, ok := requestBody["role"].(float64)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Role is required and must be a valid number"})
+		return
+	}
+
+	// Convert the role to uint
+	role := uint(roleFloat)
+
+	// Rebind the body for user struct parsing
+	if err := json.Unmarshal(body, &user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Call the service with the user and role
+	createdUser, err := uc.Service.CreateUser(&user, role)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Return the response with the created user and the token
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "registration successful",
+		"user":        createdUser,
+	})
+}
 
 func (uc *UserController) RefreshToken(c *gin.Context) {
 	// Get the refresh token from the HTTP-only cookie

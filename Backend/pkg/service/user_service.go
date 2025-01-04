@@ -18,6 +18,34 @@ type UserService struct {
 	Repo *repository.UserRepository
 }
 
+func (us *UserService) CreateUser(user *models.User, role uint) (*models.User, error) {
+	if err := user.Validate(); err != nil {
+		return nil, err
+	}
+
+	existingUser, _ := us.Repo.FindByEmailOrPhone(user.Email, user.PhoneNumber)
+	if existingUser != nil {
+		// User already exists
+		return nil, errors.New("user with that email or phone number already exists")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, errors.New("failed to hash password")
+	}
+	user.Password = string(hashedPassword)
+
+	// Create the user in the database
+	user, err = us.Repo.Create(user, role)
+	if err != nil {
+		return nil, err
+	}
+	// Log the registration login event
+	us.LogLoginEvent(user, nil) // No IP or UserAgent needed during registration
+
+	return user, nil
+}
+
 // Register a new user
 func (us *UserService) Register(user *models.User, role uint) (*models.User, string, string, error) {
 	if err := user.Validate(); err != nil {
@@ -58,7 +86,7 @@ func (us *UserService) Register(user *models.User, role uint) (*models.User, str
 // SaveNotificationToken saves the notification token for a user
 func (us *UserService) SaveNotificationToken(userID uint, token string, device_id string) error {
 	// Call the repository method to save the notification token
-	err := us.Repo.SaveNotificationToken(userID, token,device_id)
+	err := us.Repo.SaveNotificationToken(userID, token, device_id)
 	if err != nil {
 		return err
 	}
