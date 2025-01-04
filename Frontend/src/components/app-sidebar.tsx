@@ -69,8 +69,8 @@ const data = {
           url: "/map",
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "Role And Permission",
+          url: "/rolepermission",
         },
       ],
     },
