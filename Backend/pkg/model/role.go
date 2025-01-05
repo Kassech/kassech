@@ -18,3 +18,8 @@ func (r *Role) Validate() error {
 	validate := validator.New()
 	return validate.Struct(r)
 }
+
+// GetPermissions method for Role
+func (r *Role) GetPermissions() []Permission {
+	return r.Permissions
+}

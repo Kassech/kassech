@@ -1,8 +1,10 @@
 package socket
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -15,6 +17,12 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
+}
+
+func RegisterRoutes(r *gin.Engine) {
+	r.GET("/ws/queue_manager", WebsocketHandler)
+	r.GET("/ws/", WebsocketHandler)
+
 }
 
 // WebSocket handler
@@ -39,6 +47,12 @@ func WebsocketHandler(c *gin.Context) {
 
 		// Show message
 		log.Printf("Received message: %s", message)
+		userID, _ := c.Get("userID")
+		log.Println(userID)
+
+		userIDUint64, _ := strconv.ParseUint(fmt.Sprintf("%v", userID), 10, 32)
+		userIDUint := uint(userIDUint64)
+		fmt.Printf("🚀 ~ func SaveNotificationToken ~ userIDUint: %d, type: %T\n", userIDUint, userIDUint)
 
 		// Send message to client
 		err = conn.WriteMessage(websocket.TextMessage, message)
