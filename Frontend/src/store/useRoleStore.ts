@@ -1,11 +1,25 @@
 import { create } from "zustand";
 
+type Permission = {
+  ID?: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt?: string | null;
+  PermissionName: string;
+  Description: string;
+  Roles?: any; // Replace `any` with the appropriate type if `Roles` has a known structure.
+};
+
 type Role = {
   ID?: number;
+  // CreatedAt: string;
+  // UpdatedAt: string;
+  // DeletedAt?: string | null;
   RoleName: string;
   Description: string;
-  Permission: string;
+  Permissions: Permission[];
 };
+
 
 type RoleStore = {
   roles: Role[];
@@ -18,6 +32,8 @@ type RoleStore = {
   setNewRole: (role: Role) => void;
   updateNewRoleField: (field: keyof Role, value: string) => void;
   setSelectedRole: (roleId: number | null) => void;
+  rolePermissions: Permission[]; 
+  setRolePermissions: (permissions: Permission[]) => void;
 };
 
 type DialogState = {
@@ -48,13 +64,15 @@ export const useRoleStore = create<RoleStore>((set) => ({
   currentRole: {
     RoleName: "",
     Description: "",
-    Permission: "",
+    Permissions: [],
   },
   newRole: {
     RoleName: "",
     Description: "",
-    Permission:"",
+    Permissions:[],
   },
+  rolePermissions: [], 
+  setRolePermissions: (permissions) => set({ rolePermissions: permissions }),
   selectedRole: null,
   setRoles: (roles) => set({ roles }),
   setCurrentRole: (role) => set({ currentRole: role }),
