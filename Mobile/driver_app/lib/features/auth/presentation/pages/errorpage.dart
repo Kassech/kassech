@@ -1,22 +1,3 @@
-import 'package:flutter/material.dart';
-
-class ErrorPage extends StatelessWidget {
-  const ErrorPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Something went wrong',
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.w700),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:23182020552ba25c4fbc05bbb31f50f77144be95ee0ea0d404e0cbaeef2aa8ee
+size 505

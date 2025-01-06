@@ -1,12 +1,3 @@
-package models
-
-import "time"
-
-type UserSession struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	UserID    uint      `json:"user_id"`
-	Token     string    `gorm:"size:512" json:"token"`
-	IsActive  bool      `gorm:"default:true" json:"is_active"`
-	IssuedAt  time.Time `gorm:"autoCreateTime" json:"issued_at"`
-	ExpiresAt time.Time `json:"expires_at"`
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0a999ac75a07e947e8a26e0b3c5fda37e02aaad4b20564c2033373f5e1550d78
+size 363

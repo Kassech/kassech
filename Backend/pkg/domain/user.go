@@ -1,23 +1,3 @@
-package domain
-
-import (
-	"mime/multipart"
-)
-
-type User struct {
-	ID                 uint   `json:"id"`
-	Email              string `json:"email" binding:"required,email"`
-	Password           string `json:"password" binding:"required"` // Hashed password
-	FirstName          string `json:"first_name" validate:"required"`
-	LastName           string `json:"last_name" validate:"required"`
-	ProfilePicture     *string
-	ProfilePictureFile *multipart.FileHeader `form:"profile"`
-	PhoneNumber        string                `json:"phone_number"`
-	IsVerified         bool                  `json:"is_verified"`
-	Role               uint                  `json:"role"`
-}
-
-type LoginResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2c16673614a298f0856fcdf813de9367e949df5c1b63a6b27c2c2a304ee13444
+size 777

@@ -1,13 +1,3 @@
-import React from 'react';
-import DriverForm from './driverForm';
-import DriverTable from './driverTable';
-
-const Driver: React.FC = () => {
-    return (    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <DriverForm />
-        <DriverTable />
-    </div>
-    );
-};
-
-export default Driver;
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b9c210b1df016955aebff1704acc32cc7ebd62efc162f47d223bd534809d3d2
+size 305

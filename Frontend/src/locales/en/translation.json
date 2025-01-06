@@ -1,13 +1,3 @@
-{
-    "Welcome Back": "Welcome Back",
-    "Login": "Login",
-    "Don't have an account? Sign Up": "Don't have an account? Sign Up",
-    "Phone Number": "Phone Number",
-    "Password": "Password",
-    "Full Name": "Full Name",
-    "Create an Account": "Create an Account",
-    "Sign Up": "Sign Up",
-    "Already have an account? Login": "Already have an account? Login",
-    "Profile Picture": "Profile Picture"
-  }
-  
+version https://git-lfs.github.com/spec/v1
+oid sha256:fbd775532e99f83a7edccc5c414da57c4c60a6306e7ae5bd271eb387586e6e51
+size 417

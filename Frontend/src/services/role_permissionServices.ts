@@ -1,24 +1,3 @@
-import { useMutation, useQueryClient } from "react-query";
-import api from "../api/axiosInstance";
-
-type RolePermissionPayload = {
-  RoleID: number;
-  PermissionID: number;
-};
-
-export const useCreateRolePermission = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation(
-    async (newPermission: RolePermissionPayload) => {
-      const response = await api.post("/role_permissions", newPermission);
-      return response.data;
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("role_permissions");
-        queryClient.invalidateQueries("roles");
-      },
-    }
-  );
-};
+version https://git-lfs.github.com/spec/v1
+oid sha256:2f91a9555e71fd01df299eb98fa6174f3b2624ba1563f8b5a3ed2e0f2f342ed4
+size 612

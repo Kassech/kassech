@@ -1,12 +1,3 @@
-{
-  "Welcome Back": "እንኳን ደህና መጣህ",
-  "Login": "ግባ",
-  "Don't have an account? Sign Up": "መለያ የለህም? ",
-  "Phone Number": "ስልክ ቁጥር",
-  "Password": "የይለፍ ቃል",
-  "Full Name": "ሙሉ ስም",
-  "Create an Account": "መለያ ፍጠር",
-  "Sign Up": "ይመዝገቡ",
-  "Already have an account? Login": "መለያ አለህ? ",
-  "Profile Picture": "የመገለጫ ሥዕል"
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6c9608984de55a9bda9de19ce11490293dc870a8b672ff5a68d3be73d3b073d6
+size 440

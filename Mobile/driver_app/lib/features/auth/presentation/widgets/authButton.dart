@@ -1,22 +1,3 @@
-import 'package:flutter/material.dart';
-
-class AuthButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-  const AuthButton({super.key, required this.label, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.only(top: 30),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5), color: Colors.black),
-        padding: EdgeInsets.symmetric(vertical: 7, horizontal: 150),
-        child: TextButton(
-            onPressed: onPressed,
-            child: Text(
-              label,
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            )));
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b087c6f12d632f734c9476acbdb47ec7633067c21f7792cc86b6f05eb4d48b9b
+size 714

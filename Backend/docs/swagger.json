@@ -1,26 +1,3 @@
-{
-    "schemes": [
-        "http",
-        "https"
-    ],
-    "swagger": "2.0",
-    "info": {
-        "description": "A comprehensive API for managing cars, offering endpoints for creation, update, deletion, and retrieval of transport data.",
-        "title": "Kassech Transport Management API",
-        "contact": {
-            "name": "Team Kassech"
-        },
-        "version": "1.0"
-    },
-    "host": "localhost:5000/",
-    "basePath": "api",
-    "paths": {},
-    "securityDefinitions": {
-        "JWT": {
-            "description": "JWT security accessToken. Please add it in the format \"Bearer {AccessToken}\" to authorize your requests.",
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4a70a2dca0a8265c873c45fc665c684d8a96c1e12acd280be52d0573c42454e4
+size 760

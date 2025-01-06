@@ -1,18 +1,3 @@
-package models
-
-import (
-	"github.com/go-playground/validator/v10"
-	"gorm.io/gorm"
-)
-
-type RolePermission struct {
-	gorm.Model
-	RoleID       uint `validate:"required"`
-	PermissionID uint `validate:"required"`
-}
-
-// Validate method for RolePermission
-func (rp *RolePermission) Validate() error {
-	validate := validator.New()
-	return validate.Struct(rp)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:78ae8aa456707a62e17d8fba53de4b3e37fd41e0c2e7dcdf5127debdf9d72577
+size 354

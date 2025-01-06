@@ -1,14 +1,3 @@
-//
-//  Generated file. Do not edit.
-//
-
-// clang-format off
-
-#include "generated_plugin_registrant.h"
-
-#include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
-
-void RegisterPlugins(flutter::PluginRegistry* registry) {
-  FlutterSecureStorageWindowsPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FlutterSecureStorageWindowsPlugin"));
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8ba051e6051c70ceb18ecbdaaffa7e280f2874eb249fa80b7202a9333b5fba17
+size 381

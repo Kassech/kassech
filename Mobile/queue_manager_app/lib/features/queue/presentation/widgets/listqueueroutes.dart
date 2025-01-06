@@ -1,15 +1,3 @@
-import 'package:flutter/material.dart';
-
-class QmAppCard extends StatefulWidget {
-  const QmAppCard({super.key});
-
-  @override
-  State<QmAppCard> createState() => _QmAppCardState();
-}
-
-class _QmAppCardState extends State<QmAppCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:88c1352aa09492fd1701bd4051ca8447e6d3b1b02c59b62206729ff01009c051
+size 314

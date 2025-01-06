@@ -1,10 +1,3 @@
-package models
-
-import "gorm.io/gorm"
-
-type DriverVehicle struct {
-	gorm.Model
-	DriverID  uint   `gorm:"not null"` // Foreign key to Driver
-	VehicleID uint   `gorm:"not null"` // Foreign key to Vehicle
-	Status    string `gorm:"size:20;not null;default:'active'"`
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a0355836ae7426cbd4ace4c0b33940bc80089e544c04267c85d5c3f91d6b3f9d
+size 265

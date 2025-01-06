@@ -1,21 +1,3 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-final storage = FlutterSecureStorage();
-
-Future<void> saveTokens(String? accessToken, String? refreshToken) async {
-  await storage.write(key: 'accessToken', value: accessToken);
-  await storage.write(key: 'refreshToken', value: refreshToken);
-}
-
-Future<String?> getAccessToken() async {
-  return await storage.read(key: 'accessToken');
-}
-
-Future<String?> getRefreshToken() async {
-  return await storage.read(key: 'refreshToken');
-}
-
-Future<void> clearTokens() async {
-  await storage.delete(key: 'accessToken');
-  await storage.delete(key: 'refreshToken');
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ec43572eca12a9c2908b720d44332250685fb9c5d528da5269977988b8253b61
+size 631

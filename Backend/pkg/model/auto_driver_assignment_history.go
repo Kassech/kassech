@@ -1,11 +1,3 @@
-package models
-
-import "gorm.io/gorm"
-
-type AutoDriverAssignmentHistory struct {
-	gorm.Model
-	DriverID       uint   `gorm:"not null"` // Foreign key to Driver
-	VehicleID      uint   `gorm:"not null"` // Foreign key to Vehicle
-	AssignedDate   string `gorm:"size:20;not null"`
-	AlgorithmUsed  string `gorm:"size:255"` // Information about the assignment algorithm
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b1815b972d94724f83483d2ee2f7179fcdf114e71f38c1c070681fd9cfd4996f
+size 364

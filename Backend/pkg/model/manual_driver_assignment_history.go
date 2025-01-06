@@ -1,12 +1,3 @@
-package models
-
-import "gorm.io/gorm"
-
-type ManualDriverAssignmentHistory struct {
-	gorm.Model
-	DriverID        uint   `gorm:"not null"` // Foreign key to Driver
-	VehicleID       uint   `gorm:"not null"` // Foreign key to Vehicle
-	AssignedByID    uint   `gorm:"not null"` // Foreign key to User (assigned by)
-	AssignmentDate  string `gorm:"size:20;not null"`
-	AssignmentNotes string `gorm:"type:text"` // Optional notes field
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:65e2f6cd452ef6ae79cc8569a382196a73f80dc36f08229ccd38b4ddea7455bc
+size 428

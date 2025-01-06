@@ -1,29 +1,3 @@
-{
-  "project_info": {
-    "project_number": "729434706009",
-    "project_id": "kassechtransportaion",
-    "storage_bucket": "kassechtransportaion.firebasestorage.app"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:729434706009:android:7905c333aa47a30357e148",
-        "android_client_info": {
-          "package_name": "com.example.queue_manager_app"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDR_ajkCa2c_ocesiyXNuGPXQUPFKFD_TQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
-  ],
-  "configuration_version": "1"
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4eaa59383e51a0ece569cf42a03b8243f890c29898a2a06d7adb321bd9101953
+size 699

@@ -1,18 +1,3 @@
-package models
-
-import (
-	"github.com/go-playground/validator/v10"
-	"gorm.io/gorm"
-)
-
-type UserRole struct {
-	gorm.Model
-	UserID uint `validate:"required"`
-	RoleID uint `validate:"required"`
-}
-
-// Validate method for UserRole
-func (ur *UserRole) Validate() error {
-	validate := validator.New()
-	return validate.Struct(ur)
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f304d5afe6fb31441ba1b91cb69f7e653dbbabce1967e1442e6fe017ccc66824
+size 324
