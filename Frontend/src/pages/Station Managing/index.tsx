@@ -12,6 +12,7 @@ import {
   useGetAllStations,
 } from "../../services/stationService";
 import { useStationStore } from "../../store/stationStore";
+import Header from "@/components/header";
 
 const SearchMap: React.FC = () => {
   const {
@@ -106,119 +107,128 @@ const SearchMap: React.FC = () => {
     });
   };
 
+
+  const paths = [
+    { name: "Home", href: "/" },
+    { name: "Dashboard", href: "/b" },
+  ];
   return (
-    <div>
-      <MapContainer
-        center={[51.505, -0.09]}
-        zoom={13}
-        style={{ height: "50vh", width: "100%" }}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        <MapClickHandler />
-        {position && <Marker position={position} />}
-      </MapContainer>
+    <>
+      <Header paths={paths} />
+      <div>
+        <MapContainer
+          center={[51.505, -0.09]}
+          zoom={13}
+          style={{ height: "50vh", width: "100%" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <MapClickHandler />
+          {position && <Marker position={position} />}
+        </MapContainer>
 
-      <div className="p-4 bg-white border-t shadow-md">
-        <h3 className="text-lg font-bold">
-          {editingStationId ? "Edit Station" : "Add Station"}
-        </h3>
-        {position ? (
-          <>
-            <Label htmlFor="latitude">Latitude</Label>
-            <Input
-              id="latitude"
-              value={position.lat.toFixed(4)}
-              readOnly
-              className="mb-2"
-            />
-            <Label htmlFor="longitude">Longitude</Label>
-            <Input
-              id="longitude"
-              value={position.lng.toFixed(4)}
-              readOnly
-              className="mb-2"
-            />
-            <Label htmlFor="location">Location Name</Label>
-            <Input
-              id="location"
-              value={LocationName}
-              readOnly
-              className="mb-4"
-            />
-            {editingStationId ? (
-              <Button onClick={updateStationInfo}>Update Station</Button>
-            ) : (
-              <Button onClick={addStation}>Add Station</Button>
-            )}
-          </>
-        ) : (
-          <p>Click on the map to select a location.</p>
-        )}
-      </div>
+        <div className="p-4 bg-white border-t shadow-md">
+          <h3 className="text-lg font-bold">
+            {editingStationId ? "Edit Station" : "Add Station"}
+          </h3>
+          {position ? (
+            <>
+              <Label htmlFor="latitude">Latitude</Label>
+              <Input
+                id="latitude"
+                value={position.lat.toFixed(4)}
+                readOnly
+                className="mb-2"
+              />
+              <Label htmlFor="longitude">Longitude</Label>
+              <Input
+                id="longitude"
+                value={position.lng.toFixed(4)}
+                readOnly
+                className="mb-2"
+              />
+              <Label htmlFor="location">Location Name</Label>
+              <Input
+                id="location"
+                value={LocationName}
+                readOnly
+                className="mb-4"
+              />
+              {editingStationId ? (
+                <Button onClick={updateStationInfo}>Update Station</Button>
+              ) : (
+                <Button onClick={addStation}>Add Station</Button>
+              )}
+            </>
+          ) : (
+            <p>Click on the map to select a location.</p>
+          )}
+        </div>
 
-      <div className="p-4 bg-gray-100">
-        <h3 className="text-lg font-bold">Managed Stations</h3>
-        {stations && stations.length > 0 ? (
-          <ul className="mt-2">
-            {stations.map((station) => (
-              <li
-                key={station.ID}
-                className="flex justify-between items-center p-2 bg-white shadow mb-2 rounded"
-              >
-                <div>
-                  {station ? (
-                    <>
-                      <p>
-                        <strong>
-                          {station.LocationName || "Unknown Location"}
-                        </strong>
-                      </p>
-                      {station.Latitude != null && station.Longitude != null ? (
+        <div className="p-4 bg-gray-100">
+          <h3 className="text-lg font-bold">Managed Stations</h3>
+          {stations && stations.length > 0 ? (
+            <ul className="mt-2">
+              {stations.map((station) => (
+                <li
+                  key={station.ID}
+                  className="flex justify-between items-center p-2 bg-white shadow mb-2 rounded"
+                >
+                  <div>
+                    {station ? (
+                      <>
                         <p>
-                          Lat: {(station.Latitude ?? 0).toFixed(4)}, Lng:{" "}
-                          {(station.Longitude ?? 0).toFixed(4)}
+                          <strong>
+                            {station.LocationName || "Unknown Location"}
+                          </strong>
                         </p>
-                      ) : (
-                        <p>Coordinates not available</p>
-                      )}
-                    </>
-                  ) : (
-                    <p>Station data not available</p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => {
-                      setEditingStationId(station.ID);
-                      setPosition(
-                        new L.LatLng(station.Latitude, station.Longitude)
-                      );
-                      setLocationName(station.LocationName);
-                    }}
-                    variant="secondary"
-                    size="sm"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDeleteStation(station.ID)}
-                    variant="destructive"
-                    size="sm"
-                  >
-                    Remove
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No stations added yet.</p>
-        )}
+                        {station.Latitude != null &&
+                        station.Longitude != null ? (
+                          <p>
+                            Lat: {(station.Latitude ?? 0).toFixed(4)}, Lng:{" "}
+                            {(station.Longitude ?? 0).toFixed(4)}
+                          </p>
+                        ) : (
+                          <p>Coordinates not available</p>
+                        )}
+                      </>
+                    ) : (
+                      <p>Station data not available</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        setEditingStationId(station.ID);
+                        setPosition(
+                          new L.LatLng(station.Latitude, station.Longitude)
+                        );
+                        setLocationName(station.LocationName);
+                      }}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteStation(station.ID)}
+                      variant="destructive"
+                      size="sm"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No stations added yet.</p>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

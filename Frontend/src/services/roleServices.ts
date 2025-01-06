@@ -5,10 +5,20 @@ type Role = {
   ID: number;
   RoleName: string;
   Description: string;
-  Permission: string;
+  Permissions: [Permission];
   CreatedAt: string;
   UpdatedAt: string;
   DeletedAt?: string | null;
+};
+
+type Permission = {
+  ID?: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt?: string | null;
+  PermissionName: string;
+  Description: string;
+  Roles?: any; // Replace `any` with the appropriate type if `Roles` has a known structure.
 };
 
 // Fetch all role
@@ -19,11 +29,17 @@ export const useGetAllRole = () => {
   });
 };
 // Fetch a role by ID
-export const useGetRoleById = (id: number) => {
-  return useQuery<Role>(['role', id], async () => {
-    const response = await api.get(`/roles/${id}`);
-    return response.data;
-  });
+export const useGetRoleById = (id: number | null) => {
+  return useQuery<Role>(
+    ["role", id],
+    async () => {
+      const response = await api.get(`/roles/${id}`);
+      return response.data;
+    },
+    {
+      enabled: id !== null && id !== undefined, // Only fetch if id is valid
+    }
+  );
 };
 
 // Create a new role
@@ -31,7 +47,7 @@ export const useCreateRole = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (pendingRole: Omit<Role, 'ID' | 'CreatedAt' | 'UpdatedAt' | 'DeletedAt' | 'Permission'>) => {
+    async (pendingRole: Omit<Role, 'ID' | 'CreatedAt' | 'UpdatedAt' | 'DeletedAt' | 'Permissions'>) => {
       const response = await api.post('/roles/', pendingRole);
       return response.data;
     },
