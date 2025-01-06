@@ -72,11 +72,12 @@ func (ur *UserRepository) Update(user *models.User) error {
 }
 
 // Delete removes a user from the database
-func (ur *UserRepository) Delete(user *models.User) error {
-	if err := database.DB.Delete(user).Error; err != nil {
-		return err
+func (ur *UserRepository) Delete(user *models.User, isForce bool) error {
+	query := database.DB
+	if isForce {
+		query = query.Unscoped()
 	}
-	return nil
+	return query.Delete(user).Error
 }
 
 // ListUsers fetches users with pagination, optional search filter, and active/deleted filter

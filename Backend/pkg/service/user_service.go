@@ -9,7 +9,6 @@ import (
 
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/repository"
-	"kassech/backend/pkg/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -178,8 +177,9 @@ func (us *UserService) ListUsers(page, limit int, search string, typ string) ([]
 }
 
 // UpdateUser updates a user by ID
-func (us *UserService) UpdateUser(userId string, user *models.User) (*models.User, error) {
-	existingUser, err := us.Repo.FindByID(utils.StringToUint(userId))
+func (us *UserService) UpdateUser(userId uint, user *models.User) (*models.User, error) {
+
+	existingUser, err := us.Repo.FindByID(userId)
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
@@ -200,14 +200,16 @@ func (us *UserService) UpdateUser(userId string, user *models.User) (*models.Use
 }
 
 // DeleteUser deletes a user by ID
-func (us *UserService) DeleteUser(userId string) error {
-	existingUser, err := us.Repo.FindByID(utils.StringToUint(userId))
+func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
+	force := len(isForce) > 0 && isForce[0]
+
+	existingUser, err := us.Repo.FindByID(userId)
 	if err != nil {
 		return errors.New("user not found")
 	}
 
 	// Delete the user
-	err = us.Repo.Delete(existingUser)
+	err = us.Repo.Delete(existingUser, force)
 	if err != nil {
 		return err
 	}

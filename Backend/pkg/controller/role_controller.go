@@ -44,8 +44,12 @@ func (rc *RoleController) UpdateRole(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	updatedRole, err := rc.Service.UpdateRole(&role, utils.StringToUint(roleID))
+	roleIDUint, err := utils.StringToUint(roleID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	updatedRole, err := rc.Service.UpdateRole(&role, roleIDUint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -57,8 +61,12 @@ func (rc *RoleController) UpdateRole(c *gin.Context) {
 // DeleteRole handles HTTP requests to delete a role
 func (rc *RoleController) DeleteRole(c *gin.Context) {
 	roleID := c.Param("id")
-
-	deletedRole, err := rc.Service.DeleteRoleByID(utils.StringToUint(roleID))
+	roleIDUint, err := utils.StringToUint(roleID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	deletedRole, err := rc.Service.DeleteRoleByID(roleIDUint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -70,8 +78,12 @@ func (rc *RoleController) DeleteRole(c *gin.Context) {
 // FindRoleByID handles HTTP requests to get a role by ID
 func (rc *RoleController) FindRoleByID(c *gin.Context) {
 	roleID := c.Param("id")
-
-	role, err := rc.Service.FindRoleByID(utils.StringToUint(roleID))
+	roleIDUint, err := utils.StringToUint(roleID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	role, err := rc.Service.FindRoleByID(roleIDUint)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return

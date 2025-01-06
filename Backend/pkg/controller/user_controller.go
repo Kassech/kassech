@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"kassech/backend/pkg/constants"
+	"kassech/backend/pkg/domain"
+	"kassech/backend/pkg/mapper"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/service"
 	"kassech/backend/pkg/utils"
@@ -35,14 +37,14 @@ func (uc *UserController) Register(c *gin.Context) {
 	}
 	defer file.Close()
 
-	profilePictureName, err := utils.UploadFile(c.Request, "profile_picture", constants.ProfilePictureDirectory)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload profile picture"})
-		return
-	}
+	// profilePictureName, err := utils.UploadFile(c.Request, "profile_picture", constants.ProfilePictureDirectory)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload profile picture"})
+	// 	return
+	// }
 
-	// Assign the profile picture location to the user
-	user.ProfilePicture = &profilePictureName
+	// // Assign the profile picture location to the user
+	// user.ProfilePicture = &profilePictureName
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
@@ -122,68 +124,35 @@ func (uc *UserController) Login(c *gin.Context) {
 }
 func (uc *UserController) CreateUser(c *gin.Context) {
 
-	var user models.User
-
-	// Read the request body
-	body, _ := io.ReadAll(c.Request.Body)
-	// Extract and upload profile picture
-	file, _, err := c.Request.FormFile("profile_picture")
-	fmt.Println("file:", file)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Profile picture is required"})
-		return
-	}
-	defer file.Close()
-
-	profilePictureName, err := utils.UploadFile(c.Request, "profile_picture", constants.ProfilePictureDirectory)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload profile picture"})
-		return
-	}
-
-	// Assign the profile picture location to the user
-	user.ProfilePicture = &profilePictureName
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-		return
-	}
-
-	// Parse the body to extract the role
-	var requestBody map[string]interface{}
-	if err := json.Unmarshal(body, &requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
-		return
-	}
-
-	// Check if "role" exists and is valid
-	roleFloat, ok := requestBody["role"].(float64)
-	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Role is required and must be a valid number"})
-		return
-	}
-
-	// Convert the role to uint
-	role := uint(roleFloat)
-
-	// Rebind the body for user struct parsing
-	if err := json.Unmarshal(body, &user); err != nil {
+	var user domain.User
+	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	// Save the profile picture file
+	if user.ProfilePictureFile != nil {
+		profilePicturePath, err := utils.UploadFile(user.ProfilePictureFile, constants.ProfilePictureDirectory)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save profile picture"})
+			return
+		}
+		user.ProfilePicture = &profilePicturePath
+	}
+	// make user is verified to true
+	user.IsVerified = true
+	// Convert the domain user to GORM user
+	var userModel *models.User = mapper.ToGormUser(&user)
 
-	// Call the service with the user and role
-	createdUser, err := uc.Service.CreateUser(&user, role)
+	insertedUser, err := uc.Service.CreateUser(userModel, user.Role)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	// Return the response with the created user and the token
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "registration successful",
-		"user":        createdUser,
+		"message": "User created successfully",
+		"user":    insertedUser,
 	})
+
 }
 
 func (uc *UserController) RefreshToken(c *gin.Context) {
@@ -302,8 +271,13 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	userIdUint, err := utils.StringToUint(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
 
-	updatedUser, err := uc.Service.UpdateUser(userId, &user)
+	updatedUser, err := uc.Service.UpdateUser(userIdUint, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -318,8 +292,13 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 // DeleteUser method (Delete User by ID)
 func (uc *UserController) DeleteUser(c *gin.Context) {
 	userId := c.Param("id")
+	userIdUint, err := utils.StringToUint(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
 
-	err := uc.Service.DeleteUser(userId)
+	err = uc.Service.DeleteUser(userIdUint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
