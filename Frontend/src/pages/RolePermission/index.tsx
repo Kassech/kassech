@@ -2,8 +2,10 @@ import {
   useGetAllRole,
   useDeleteRole,
   useCreateRole,
+  useGetRoleById,
   useUpdateRole,
 } from "@/services/roleServices";
+import {useCreateRolePermission} from "@/services/role_permissionServices";
 import { useGetAllPermission } from "@/services/permissionServices";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,11 +34,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDownCircle, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Header from "@/components/header";
 
 export default function RolePermission() {
   const { toast } = useToast();
-  const { toggleCard, showCard }=useCardStore();
+  const { toggleCard, showCard } = useCardStore();
   const {
     isDialogOpen,
     setDialogOpen,
@@ -47,16 +50,19 @@ export default function RolePermission() {
   } = useDialogStore();
 
   const { data: allRoles, isLoading: isRolesLoading } = useGetAllRole();
-  const { data: allPermissions, isLoading: isPermissionsLoading } = useGetAllPermission();
+  const { data: allPermissions, isLoading: isPermissionsLoading } =
+    useGetAllPermission();
   const { mutate: deleteRole } = useDeleteRole();
   const { mutate: editRole } = useUpdateRole();
   const { mutate: addRole } = useCreateRole();
+   const { mutate: addPermissionToRole } = useCreateRolePermission();
 
   const {
     currentRole,
     selectedRole,
     newRole,
-    setNewRole,
+    setRolePermissions,
+    rolePermissions,
     updateNewRoleField,
     setCurrentRole,
     setSelectedRole,
@@ -64,30 +70,36 @@ export default function RolePermission() {
   } = useRoleStore();
 
 
-  const handleAddRole = () =>{
-     toggleCard();
- if (newRole.RoleName && newRole.Description) {
-   addRole(
-     {
-       RoleName: newRole.RoleName,
-       Description: newRole.Description,
-     },
-     {
-       onSuccess: (data) => {
-         console.log("API response data:", data);
-         toast({
-           description: "Role Added Successfully.",
-         });
-       },
-       onError: (error) => {
-         console.error(`Failed to add role: ${error}`);
-       },
-     }
-   );
- } else {
-   console.error("Role ID is undefined.");
- }
-  }
+   const {
+     data: selectedRoleData,
+     isLoading,
+     error,
+   } = useGetRoleById(selectedRole);
+
+  const handleAddRole = () => {
+    toggleCard();
+    if (newRole.RoleName && newRole.Description) {
+      addRole(
+        {
+          RoleName: newRole.RoleName,
+          Description: newRole.Description,
+        },
+        {
+          onSuccess: (data) => {
+            console.log("API response data:", data);
+            toast({
+              description: "Role Added Successfully.",
+            });
+          },
+          onError: (error) => {
+            console.error(`Failed to add role: ${error}`);
+          },
+        }
+      );
+    } else {
+      console.error("Role ID is undefined.");
+    }
+  };
 
   const confirmDelete = () => {
     if (selectedRole !== null) {
@@ -106,9 +118,7 @@ export default function RolePermission() {
     }
   };
 
-
   const handleSaveChange = () => {
-
     setEditRoleDialogClose();
     if (currentRole?.ID !== undefined) {
       editRole(
@@ -135,13 +145,78 @@ export default function RolePermission() {
       console.error("Role ID is undefined.");
     }
   };
-        
-          console.log("permissions",allPermissions);
-      
- const [isSelected, setIsSelected] = useState(null);
+
+  useEffect(() => {
+    if (isLoading) {
+      console.log("Loading role data...");
+    }
+
+    if (error) {
+      console.error("Error fetching role data:", error);
+    }
+
+    if (selectedRoleData) {
+      setRolePermissions(selectedRoleData.Permissions || []);
+    }
+  }, [selectedRoleData, isLoading, error]); 
+
+  const paths = [
+    { name: "Home", href: "/" },
+    { name: "Dashboard", href: "/b" },
+  ];
+
+  interface Permission {
+    ID: number; 
+    CreatedAt: string; 
+    UpdatedAt: string; 
+    PermissionName: string;
+    Description: string;
+  }
+const [highlightedPermission, setHighlightedPermission] = useState<number | null>(null);
+
+const handlePermissionClick = async (permission: Permission) => {
+  const isPermissionAssigned = rolePermissions.some(
+    (rp) => rp.ID === permission.ID
+  );
+
+  // Check if the selected role is valid (not null)
+  if (selectedRole === null) {
+    console.error("No role selected!");
+    return; // Exit early if no role is selected
+  }
+
+  const roleId = selectedRole; // Ensure roleId is a valid number
+
+  if (isPermissionAssigned) {
+    // Remove permission from role
+    // setRolePermissions(rolePermissions.filter((rp) => rp.ID !== permission.ID));
+    // Call API to remove the permission for the role
+    // useDeleteRolePermission({ roleId, permissionId: permission.ID });
+    console.log("already assigned")
+  } else {
+       addPermissionToRole(
+         {
+           RoleID: roleId,
+           PermissionID: permission.ID,
+         },
+         {
+           onSuccess: (data) => {
+             console.log("API response data:", data);
+             setHighlightedPermission(permission.ID);
+           },
+           onError: (error) => {
+             console.error(`Failed to add role: ${error}`);
+           },
+         }
+       );
+  }
+};
+
+
 
   return (
     <>
+      <Header paths={paths} />
       <div className="h-screen flex flex-col">
         <div className=" border-b-2 p-6">
           <h1 className="text-xl font-semibold mb-4">Roles</h1>
@@ -156,7 +231,7 @@ export default function RolePermission() {
                   className="flex items-center gap-2"
                 >
                   <Button
-                  key={role.ID}
+                    key={role.ID}
                     variant="outline"
                     // className="relative"
                     onClick={() => setSelectedRole(role.ID)} // Update state with the role's id
@@ -367,7 +442,13 @@ export default function RolePermission() {
                 {allPermissions.map((permissions) => (
                   <div
                     key={permissions.ID ?? permissions.PermissionName}
-                    className="border rounded-lg p-4"
+                    className={`border rounded-lg p-4 ${
+                      rolePermissions?.some((rp) => rp.ID === permissions.ID) ||
+                      highlightedPermission === permissions.ID
+                        ? "bg-blue-100 text-blue-900 border-blue-500"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                    onClick={() => handlePermissionClick(permissions)}
                   >
                     <h2 className="text-lg font-medium">
                       {permissions.PermissionName}
