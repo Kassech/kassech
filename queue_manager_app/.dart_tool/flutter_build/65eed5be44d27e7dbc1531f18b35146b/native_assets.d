@@ -1,1 +1,0 @@
- /home/abeselom/Desktop/projects/kassech/queue_manager_app/.dart_tool/flutter_build/65eed5be44d27e7dbc1531f18b35146b/native_assets.yaml: 
