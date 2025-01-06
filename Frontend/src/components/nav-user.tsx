@@ -5,7 +5,9 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
+  Languages,
   LogOut,
+  Moon,
   Sparkles,
 } from "lucide-react"
 
@@ -30,6 +32,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useNavigate } from "react-router-dom"
+import { LanguageSelector } from "./language-toggle"
+import { ModeToggle } from "./mode-toggle"
 
 export function NavUser({
   user,
@@ -103,9 +107,16 @@ export function NavUser({
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
-                Notifications
+                <Languages />
+                Language
+            <LanguageSelector />
               </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Moon className="w-full" />
+                Theme
+                <ModeT3oggle />
+                </DropdownMenuItem>
+
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>

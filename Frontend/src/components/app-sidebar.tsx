@@ -47,7 +47,7 @@ const data = {
         },
         {
           title: "Driver Registration",
-          url: "/driverForm",
+          url: "/driver",
         },
         {
           title: "Queue Manager Registration",

@@ -1,0 +1,15 @@
+com.example.queue_manager_app-core-1.6.0-0 /home/abeselom/.gradle/caches/transforms-3/284a410c767ad6c7a2b0ffc8d8d85981/transformed/core-1.6.0/res
+com.example.queue_manager_app-jetified-window-java-1.0.0-beta04-1 /home/abeselom/.gradle/caches/transforms-3/2a215381204751055df81b6269e717b7/transformed/jetified-window-java-1.0.0-beta04/res
+com.example.queue_manager_app-jetified-annotation-experimental-1.1.0-2 /home/abeselom/.gradle/caches/transforms-3/3d2f03fc996c2e0aa3dee5cfa3002cd1/transformed/jetified-annotation-experimental-1.1.0/res
+com.example.queue_manager_app-jetified-window-1.0.0-beta04-3 /home/abeselom/.gradle/caches/transforms-3/f302e75fb7efd781bcf1a29281c188da/transformed/jetified-window-1.0.0-beta04/res
+com.example.queue_manager_app-debug-4 /home/abeselom/Desktop/projects/kassech/queue_manager_app/android/app/src/debug/res
+com.example.queue_manager_app-main-5 /home/abeselom/Desktop/projects/kassech/queue_manager_app/android/app/src/main/res
+com.example.queue_manager_app-pngs-6 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/app/generated/res/pngs/debug
+com.example.queue_manager_app-resValues-7 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/app/generated/res/resValues/debug
+com.example.queue_manager_app-rs-8 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/app/generated/res/rs/debug
+com.example.queue_manager_app-mergeDebugResources-9 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/app/intermediates/incremental/debug/mergeDebugResources/merged.dir
+com.example.queue_manager_app-mergeDebugResources-10 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/app/intermediates/incremental/debug/mergeDebugResources/stripped.dir
+com.example.queue_manager_app-merged_res-11 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/app/intermediates/merged_res/debug
+com.example.queue_manager_app-packaged_res-12 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/file_picker/intermediates/packaged_res/debug
+com.example.queue_manager_app-packaged_res-13 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/flutter_native_splash/intermediates/packaged_res/debug
+com.example.queue_manager_app-packaged_res-14 /home/abeselom/Desktop/projects/kassech/queue_manager_app/build/flutter_plugin_android_lifecycle/intermediates/packaged_res/debug
