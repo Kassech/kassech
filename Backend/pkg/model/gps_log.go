@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:13645a9e14e9c0a2bc735eea775b7e6792f15119f9700c9422921c43b3fcd4f2
-size 208
+package models
+
+import "gorm.io/gorm"
+
+type VehicleGPSLog struct {
+	gorm.Model
+	VehicleID uint    `gorm:"not null"`
+	Latitude  float64 `gorm:"not null"`
+	Longitude float64 `gorm:"not null"`
+	PathID    uint
+}

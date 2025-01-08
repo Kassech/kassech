@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7fd80819be6b2497ec7be5fd9b5fee3f0d0eec2977f6b128575d6c77fce734b2
-size 322
+package models
+
+import "gorm.io/gorm"
+
+type PassengerHistory struct {
+	gorm.Model
+	PassengerID uint   `gorm:"not null"` // Foreign key to Passenger
+	VehicleID   uint   `gorm:"not null"` // Foreign key to Vehicle
+	RouteID     uint   `gorm:"not null"` // Foreign key to Route
+	TravelDate  string `gorm:"size:20;not null"`
+}

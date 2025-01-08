@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f2d2d5c70236a569ac974d4259c90131ac9cceb3bf31374348b094bb43f1690c
-size 625
+import { ModeToggle } from "@/components/mode-toggle";
+import { Outlet } from "react-router-dom";
+import { LanguageSelector } from "@/components/language-toggle";
+import { Card } from "@/components/ui/card";
+
+const AuthLayout = () => {
+
+  return (
+    <Card className={`flex items-center justify-center min-h-screen relative `}>
+      <div className="w-full max-w-md mx-4 shadow-md rounded-md overflow-hidden">
+        <Outlet />
+      </div>
+      <div className="absolute bottom-4 right-4 p-4 flex space-x-4">
+        <LanguageSelector />
+        <ModeToggle />
+      </div>
+    </Card>
+  );
+};
+
+export default AuthLayout;

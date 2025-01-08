@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:035d1a14013a78db17a0f81387957758888c9bd8ca9bb1389cceacbc3017eddc
-size 400
+package models
+
+import "gorm.io/gorm"
+
+type Vehicle struct {
+	gorm.Model
+	Type          uint   `gorm:"not null"`
+	LicenseNumber string `gorm:"size:20;not null"`
+	VIN           string `gorm:"size:20;unique;not null"`
+	Make          string `gorm:"not null"`
+	Year          uint   `gorm:"not null"`
+	Color         string
+	OwnerID       uint   `gorm:"not null"`
+	OwnerSince    string `gorm:"not null"`
+}

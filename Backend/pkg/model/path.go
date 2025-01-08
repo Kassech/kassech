@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:92c3fac872761a1207110b825033c7328e80a1347745316eb863ca44eb8f9f6c
-size 299
+package models
+
+import "gorm.io/gorm"
+
+type Path struct {
+    gorm.Model
+    RouteID       uint    `gorm:"not null"`
+    PathName      string  `gorm:"not null"`
+    DistanceKM    float64 `gorm:"not null"`
+    EstimatedTime string  `gorm:"not null"`
+    IsActive      bool    `gorm:"default:true"`
+}

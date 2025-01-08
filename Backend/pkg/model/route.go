@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c35202551846dbbe97664b158c92968a845c50ab6a4a0b5e0c552c0a15b46ae4
-size 356
+package models
+
+import "gorm.io/gorm"
+
+// Route represents a connection between two stations
+type Route struct {
+	gorm.Model
+	LocationA uint `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:LocationA;references:ID"`
+	LocationB uint `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:LocationB;references:ID"`
+}
+

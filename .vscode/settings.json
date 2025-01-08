@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a30c57455cb97bc3c4ed416fe80c5f877434a321f470567d44983a3b2f96aaa1
-size 159
+{
+  "cmake.sourceDirectory": "C:/Users/OMEN 16/Documents/Kasech/Project/Queue Manager App/kassech/driver_app/linux",
+  "cmake.ignoreCMakeListsMissing": true
+}

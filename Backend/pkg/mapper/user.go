@@ -1,3 +1,29 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5232e1324d1f7b12802cfae34647438813380c5c947072d6c654b7610d5bf053
-size 766
+package mapper
+
+import (
+	"kassech/backend/pkg/domain"
+	models "kassech/backend/pkg/model"
+)
+
+// GORM to Domain
+func ToDomainUser(dbUser *models.User) *domain.User {
+	return &domain.User{
+		ID:             dbUser.ID,
+		Email:          dbUser.Email,
+		Password:       dbUser.Password,
+		FirstName:      dbUser.FirstName,
+		LastName:       dbUser.LastName,
+		ProfilePicture: dbUser.ProfilePicture,
+	}
+}
+func ToGormUser(domainUser *domain.User) *models.User {
+	return &models.User{
+		LastName:       domainUser.LastName,
+		FirstName:      domainUser.FirstName,
+		Email:          domainUser.Email,
+		Password:       domainUser.Password,
+		ProfilePicture: domainUser.ProfilePicture,
+		PhoneNumber:    domainUser.PhoneNumber,
+		IsVerified:     domainUser.IsVerified,
+	}
+}

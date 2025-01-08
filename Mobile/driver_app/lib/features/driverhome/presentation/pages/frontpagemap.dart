@@ -1,3 +1,40 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5d45551ccfea3f49d91ab1674a2f37c7d3aebd945872d0bf0d0b8b4236d8bbdf
-size 1013
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+
+class DriverHome extends StatefulWidget {
+  const DriverHome({super.key});
+
+  @override
+  State<DriverHome> createState() => _DriverHomeState();
+}
+
+class _DriverHomeState extends State<DriverHome> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Stack(
+      children: [
+        FlutterMap(
+          options: MapOptions(
+            initialCenter: LatLng(9.030093, 38.762791),
+            minZoom: 15,
+          ),
+          children: [
+            MarkerLayer(
+              markers: [
+                Marker(
+                    point: LatLng(9.036151548242255, 38.7625160846566),
+                    child: Icon(
+                      Icons.location_on_sharp,
+                      size: 60,
+                      color: Colors.green[600],
+                    ))
+              ],
+            ),
+          ],
+        ),
+      ],
+    ));
+  }
+}

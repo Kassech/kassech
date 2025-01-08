@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c6a8267320079063966fd585f52fd7e154fb809b4ebe05dc75c552b6b251b9ca
-size 538
+basePath: api
+host: localhost:5000/
+info:
+  contact:
+    name: Team Kassech
+  description: A comprehensive API for managing cars, offering endpoints for creation,
+    update, deletion, and retrieval of transport data.
+  title: Kassech Transport Management API
+  version: "1.0"
+paths: {}
+schemes:
+- http
+- https
+securityDefinitions:
+  JWT:
+    description: JWT security accessToken. Please add it in the format "Bearer {AccessToken}"
+      to authorize your requests.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

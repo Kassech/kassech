@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4c4c0a6b72816089bbcfd2298cefdc6d80b74c2667c35aae33ad3c6f8d2edafa
-size 239
+package config
+
+import (
+	"log"
+
+	"github.com/joho/godotenv"
+)
+
+// LoadEnv loads environment variables from the .env file.
+func LoadEnv() {
+	if err := godotenv.Load("./.env"); err != nil {
+		log.Fatalf("Error loading .env file", err)
+	}
+}

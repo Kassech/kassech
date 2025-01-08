@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4ddf8e0eadd52907fc2ad90ec98d775b52ec1141e92b60c4ca6fa059c730c4a1
-size 584
+# Start from the official Golang image (latest version)
+FROM golang:1.23
+
+# Set the Current Working Directory inside the container
+WORKDIR /app
+
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+
+# Download all dependencies
+RUN go mod download
+
+# Copy the source from the current directory to the Working Directory inside the container
+COPY . .
+
+# Install Air for live reload
+RUN go install github.com/air-verse/air@latest
+
+# Expose port 8080 to the outside world
+EXPOSE 8080
+
+# Command to run the Go app using Air directly (without Docker inside)
+CMD ["air", "-c", "/app/.air.toml"]

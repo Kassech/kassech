@@ -1,3 +1,28 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e59ae2e3fcdd85af7260a44fca378a78a5cb88921054cd2f01f9e0303d991be1
-size 716
+import { useTranslation } from "react-i18next"; 
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
+  
+export const LanguageSelector = () => {
+  const { i18n,  } = useTranslation(); 
+
+  const handleLanguageChange = (language: string) => {
+    i18n.changeLanguage(language); 
+  };
+
+  return (
+    <Select defaultValue={i18n.language} onValueChange={handleLanguageChange}>
+      <SelectTrigger>
+        <SelectValue placeholder="Select Language" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="en">English</SelectItem>
+        <SelectItem value="am">Amharic</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};

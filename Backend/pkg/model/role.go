@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4191d8bca52e80e957d4c9beec3ae6b51d46ec033fb007da07ded096032e58e4
-size 579
+package models
+
+import (
+	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
+)
+
+type Role struct {
+	gorm.Model
+	RoleName    string       `gorm:"not null" validate:"required"`
+	Description string       `validate:"omitempty"`
+	Permissions []Permission `gorm:"many2many:role_permissions;"`
+	Users       []User       `gorm:"many2many:user_roles;"`
+}
+
+// Validate method for Role
+func (r *Role) Validate() error {
+	validate := validator.New()
+	return validate.Struct(r)
+}
+
+// GetPermissions method for Role
+func (r *Role) GetPermissions() []Permission {
+	return r.Permissions
+}

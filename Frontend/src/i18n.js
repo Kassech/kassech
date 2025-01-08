@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e1812b7f45118162989c8dfd4d3f4fcefd8cdec58d71eed070dde6fb1e471039
-size 460
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import enTranslation from './locales/en/translation.json';
+import amTranslation from './locales/am/translation.json';
+
+const resources = {
+  en: {
+    translation: enTranslation
+  },
+  am: {
+    translation: amTranslation
+  }
+};
+
+i18n
+  .use(initReactI18next) 
+  .init({
+    resources,
+    lng: "en",
+    interpolation: {
+      escapeValue: false
+    }
+  });
+
+  export default i18n;

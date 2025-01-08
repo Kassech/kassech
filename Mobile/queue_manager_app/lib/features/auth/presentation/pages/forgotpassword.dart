@@ -1,3 +1,52 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:253ba2d9f0d71953c5bae1e47559c004fc161ad30c47c06dce26127631230b43
-size 1583
+import 'package:flutter/material.dart';
+import 'package:queue_manager_app/config/route/route.dart';
+import 'package:queue_manager_app/features/auth/presentation/widgets/authButton.dart';
+import 'package:queue_manager_app/features/auth/presentation/widgets/mytextfield.dart';
+
+class ForgotPassword extends StatelessWidget {
+  ForgotPassword({super.key});
+  final TextEditingController phoneController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+            onPressed: () {
+              AppRouter.router.go('/signin');
+            },
+            icon: const Icon(Icons.arrow_back)),
+      ),
+      backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Forgot Password?',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          MyTextField(
+              labelText: 'Enter your phone number',
+              controller: phoneController,
+              hintText: "+251 ___ ___ ___"),
+          const SizedBox(
+            height: 20,
+          ),
+          AuthButton(
+              label: 'Send Code',
+              onPressed: () {
+                AppRouter.router.go('/');
+              }),
+        ],
+      ),
+    );
+  }
+}

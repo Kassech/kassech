@@ -1,3 +1,34 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cacbe7bb324ff01e1f0135a72ee36d47ce95f2d898e6b73b51045736f0d21e1e
-size 955
+import 'package:flutter/material.dart';
+import 'package:queue_manager_app/config/route/route.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:queue_manager_app/core/util/notification.dart';
+import 'firebase_options.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // ignore: unused_field
+  final NotificationService _notificationService = NotificationService();
+  // final AuthenticationService _authService = AuthenticationService();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      routerConfig: AppRouter.router,
+    );
+  }
+}

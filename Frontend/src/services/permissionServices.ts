@@ -1,3 +1,28 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:766e59aed69e66c6d7467cfc0e421377ea6fae38c26a50db039c526df5251b17
-size 729
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import api from "../api/axiosInstance";
+
+type Permission = {
+  ID: number;
+  PermissionName: string;  
+  Description: string;
+  Role: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt?: string | null;
+};
+
+
+// Fetch all stations
+export const useGetAllPermission = () => {
+  return useQuery<Permission[]>("permissions", async () => {
+    const response = await api.get("/permissions");
+    return response.data;
+  });
+};
+// Fetch a station by ID
+export const useGetRoleById = (id: number) => {
+  return useQuery<Permission>(["permission", id], async () => {
+    const response = await api.get(`/permission/${id}`);
+    return response.data;
+  });
+};

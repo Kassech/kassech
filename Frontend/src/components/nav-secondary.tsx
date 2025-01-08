@@ -1,3 +1,40 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:28a8f9ebeadc1588e219c841f9d44aec1ef8a2917f0c536a381400ebc207a401
-size 917
+import * as React from "react"
+import { type LucideIcon } from "lucide-react"
+
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar"
+
+export function NavSecondary({
+  items,
+  ...props
+}: {
+  items: {
+    title: string
+    url: string
+    icon: LucideIcon
+  }[]
+} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  return (
+    <SidebarGroup {...props}>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {items.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild size="sm">
+                <a href={item.url}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  )
+}

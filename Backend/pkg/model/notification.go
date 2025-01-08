@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b5bf910df2b26334aa57377ba67dd327cac888e10b8d9feab84a9a54ee2cd982
-size 263
+package models
+
+import "gorm.io/gorm"
+
+type NotificationLog struct {
+    gorm.Model
+    SenderID  uint
+    ReceiverID uint
+    Title     string `gorm:"not null"`
+    Body      string `gorm:"not null"`
+    ImageURL  string
+    Status    string `gorm:"not null"`
+}

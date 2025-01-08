@@ -1,3 +1,40 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:58ebf3b62cafef0169fffad1c41c10d1b7a9bf764b7eae7be918de1a19111bd8
-size 1012
+
+import { cn } from "@/lib/utils"
+import { Link } from "react-router-dom"
+
+export function MainNav({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLElement>) {
+  return (
+    <nav
+      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+      {...props}
+    >
+      <Link
+        to="/examples/dashboard"
+        className="text-sm font-medium transition-colors hover:text-primary"
+      >
+        Overview
+      </Link>
+      <Link
+        to="/examples/dashboard"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Customers
+      </Link>
+      <Link
+        to="/examples/dashboard"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Products
+      </Link>
+      <Link
+        to="/examples/dashboard"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Settings
+      </Link>
+    </nav>
+  )
+}

@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:85721ebf76c3a7250adcfc6889719c87228d38bae59f15894a99ef1cc9dfd785
-size 298
+import api from '../api/axiosInstance';
+
+export const fetchUserData = async () => {
+  const response = await api.get('/users');
+  return response.data;
+};
+
+export const updateUserData = async (userData: unknown) => {
+  const response = await api.put('/users', userData);
+  return response.data;
+};

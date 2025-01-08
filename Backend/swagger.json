@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3f17e7a652956d46448de6b9914f522a6644e3428bfdac2d54fcb11130f0b9bf
-size 37
+{
+  "swagger": "2.0",
+  "paths": {}
+}

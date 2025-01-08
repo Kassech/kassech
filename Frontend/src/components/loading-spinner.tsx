@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c886712dd54f5e1059b56ab454d42184614b73dee55ba52489d8b8282128d962
-size 371
+import { cn } from '@/lib/utils';
+import { Loader } from "lucide-react";
+
+const LoadingSpinner = ({ className }: { className?: string }) => {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <Loader
+        className={cn('h-16 w-16 text-primary/60 animate-spin', className)}
+      />
+    </div>
+  );
+};
+
+export default LoadingSpinner;
