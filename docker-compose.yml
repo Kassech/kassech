@@ -36,7 +36,7 @@ services:
       DB_NAME: kassech
       DB_SSLMODE: disable
       DB_TIMEZONE: Asia/Shanghai
-      GIN_MODE: release
+      GIN_MODE: debug
       JWTToken: thteswetsersogbsiisissdteswetsersogbsifasofboteswetsersogbsijaflafoteswetsersogbsia
       ACCESS_TOKEN_EXPIRATION: 30m
       REFRESH_TOKEN_EXPIRATION: 720h
@@ -48,6 +48,8 @@ services:
       - pg_network
     depends_on:
       - db  # Wait for db to start before kassech-backend
+    volumes:
+      - ./Backend:/app  # Mount the Backend directory to the container
   kassech-frontend:
     build:
       context: ./Frontend/
@@ -62,7 +64,8 @@ services:
       - pg_network
     depends_on:
       - kassech-backend  # Wait for kassech-backend to start before kassech-frontend
-
+    volumes:
+      - ./Frontend:/app  # Mount the frontend source code to the container for live reload
 networks:
   pg_network:
     driver: bridge

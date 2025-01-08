@@ -93,6 +93,31 @@ func (uc *UserController) Register(c *gin.Context) {
 	})
 }
 
+func (uc *UserController) Logout(c *gin.Context) {
+	// Get the refresh token from the HTTP-only cookie
+	refreshToken, err := c.Cookie("refresh_token")
+	if err != nil {
+		// If no refresh token is found, return an error response
+		c.JSON(http.StatusForbidden, gin.H{"error": "Refresh token is missing"})
+		return
+	}
+
+	// Invalidate the session using the refresh token (session service)
+	err = uc.SessionService.Logout(refreshToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete session"})
+		return
+	}
+
+	// Remove the refresh token from the client's cookies
+	c.SetCookie("refresh_token", "", -1, "/", "", true, true) // Expired immediately to delete
+
+	// Respond with a success message
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Logout successful",
+	})
+}
+
 func (uc *UserController) Login(c *gin.Context) {
 	var input struct {
 		EmailOrPhone string `json:"email_or_phone"`
