@@ -172,7 +172,9 @@ export default function RolePermission() {
     PermissionName: string;
     Description: string;
   }
-const [highlightedPermission, setHighlightedPermission] = useState<number | null>(null);
+const [highlightedPermissions, setHighlightedPermissions] = useState<number[]>(
+  []
+);
 
 const handlePermissionClick = async (permission: Permission) => {
   const isPermissionAssigned = rolePermissions.some(
@@ -202,7 +204,7 @@ const handlePermissionClick = async (permission: Permission) => {
          {
            onSuccess: (data) => {
              console.log("API response data:", data);
-             setHighlightedPermission(permission.ID);
+             setHighlightedPermissions((prev) => [...prev, permission.ID]);
            },
            onError: (error) => {
              console.error(`Failed to add role: ${error}`);
@@ -234,7 +236,9 @@ const handlePermissionClick = async (permission: Permission) => {
                     key={role.ID}
                     variant="outline"
                     // className="relative"
-                    onClick={() => setSelectedRole(role.ID)} // Update state with the role's id
+                    onClick={() => {setSelectedRole(role.ID);
+                      setHighlightedPermissions([]);}
+                    } // Update state with the role's id
                     className={`transition-colors duration-200 ease-in-out ${
                       selectedRole === role.ID
                         ? "bg-blue-500 text-white border-blue-700"
@@ -444,7 +448,7 @@ const handlePermissionClick = async (permission: Permission) => {
                     key={permissions.ID ?? permissions.PermissionName}
                     className={`border rounded-lg p-4 ${
                       rolePermissions?.some((rp) => rp.ID === permissions.ID) ||
-                      highlightedPermission === permissions.ID
+                      highlightedPermissions.includes(permissions.ID)
                         ? "bg-blue-100 text-blue-900 border-blue-500"
                         : "bg-gray-100 text-gray-700"
                     }`}
