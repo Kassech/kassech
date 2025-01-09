@@ -39,8 +39,12 @@ func (rc *RouteController) UpdateRoute(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	updatedRoute, err := rc.Service.UpdateRoute(&route, utils.StringToUint(routeID))
+	routeIDUint, err := utils.StringToUint(routeID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	updatedRoute, err := rc.Service.UpdateRoute(&route, routeIDUint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -52,8 +56,12 @@ func (rc *RouteController) UpdateRoute(c *gin.Context) {
 // DeleteRoute handles HTTP requests to delete a route
 func (rc *RouteController) DeleteRoute(c *gin.Context) {
 	routeID := c.Param("id")
-
-	deletedRoute, err := rc.Service.DeleteRouteByID(utils.StringToUint(routeID))
+	routeIDUint, err := utils.StringToUint(routeID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	deletedRoute, err := rc.Service.DeleteRouteByID(routeIDUint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -65,8 +73,12 @@ func (rc *RouteController) DeleteRoute(c *gin.Context) {
 // FindRouteByID handles HTTP requests to get a route by ID
 func (rc *RouteController) FindRouteByID(c *gin.Context) {
 	routeID := c.Param("id")
-
-	route, err := rc.Service.FindRouteByID(utils.StringToUint(routeID))
+	routeIDUint, err := utils.StringToUint(routeID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	route, err := rc.Service.FindRouteByID(routeIDUint)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return

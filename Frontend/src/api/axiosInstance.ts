@@ -1,7 +1,8 @@
+import { apiEndpointApi } from '@/config/config';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: apiEndpointApi,
   timeout: 10000,
   withCredentials: true,
 });

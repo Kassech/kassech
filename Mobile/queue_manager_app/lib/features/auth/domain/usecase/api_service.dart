@@ -113,10 +113,8 @@ class ApiService {
   Future<void> sendTokensToBackend(
       String accessToken, String refreshToken) async {
     try {
-      final response = await _dio.post('${dio_baseUrl}notification', data: {
-        'token': accessToken,
-        "device_id": "102934"
-      });
+      final response = await _dio.post('${dio_baseUrl}notification',
+          data: {'token': accessToken, "device_id": "102934"});
       print('Notification response: ${response.data}');
     } catch (e) {
       print('Error sending tokens to backend: $e');
@@ -125,7 +123,8 @@ class ApiService {
 
   Future<void> getNotifications(String accessToken) async {
     try {
-      final response = await _dio.post('${dio_baseUrl}notifications', data: {'token': 'abcde', "device_id": "102934"});
+      final response = await _dio.post('${dio_baseUrl}notifications',
+          data: {'token': 'abcde', "device_id": "102934"});
 
       print('Notifications response: ${response.data}');
     } catch (e) {
@@ -167,6 +166,18 @@ class ApiService {
     final token = prefs.getString('refreshToken');
     print('Retrieved refresh token: $token');
     return token;
+  }
+
+  Future<void> logout() async {
+    try {
+      await SharedPreferences.getInstance().then((prefs) async {
+        await prefs.remove('accessToken');
+        await prefs.remove('refreshToken');
+      });
+      print('Logged out');
+    } catch (e) {
+      print('Error during logout: $e');
+    }
   }
 
   Future<void> saveTokens(String accessToken, String refreshToken) async {

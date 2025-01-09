@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { AxiosError } from "axios";
 import {
   useQuery,
   useMutation,
@@ -32,28 +33,41 @@ export const useCustomQuery = (
     },
     options
   );
-
-export const useCustomMutation = <
+  export const useCustomMutation = <
   TRequest, // Request data type (input)
   TResponse, // Response data type (success)
-  string // Error type
+  TError = any // Error type, default to any
 >(
   mutateFn: (data: TRequest) => Promise<TResponse>, // The function that performs the mutation
-  options: UseMutationOptions<TResponse, string, TRequest> = {} // Error type is explicitly string
-): UseMutationResult<TResponse, string, TRequest> =>
-  useMutation<TResponse, string, TRequest>(mutateFn, {
-    ...options,
-    onError: (error: unknown) => {
-      const errorMessage =
-        error?.response?.data?.error ||
-        error.message ||
-        "An unknown error occurred";
-      // Pass the error as a string to React Query
-      console.log("🚀 ~ errorMessage:", errorMessage);
+  options: UseMutationOptions<TResponse, TError, TRequest> = {} // Error type is dynamic
+): UseMutationResult<TResponse, TError, TRequest> =>
+  useMutation<TResponse, TError, TRequest>(mutateFn, {
+      ...options,
+      onError: (error: TError) => {
+          const axiosError = error as AxiosError;
+          let errorMessage = "An unknown error occurred";
 
-      return errorMessage;
-    },
-    onSuccess: (data) => {
-      console.log("Mutation succeeded with data:", data);
-    },
+          if (axiosError.response) {
+              const status = axiosError.response.status;
+              const data = axiosError.response.data as any;
+
+              if (status === 400 && data.errors) {
+                  errorMessage = Object.values(data.errors).join(", ");
+              } else if (status === 401) {
+                  errorMessage = data.error || "Invalid credentials";
+              } else if (status === 500) {
+                  errorMessage = data.error || "Internal server error";
+              } else {
+                  errorMessage = data.error || "Unexpected error";
+              }
+          } else if (axiosError.message) {
+              errorMessage = axiosError.message;
+          }
+
+          console.error("🚀 ~ Error:", errorMessage);
+          console.error("🚀 ~ Error:", errorMessage);
+      },
+      onSuccess: (data) => {
+          console.log("Mutation succeeded with data:", data);
+      },
   });

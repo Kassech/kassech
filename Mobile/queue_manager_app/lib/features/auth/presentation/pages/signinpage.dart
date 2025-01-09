@@ -24,7 +24,9 @@ class SigninPage extends StatelessWidget {
 
   Future<void> _login(BuildContext context) async {
     String? refresh_Token = '';
-    
+
+    //login if verified
+
     try {
       final response = await _apiService.login(
           phoneController.text, passwordController.text);
@@ -36,23 +38,36 @@ class SigninPage extends StatelessWidget {
           refresh_Token = extractRefreshToken(cookies.toString());
           print('Refresh Token: $refresh_Token');
         }
+
         // Store the access token and refresh token
         final accessToken = response.data['accessToken'];
         final refreshToken = refresh_Token;
+        final isVerified = response.data['user']['IsVerified'];
+
+        if (!isVerified) {
+          // Handle unverified user
+          print('User is not verified');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Your account is not verified. Please verify your account.')),
+          );
+          return;
+        }
         await _apiService.saveTokens(accessToken, refresh_Token.toString());
-        print('Login successful');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login successful')));
         print(accessToken);
         print(refreshToken);
 
         // Send the access token to the backend
-        await _apiService.sendTokensToBackend(accessToken, refresh_Token.toString());
+        await _apiService.sendTokensToBackend(
+            accessToken, refresh_Token.toString());
         AppRouter.router.go('/home');
         // Get notifications
         // await _apiService.getNotifications(accessToken);
       } else {
         print('Login failed, status code: ${response.statusCode}');
       }
-      
     } catch (e) {
       print('Error during login: $e');
       throw e;

@@ -118,7 +118,6 @@ func RefreshTokenService(refreshToken string) (string, error) {
 
 	// Extract the user ID from the refresh token
 	userID := uint(claims["user_id"].(float64))
-	fmt.Println("	ftm", userID)
 	// Redis key
 	ctx := context.Background()
 	redisKey := "refresh_token:" + fmt.Sprintf("%d", int(userID))

@@ -39,8 +39,12 @@ func (rc *StationController) UpdateStation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	updatedStation, err := rc.Service.UpdateStation(&role, utils.StringToUint(roleID))
+	roleIdUint, err := utils.StringToUint(roleID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	updatedStation, err := rc.Service.UpdateStation(&role, roleIdUint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -52,8 +56,12 @@ func (rc *StationController) UpdateStation(c *gin.Context) {
 // DeleteStation handles HTTP requests to delete a role
 func (rc *StationController) DeleteStation(c *gin.Context) {
 	roleID := c.Param("id")
-
-	deletedStation, err := rc.Service.DeleteStationByID(utils.StringToUint(roleID))
+	roleIdUint, err := utils.StringToUint(roleID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	deletedStation, err := rc.Service.DeleteStationByID(roleIdUint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -65,8 +73,12 @@ func (rc *StationController) DeleteStation(c *gin.Context) {
 // FindStationByID handles HTTP requests to get a role by ID
 func (rc *StationController) FindStationByID(c *gin.Context) {
 	roleID := c.Param("id")
-
-	role, err := rc.Service.FindStationByID(utils.StringToUint(roleID))
+	userIdUint, err := utils.StringToUint(roleID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	role, err := rc.Service.FindStationByID(userIdUint)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return

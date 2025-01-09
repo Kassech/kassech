@@ -121,7 +121,11 @@ func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 
 	api.Use(middleware.AuthMiddleware())
 
+	api.POST("/logout", ctrl.Logout)
+
 	api.POST("/notification", ctrl.SaveNotificationToken)
+
+	api.POST("/user", ctrl.CreateUser)
 
 	api.GET("/users", ctrl.ListUsers)
 

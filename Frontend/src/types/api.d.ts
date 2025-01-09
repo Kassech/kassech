@@ -1,4 +1,5 @@
 // src/types/api.d.ts
+import { User } from "@/types/user";
 
 // Type for the response from the API (both success and error format)
 export interface ApiResponse<T = unknown> {
@@ -13,30 +14,16 @@ export interface LoginCredentials {
   password: string;
 }
 
-// Type for the user data returned after a successful login
-export interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email?: string | null;
-  phoneNumber: string;
-  isOnline: boolean;
-  password: string;
-  previousPassword1?: string | null;
-  previousPassword2?: string | null;
-  profilePicture?: string | null;
-  isVerified: boolean;
-  lastLoginDate?: Date | null;
-  socketID?: string | null;
+export interface LoginSuccessResponse {
+    accessToken: string;
+    user: User;
+  }
+export interface LoginErrorResponse {
+    errorCode: string;
+    errorMessage: string;
 }
 
-export interface LoginResponse {
-  accessToken: string;
-  user: User;
-}
-
-// Type for the mutation response (e.g., user data or undefined)
-export type MutationResponse<T = unknown> = T | undefined;
+  export type MutationResponse<T = unknown> = T | undefined;
 
 
 export interface Station {

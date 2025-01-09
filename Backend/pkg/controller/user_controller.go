@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"kassech/backend/pkg/constants"
+	"kassech/backend/pkg/domain"
+	"kassech/backend/pkg/mapper"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/service"
 	"kassech/backend/pkg/utils"
@@ -35,14 +37,14 @@ func (uc *UserController) Register(c *gin.Context) {
 	}
 	defer file.Close()
 
-	profilePictureName, err := utils.UploadFile(c.Request, "profile_picture", constants.ProfilePictureDirectory)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload profile picture"})
-		return
-	}
+	// profilePictureName, err := utils.UploadFile(c.Request, "profile_picture", constants.ProfilePictureDirectory)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload profile picture"})
+	// 	return
+	// }
 
-	// Assign the profile picture location to the user
-	user.ProfilePicture = &profilePictureName
+	// // Assign the profile picture location to the user
+	// user.ProfilePicture = &profilePictureName
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
@@ -91,6 +93,31 @@ func (uc *UserController) Register(c *gin.Context) {
 	})
 }
 
+func (uc *UserController) Logout(c *gin.Context) {
+	// Get the refresh token from the HTTP-only cookie
+	refreshToken, err := c.Cookie("refresh_token")
+	if err != nil {
+		// If no refresh token is found, return an error response
+		c.JSON(http.StatusForbidden, gin.H{"error": "Refresh token is missing"})
+		return
+	}
+
+	// Invalidate the session using the refresh token (session service)
+	err = uc.SessionService.Logout(refreshToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete session"})
+		return
+	}
+
+	// Remove the refresh token from the client's cookies
+	c.SetCookie("refresh_token", "", -1, "/", "", true, true) // Expired immediately to delete
+
+	// Respond with a success message
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Logout successful",
+	})
+}
+
 func (uc *UserController) Login(c *gin.Context) {
 	var input struct {
 		EmailOrPhone string `json:"email_or_phone"`
@@ -103,12 +130,16 @@ func (uc *UserController) Login(c *gin.Context) {
 	}
 
 	user, accessToken, refreshToken, err := uc.Service.Login(input.EmailOrPhone, input.Password, c.Request)
-	fmt.Println("user, accessToken, refreshToken:", user, accessToken, refreshToken)
-	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		if err.Error() == "invalid credentials" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
+
+	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
 
 	c.JSON(http.StatusOK, gin.H{
@@ -116,21 +147,38 @@ func (uc *UserController) Login(c *gin.Context) {
 		"accessToken": accessToken,
 	})
 }
+func (uc *UserController) CreateUser(c *gin.Context) {
 
-// func (uc *UserController) Logout(c *gin.Context) {
+	var user domain.User
+	if err := c.ShouldBind(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// Save the profile picture file
+	if user.ProfilePictureFile != nil {
+		profilePicturePath, err := utils.UploadFile(user.ProfilePictureFile, constants.ProfilePictureDirectory)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save profile picture"})
+			return
+		}
+		user.ProfilePicture = &profilePicturePath
+	}
+	// make user is verified to true
+	user.IsVerified = true
+	// Convert the domain user to GORM user
+	var userModel *models.User = mapper.ToGormUser(&user)
 
-// 	uc.SessionService.Logout()
-// 	if err != nil {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
+	insertedUser, err := uc.Service.CreateUser(userModel, user.Role)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User created successfully",
+		"user":    insertedUser,
+	})
 
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"user":        user,
-// 		"accessToken": accessToken,
-// 	})
-// }
+}
 
 func (uc *UserController) RefreshToken(c *gin.Context) {
 	// Get the refresh token from the HTTP-only cookie
@@ -248,8 +296,13 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	userIdUint, err := utils.StringToUint(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
 
-	updatedUser, err := uc.Service.UpdateUser(userId, &user)
+	updatedUser, err := uc.Service.UpdateUser(userIdUint, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -264,8 +317,13 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 // DeleteUser method (Delete User by ID)
 func (uc *UserController) DeleteUser(c *gin.Context) {
 	userId := c.Param("id")
+	userIdUint, err := utils.StringToUint(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
 
-	err := uc.Service.DeleteUser(userId)
+	err = uc.Service.DeleteUser(userIdUint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
