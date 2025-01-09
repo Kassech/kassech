@@ -66,6 +66,7 @@ services:
       - kassech-backend  # Wait for kassech-backend to start before kassech-frontend
     volumes:
       - ./Frontend:/app  # Mount the frontend source code to the container for live reload
+      - /app/node_modules
 networks:
   pg_network:
     driver: bridge
