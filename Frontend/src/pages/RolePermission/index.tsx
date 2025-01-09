@@ -5,7 +5,10 @@ import {
   useGetRoleById,
   useUpdateRole,
 } from '@/services/roleServices';
-import { useCreateRolePermission } from '@/services/role_permissionServices';
+import {
+  useCreateRolePermission,
+  useDeleteRolePermission,
+} from '@/services/role_permissionServices';
 import { useGetAllPermission } from '@/services/permissionServices';
 import { Button } from '@/components/ui/button';
 import {
@@ -56,6 +59,7 @@ export default function RolePermission() {
   const { mutate: editRole } = useUpdateRole();
   const { mutate: addRole } = useCreateRole();
   const { mutate: addPermissionToRole } = useCreateRolePermission();
+   const { mutate: deleteRolePermission } = useDeleteRolePermission();
 
   const {
     currentRole,
@@ -189,10 +193,21 @@ export default function RolePermission() {
     const roleId = selectedRole; // Ensure roleId is a valid number
 
     if (isPermissionAssigned) {
-      // Remove permission from role
-      // setRolePermissions(rolePermissions.filter((rp) => rp.ID !== permission.ID));
-      // Call API to remove the permission for the role
-      // useDeleteRolePermission({ roleId, permissionId: permission.ID });
+      setHighlightedPermissions((prev) =>
+        prev.filter((id) => id !== permission.ID)
+      );
+
+      deleteRolePermission(
+        { Roleid:roleId, Permissionid: permission.ID },
+        {
+          onSuccess: (data) => {
+            console.log('API response data:', data);
+          },
+          onError: (error) => {
+            console.error(`Failed to add role: ${error}`);
+          },
+        }
+      );
       console.log('already assigned');
     } else {
       addPermissionToRole(
