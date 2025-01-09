@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queue_manager_app/config/route/route.dart';
+import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart';
 
 class HomeQueueManager extends StatefulWidget {
   const HomeQueueManager({super.key});
@@ -15,7 +16,7 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
     {'routeName': 'Route 3', 'routeId': 'R003', 'queueCount': 10},
   ];
   bool _isDrawerOpen = false;
-
+  final apiService = ApiService();
   void _toggleDrawer() {
     setState(() {
       _isDrawerOpen = !_isDrawerOpen;
@@ -32,7 +33,7 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-           const  DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.black,
               ),
@@ -40,10 +41,9 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage:AssetImage('assets/test.jpg') ,
-                    )
-                  
-                  ,Text(
+                    backgroundImage: AssetImage('assets/test.jpg'),
+                  ),
+                  Text(
                     'Queue Manager',
                     style: TextStyle(
                       color: Colors.white,
@@ -78,11 +78,13 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
               },
             ),
             ListTile(
-              leading:const Icon(Icons.logout),
+              leading: const Icon(Icons.logout),
               title: const Text('Logout'),
-              onTap: () {
+              onTap: () async {
                 // Handle item tap
+                await apiService.logout();
                 Navigator.pop(context); // Close the drawer
+                AppRouter.router.push('/signin'); // Close the drawer
               },
             ),
           ],
@@ -107,7 +109,8 @@ class QueueCard extends StatefulWidget {
   final String routeId;
   final int initialCount;
 
-  const QueueCard({super.key, 
+  const QueueCard({
+    super.key,
     required this.routeName,
     required this.routeId,
     required this.initialCount,

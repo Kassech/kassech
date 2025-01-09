@@ -15,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useNavigate } from "react-router-dom";
+import { LanguageSelector } from "./language-toggle";
+import { ModeToggle } from "./mode-toggle";
 
 export function UserNav() {
   const navigate = useNavigate();
@@ -59,6 +61,8 @@ export function UserNav() {
           <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+          <LanguageSelector />
+          <ModeToggle />
         <DropdownMenuItem onClick={handelLogout}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

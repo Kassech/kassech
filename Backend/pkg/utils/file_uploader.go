@@ -1,45 +1,45 @@
 package utils
 
 import (
+	"fmt"
 	"io"
-	"net/http"
+	"mime/multipart"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 // UploadFile handles the file upload and saves it to the specified path
-func UploadFile(r *http.Request, fieldName, uploadPath string) (string, error) {
-	// Parse the multipart form
-	err := r.ParseMultipartForm(10 << 20) // 10 MB
-	if err != nil {
-		return "", err
-	}
-
-	// Retrieve the file from form data
-	file, handler, err := r.FormFile(fieldName)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
+func UploadFile(file *multipart.FileHeader, uploadPath string) (string, error) {
 	// Create the upload path if it doesn't exist
-	err = os.MkdirAll(uploadPath, os.ModePerm)
+	var err = os.MkdirAll(uploadPath, os.ModePerm)
 	if err != nil {
 		return "", err
 	}
+
+	// Add timestamp to the filename to avoid duplication
+	timestamp := time.Now().Unix()
+	filename := fmt.Sprintf("%d_%s", timestamp, file.Filename)
 
 	// Create the file on the server
-	dst, err := os.Create(filepath.Join(uploadPath, handler.Filename))
+	dst, err := os.Create(filepath.Join(uploadPath, filename))
 	if err != nil {
 		return "", err
 	}
 	defer dst.Close()
 
+	// Open the uploaded file
+	src, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+
 	// Copy the uploaded file to the destination file
-	_, err = io.Copy(dst, file)
+	_, err = io.Copy(dst, src)
 	if err != nil {
 		return "", err
 	}
 
-	return handler.Filename, nil
+	return filepath.Join(uploadPath, filename), nil
 }
