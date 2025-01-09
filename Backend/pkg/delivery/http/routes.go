@@ -191,3 +191,4 @@ func registerRolePermissionRoutes(api *gin.RouterGroup, ctrl *controller.RolePer
 
 	api.DELETE("/role_permissions/role/:role_id/permission/:permission_id", ctrl.DeleteRolePermissionByRoleAndPermission)
 }
+
