@@ -3,28 +3,29 @@ import {
   Route,
   Routes,
   Navigate,
-} from "react-router-dom";
-import Login from "@/pages/authentication/login-form";
-import SignUp from "@/pages/authentication/register-form";
-import AuthLayout from "./layout/auth-layout";
-import DashboardLayout from "./layout/dashboard-layout";
-import { ThemeProvider } from "@/components/theme-provider";
-import Dashboard from "./pages/dashboard";
-import NotFoundPage from "./pages/error/404";
-import Error500Page from "./pages/error/500";
-import VehicleRegistration from "./pages/Vehicle Registration";
-import DriverForm from "./pages/driver";
-import QueueManagerForm from "./pages/QueueManagerForm";
-import Users from "./pages/Users";
+} from 'react-router-dom';
+import Login from '@/pages/authentication/login-form';
+import SignUp from '@/pages/authentication/register-form';
+import AuthLayout from './layout/auth-layout';
+import DashboardLayout from './layout/dashboard-layout';
+import { ThemeProvider } from '@/components/theme-provider';
+import Dashboard from './pages/dashboard';
+import NotFoundPage from './pages/error/404';
+import Error500Page from './pages/error/500';
+import VehicleRegistration from './pages/Vehicle Registration';
+import DriverForm from './pages/driver';
+import QueueManagerForm from './pages/QueueManagerForm';
+import Users from './pages/Users';
 // import LoadingSpinner from "./components/loading-spinner";
 
-import Map from "./pages/Station Managing";
-import RolePermission from "./pages/RolePermission";
-import { Toaster } from 'sonner'
-import DriverPage from "./pages/driver";
+import Map from './pages/Station Managing';
+import RolePermission from './pages/RolePermission';
+import { Toaster } from 'sonner';
+import DriverPage from './pages/driver';
+import RoutePage from './pages/route';
 
 function App() {
-       return (
+  return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Toaster />
       <Router>
@@ -49,6 +50,7 @@ function App() {
             <Route path="/queueManagerForm" element={<QueueManagerForm />} />
             <Route path="/user" element={<Users />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/route" element={<RoutePage />} />
             <Route path="/rolepermission" element={<RolePermission />} />
           </Route>
 

@@ -65,6 +65,10 @@ const data = {
           url: '/map',
         },
         {
+          title: 'Route',
+          url: '/route',
+        },
+        {
           title: 'Role And Permission',
           url: '/rolepermission',
         },
