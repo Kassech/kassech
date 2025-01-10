@@ -22,3 +22,27 @@ export const useCreateRolePermission = () => {
     }
   );
 };
+
+export const useDeleteRolePermission = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async ({
+      Roleid,
+      Permissionid,
+    }: {
+      Roleid: number;
+      Permissionid: number;
+    }) => {
+      const response = await api.delete(
+        `/role_permissions/role/${Roleid}/permission/${Permissionid}`
+      );
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('role');
+      },
+    }
+  );
+};
