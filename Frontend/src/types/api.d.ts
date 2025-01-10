@@ -27,7 +27,7 @@ export interface LoginErrorResponse {
 
 
 export interface Station {
-  id: number;
+  ID: number;
   LocationName: string;
   Latitude: number;
   Longitude: number;
