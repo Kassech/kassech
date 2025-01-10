@@ -52,7 +52,7 @@ const RoutePage: React.FC = () => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={75}>
-            <MapContainerComponent stations={stations} />
+            <MapContainerComponent stations={stations ?? []} />
           </ResizablePanel>
           <ResizableHandle />
         </ResizablePanelGroup>
