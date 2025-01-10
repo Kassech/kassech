@@ -63,7 +63,7 @@ func (rpr *RolePermissionRepository) FindByRoleIDAndPermissionID(roleID, permiss
 
 // DeleteByRoleIDAndPermissionID deletes a RolePermission by RoleID and PermissionID
 func (rpr *RolePermissionRepository) DeleteByRoleIDAndPermissionID(roleID, permissionID uint) error {
-	if err := database.DB.Where("role_id = ? AND permission_id = ?", roleID, permissionID).Delete(&models.RolePermission{}).Error; err != nil {
+	if err := database.DB.Unscoped().Where("role_id = ? AND permission_id = ?", roleID, permissionID).Delete(&models.RolePermission{}).Error; err != nil {
 		return err
 	}
 	return nil
