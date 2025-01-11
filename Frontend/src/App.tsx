@@ -13,6 +13,7 @@ import Dashboard from './pages/dashboard';
 import NotFoundPage from './pages/error/404';
 import Error500Page from './pages/error/500';
 import VehicleRegistration from './pages/Vehicle Registration';
+import CarOwnerRegistration from './pages/carOwnerRegistration';
 import DriverForm from './pages/driver';
 import QueueManagerForm from './pages/QueueManagerForm';
 import Users from './pages/Users';
@@ -45,6 +46,10 @@ function App() {
             <Route
               path="/VehicleRegistration"
               element={<VehicleRegistration />}
+            />
+            <Route
+              path="/carOwnerRegistration"
+              element={<CarOwnerRegistration />}
             />
             <Route path="/driver" element={<DriverPage />} />
             <Route path="/queueManagerForm" element={<QueueManagerForm />} />
