@@ -190,6 +190,7 @@ func (uc *UserController) RefreshToken(c *gin.Context) {
 
 	// Call the service to refresh the token
 	accessToken, err := service.RefreshTokenService(refreshToken)
+	fmt.Println("accessToken:", accessToken)
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return

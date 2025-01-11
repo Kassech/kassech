@@ -127,6 +127,7 @@ func RefreshTokenService(refreshToken string) (string, error) {
 	if redisErr == nil && val == "active" {
 		// Token is valid in Redis, proceed to generate a new access token
 		accessToken, _, err := GenerateToken(userID)
+		fmt.Println("accessToken, _, err:", accessToken, err)
 		if err != nil {
 			return "", errors.New("failed to cache refresh token in Redis")
 		}
