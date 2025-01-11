@@ -23,7 +23,7 @@ class SigninPage extends StatelessWidget {
   }
 
   Future<void> _login(BuildContext context) async {
-    String? refresh_Token = '';
+    String? refreshToken = '';
 
     //login if verified
 
@@ -35,8 +35,8 @@ class SigninPage extends StatelessWidget {
         // Check headers for 'Set-Cookie'
         final cookies = response.headers['set-cookie'];
         if (cookies != null) {
-          refresh_Token = extractRefreshToken(cookies.toString());
-          print('Refresh Token: $refresh_Token');
+          refreshToken = extractRefreshToken(cookies.toString());
+          print('Refresh Token: $refreshToken');
         }
 
         // Store the access token and refresh token
