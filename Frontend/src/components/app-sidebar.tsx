@@ -28,6 +28,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useUserStore } from '@/store/userStore';
+import { useNavigate, useNavigation } from 'react-router-dom';
 
 const data = {
   navMain: [
@@ -37,6 +38,10 @@ const data = {
       icon: SquareTerminal,
       isActive: true,
       items: [
+        {
+          title: 'Car Owner Registration',
+          url: '/carOwnerRegistration',
+        },
         {
           title: 'Vehicle Registration',
           url: '/vehicleRegistration',
@@ -155,7 +160,12 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useUserStore((state) => state.user);
   console.log('🚀 ~ AppSidebar ~ user:', user);
+  const navigate = useNavigate()
 
+  if(!user){
+navigate('/login')
+return
+  }
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
