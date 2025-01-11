@@ -8,21 +8,21 @@ import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart'
 class NotificationService {
   Future<void> sendTokenAndDeviceId() async {
     final String? token = await FirebaseMessaging.instance.getToken();
-    final String? device_id = await _getDeviceId();
+    final String? deviceId = await _getDeviceId();
 
     final apiService = ApiService();
 
     final String url = '${apiService.dio_baseUrl}notification';
     print('URL: $url');
     print('Token: $token');
-    print('Device ID: $device_id');
+    print('Device ID: $deviceId');
 
     try {
       final response = await apiService.dio_instance.post(
         url,
         data: {
           'token': token,
-          'device_id': device_id,
+          'device_id': deviceId,
         },
         options: Options(
           headers: {

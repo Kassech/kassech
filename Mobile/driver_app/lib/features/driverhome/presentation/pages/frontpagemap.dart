@@ -16,7 +16,7 @@ class _DriverHomeState extends State<DriverHome> {
         body: Stack(
       children: [
         FlutterMap(
-          options: MapOptions(
+          options: const MapOptions(
             initialCenter: LatLng(9.030093, 38.762791),
             minZoom: 15,
           ),
@@ -24,7 +24,7 @@ class _DriverHomeState extends State<DriverHome> {
             MarkerLayer(
               markers: [
                 Marker(
-                    point: LatLng(9.036151548242255, 38.7625160846566),
+                    point: const LatLng(9.036151548242255, 38.7625160846566),
                     child: Icon(
                       Icons.location_on_sharp,
                       size: 60,
