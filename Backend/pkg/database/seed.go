@@ -1,8 +1,10 @@
 package database
 
 import (
+	"encoding/json"
 	models "kassech/backend/pkg/model"
 	"log"
+	"os"
 
 	"gorm.io/gorm"
 )
@@ -96,6 +98,39 @@ func SeedDB() {
 			log.Println("User assigned the Admin role successfully.")
 		}
 	}
+
+	// Seed stations
+	var stations []models.Station
+
+	// Print the current working directory to debug file path issues
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Printf("Failed to get current working directory: %v\n", err)
+	} else {
+		log.Printf("Current working directory: %s\n", cwd)
+	}
+
+	// Attempt to read the station JSON file
+	data, err := os.ReadFile(cwd + "/pkg/database/data/station.json")
+	if err != nil {
+		log.Printf("Failed to read station JSON file: %v\n", err)
+		return
+	}
+
+	// Parse the JSON data into the stations slice
+	if err := json.Unmarshal(data, &stations); err != nil {
+		log.Printf("Failed to parse station JSON file: %v\n", err)
+		return
+	}
+
+	// Seed each station into the database
+	for _, station := range stations {
+		if err := DB.FirstOrCreate(&models.Station{}, station).Error; err != nil {
+			log.Printf("Failed to seed station %s: %v\n", station.LocationName, err)
+		}
+	}
+
+	log.Println("Stations seeded successfully.")
 
 	log.Println("Database seeding completed.")
 }

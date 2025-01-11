@@ -68,7 +68,7 @@ const LoginForm: React.FC = () => {
               {...register("phoneNumber")}
             />
             {errors.phoneNumber && (
-              <p className="text-red-500 text-xs">
+              <p className="text-red-500 font-extraBold text-xs">
                 {errors.phoneNumber.message}
               </p>
             )}
@@ -93,8 +93,8 @@ const LoginForm: React.FC = () => {
         </div>
 
         {isError && (
-          <div className="error-message">
-            {error?.response?.data?.error ||  'An unknown error occurred'} 
+          <div className="text-red-500 text-xs font-extraBold text-center">
+            {error?.response?.data?.error || 'An unknown error occurred'}
           </div>
         )}
 
