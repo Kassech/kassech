@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart';
+import 'package:queue_manager_app/features/queue/presentation/widgets/appDrawer.dart';
+
 
 class HomeQueueManager extends StatefulWidget {
   const HomeQueueManager({super.key});
@@ -16,7 +17,7 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
     {'routeName': 'Route 3', 'routeId': 'R003', 'queueCount': 10},
   ];
   bool _isDrawerOpen = false;
-  final apiService = ApiService();
+
   void _toggleDrawer() {
     setState(() {
       _isDrawerOpen = !_isDrawerOpen;
@@ -29,67 +30,7 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
       appBar: AppBar(
         title: const Text('Queue Manager'),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.black,
-              ),
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage('assets/test.jpg'),
-                  ),
-                  Text(
-                    'Queue Manager',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                // Handle item tap
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profile'),
-              onTap: () {
-                // Handle item tap
-                AppRouter.router.go('/profile'); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                // Handle item tap
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () async {
-                // Handle item tap
-                await apiService.logout();
-                Navigator.pop(context); // Close the drawer
-                AppRouter.router.push('/signin'); // Close the drawer
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: AppDrawer(),
       body: ListView.builder(
         itemCount: queues.length,
         itemBuilder: (context, index) {
