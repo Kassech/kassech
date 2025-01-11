@@ -13,12 +13,11 @@ import Dashboard from './pages/dashboard';
 import NotFoundPage from './pages/error/404';
 import Error500Page from './pages/error/500';
 import VehicleRegistration from './pages/Vehicle Registration';
-import DriverForm from './pages/driver';
 import QueueManagerForm from './pages/QueueManagerForm';
 import Users from './pages/Users';
 // import LoadingSpinner from "./components/loading-spinner";
 
-import Map from './pages/Station Managing';
+import StationsPage from './pages/Station Managing';
 import RolePermission from './pages/RolePermission';
 import { Toaster } from 'sonner';
 import DriverPage from './pages/driver';
@@ -49,7 +48,7 @@ function App() {
             <Route path="/driver" element={<DriverPage />} />
             <Route path="/queueManagerForm" element={<QueueManagerForm />} />
             <Route path="/user" element={<Users />} />
-            <Route path="/map" element={<Map />} />
+            <Route path="/stations" element={<StationsPage />} />
             <Route path="/route" element={<RoutePage />} />
             <Route path="/rolepermission" element={<RolePermission />} />
           </Route>
