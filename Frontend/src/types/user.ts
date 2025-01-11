@@ -9,4 +9,5 @@ export interface User {
     PhoneNumber: string;
     IsVerified: boolean;
     Role: number;
+    IsOnline: boolean;
 }

@@ -66,8 +66,8 @@ const data = {
           url: '/user',
         },
         {
-          title: 'Map',
-          url: '/map',
+          title: 'Stations',
+          url: '/stations',
         },
         {
           title: 'Route',

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class FileSelectorWidget extends StatefulWidget {
   final String label; // The label to differentiate the file selector
 
-  const FileSelectorWidget({required this.label});
+  const FileSelectorWidget({super.key, required this.label});
 
   @override
   _FileSelectorWidgetState createState() => _FileSelectorWidgetState();
