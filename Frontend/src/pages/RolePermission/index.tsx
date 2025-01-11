@@ -193,6 +193,8 @@ export default function RolePermission() {
     const roleId = selectedRole; // Ensure roleId is a valid number
 
     if (isPermissionAssigned) {
+      // Remove permission from role
+      setRolePermissions(rolePermissions.filter((rp) => rp.ID !== permission.ID));
       setHighlightedPermissions((prev) =>
         prev.filter((id) => id !== permission.ID)
       );
@@ -208,7 +210,6 @@ export default function RolePermission() {
           },
         }
       );
-      console.log('already assigned');
     } else {
       addPermissionToRole(
         {

@@ -41,27 +41,27 @@ class SigninPage extends StatelessWidget {
 
         // Store the access token and refresh token
         final accessToken = response.data['accessToken'];
-        final refreshToken = refresh_Token;
+        final refreshToken = extractRefreshToken(cookies.toString());
         final isVerified = response.data['user']['IsVerified'];
 
         if (!isVerified) {
           // Handle unverified user
           print('User is not verified');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
                 content: Text(
                     'Your account is not verified. Please verify your account.')),
           );
           return;
         }
-        await _apiService.saveTokens(accessToken, refresh_Token.toString());
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login successful')));
+        await _apiService.saveTokens(accessToken, refreshToken.toString());
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login successful')));
         print(accessToken);
         print(refreshToken);
 
         // Send the access token to the backend
         await _apiService.sendTokensToBackend(
-            accessToken, refresh_Token.toString());
+            accessToken, refreshToken.toString());
         AppRouter.router.go('/home');
         // Get notifications
         // await _apiService.getNotifications(accessToken);
@@ -70,7 +70,7 @@ class SigninPage extends StatelessWidget {
       }
     } catch (e) {
       print('Error during login: $e');
-      throw e;
+      rethrow;
     }
   }
 

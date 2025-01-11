@@ -78,7 +78,7 @@ class ApiService {
       return response;
     } catch (e) {
       print(e);
-      throw e;
+      rethrow;
     }
   }
 
@@ -102,7 +102,7 @@ class ApiService {
       return newToken;
     } catch (e) {
       print('Error refreshing access token: $e');
-      throw e;
+      rethrow;
     }
   }
 

@@ -3,7 +3,6 @@ import 'package:driver_app/features/auth/presentation/widgets/authButton.dart';
 import 'package:driver_app/features/auth/presentation/widgets/filePicker.dart';
 import 'package:driver_app/features/auth/presentation/widgets/mytextfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({super.key});

@@ -48,7 +48,7 @@ class AppRouter {
       GoRoute(
         path: '/home',
         name: 'home',
-        builder: (context, state) => HomeQueueManager(),
+        builder: (context, state) => const HomeQueueManager(),
       ),
       GoRoute(
         path: '/404',
