@@ -121,6 +121,8 @@ func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 
 	api.Use(middleware.AuthMiddleware())
 
+	api.POST("/logout", ctrl.Logout)
+
 	api.POST("/notification", ctrl.SaveNotificationToken)
 
 	api.POST("/user", ctrl.CreateUser)
@@ -189,3 +191,4 @@ func registerRolePermissionRoutes(api *gin.RouterGroup, ctrl *controller.RolePer
 
 	api.DELETE("/role_permissions/role/:role_id/permission/:permission_id", ctrl.DeleteRolePermissionByRoleAndPermission)
 }
+

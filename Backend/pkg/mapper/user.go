@@ -17,11 +17,15 @@ func ToDomainUser(dbUser *models.User) *domain.User {
 	}
 }
 func ToGormUser(domainUser *domain.User) *models.User {
+	password := domainUser.Password
+	if password == "" {
+		password = domainUser.PhoneNumber
+	}
 	return &models.User{
 		LastName:       domainUser.LastName,
 		FirstName:      domainUser.FirstName,
 		Email:          domainUser.Email,
-		Password:       domainUser.Password,
+		Password:       password,
 		ProfilePicture: domainUser.ProfilePicture,
 		PhoneNumber:    domainUser.PhoneNumber,
 		IsVerified:     domainUser.IsVerified,

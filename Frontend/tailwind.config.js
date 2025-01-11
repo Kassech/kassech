@@ -3,7 +3,7 @@
 module.exports = {
     darkMode: ["class"],
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
-  Ze: {
+  theme: {
   	extend: {
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -23,7 +23,7 @@ module.exports = {
   			},
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hthemsl(var(--primary-foreground))'
+  				foreground: 'hsl(var(--primary-foreground))'
   			},
   			secondary: {
   				DEFAULT: 'hsl(var(--secondary))',

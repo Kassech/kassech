@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import api from "../api/axiosInstance";
-import axios from "axios";
 
 type Station = {
   ID: number;

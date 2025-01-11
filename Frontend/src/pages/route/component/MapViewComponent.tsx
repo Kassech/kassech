@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
-import { useMap } from "react-leaflet";
-import L from "leaflet";
+import React, { useEffect } from 'react';
+import { useMap } from 'react-leaflet';
+import L from 'leaflet';
+import { Station } from '@/types/api';
 
-export const MapView: React.FC<{ stations: any[]; drawRoute: (start: any, end: any) => void }> = ({ stations, drawRoute }) => {
+export const MapView: React.FC<{ stations: Station[] }> = ({ stations }) => {
   const map = useMap();
 
   useEffect(() => {
@@ -26,11 +27,9 @@ export const MapView: React.FC<{ stations: any[]; drawRoute: (start: any, end: a
     }
   }, [stations, map]);
 
-  return (
-    <div>
-      {stations.length >= 2 && (
-        <button onClick={() => drawRoute(stations[0], stations[1])}>Draw Route</button>
-      )}
-    </div>
-  );
+  L.Routing.control({
+    waypoints: [L.latLng(57.74, 11.94), L.latLng(57.6792, 11.949)],
+  }).addTo(map);
+
+  return null;
 };
