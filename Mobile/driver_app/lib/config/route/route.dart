@@ -47,7 +47,7 @@ class AppRouter {
        GoRoute(
         path: '/home',
         name: 'home',
-        builder: (context, state) => DriverHome(),
+        builder: (context, state) => const DriverHome(),
       ),
       GoRoute(
         path: '/404',

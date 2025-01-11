@@ -11,12 +11,12 @@ class AuthButton extends StatelessWidget {
         margin: const EdgeInsets.only(top: 30),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5), color: Colors.black),
-        padding: EdgeInsets.symmetric(vertical: 7, horizontal: 150),
+        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 150),
         child: TextButton(
             onPressed: onPressed,
             child: Text(
               label,
-              style: TextStyle(fontSize: 16, color: Colors.white),
+              style: const TextStyle(fontSize: 16, color: Colors.white),
             )));
   }
 }
