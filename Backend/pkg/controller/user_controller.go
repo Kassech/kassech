@@ -148,12 +148,12 @@ func (uc *UserController) Login(c *gin.Context) {
 	})
 }
 func (uc *UserController) CreateUser(c *gin.Context) {
-
 	var user domain.User
 	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	// Save the profile picture file
 	if user.ProfilePictureFile != nil {
 		profilePicturePath, err := utils.UploadFile(user.ProfilePictureFile, constants.ProfilePictureDirectory)
@@ -163,7 +163,45 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		}
 		user.ProfilePicture = &profilePicturePath
 	}
-	// make user is verified to true
+
+	// Save other files (driving license, national ID, insurance document, others)
+	if user.DrivingLicenseFile != nil {
+		licensePath, err := utils.UploadFile(user.DrivingLicenseFile, constants.DrivingLicenseDirectory)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save driving license"})
+			return
+		}
+		user.DrivingLicense = &licensePath
+	}
+
+	if user.NationalIdFile != nil {
+		nationalIdPath, err := utils.UploadFile(user.NationalIdFile, constants.NationalIdDirectory)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save national ID"})
+			return
+		}
+		user.NationalId = &nationalIdPath
+	}
+
+	if user.InsuranceDocumentFile != nil {
+		insuranceDocPath, err := utils.UploadFile(user.InsuranceDocumentFile, constants.InsuranceDocumentDirectory)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save insurance document"})
+			return
+		}
+		user.InsuranceDocument = &insuranceDocPath
+	}
+
+	if user.OtherFile != nil {
+		otherFilePath, err := utils.UploadFile(user.OtherFile, constants.OthersDirectory)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save other document"})
+			return
+		}
+		user.OtherDocument = &otherFilePath
+	}
+
+	// Make user is verified to true
 	user.IsVerified = true
 	// Convert the domain user to GORM user
 	var userModel *models.User = mapper.ToGormUser(&user)
@@ -173,11 +211,24 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	driver := models.Driver{
+		UserID:             insertedUser.ID,
+		Status:             "offline",
+		DrivingLicensePath: *user.DrivingLicense,
+		NationalIdPath:     *user.NationalId,
+		InsuranceDocPath:   *user.InsuranceDocument,
+		OtherFilePath:      *user.OtherDocument,
+	}
+
+	if _, err := uc.Service.CreateDriver(&driver); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User created successfully",
 		"user":    insertedUser,
 	})
-
 }
 
 func (uc *UserController) RefreshToken(c *gin.Context) {
