@@ -35,6 +35,15 @@ func (ur *UserRepository) Create(user *models.User, role uint) (*models.User, er
 	return user, nil
 }
 
+// CreateDriver inserts a new driver
+func (ur *UserRepository) CreateDriver(driver *models.Driver) (*models.Driver, error) {
+	err := database.DB.Create(driver).Error
+	if err != nil {
+		return nil, err
+	}
+	return driver, nil
+}
+
 // FindByEmailOrPhone searches for a user by either email or phone number
 func (ur *UserRepository) FindByEmailOrPhone(email string, phone string) (*models.User, error) {
 	var user models.User

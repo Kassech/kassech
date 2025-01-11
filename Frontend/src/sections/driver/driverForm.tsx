@@ -18,27 +18,14 @@ import ImageUploader from '@/components/image-uploader';
 import { Card } from '@/components/ui/card';
 import { DRIVER_ROLE } from '@/constants';
 import { useDriverStore } from '@/store/driverStore';
-import { useEffect } from 'react';
 
-export default function DriverForm() {
+export default function DriverForm({
+  switchTab,
+}: {
+  switchTab: (tab: string) => void;
+}) {
   const { formData, setField } = useDriverStore();
   console.log('🚀 ~ DriverForm ~ formData:', formData);
-  useEffect(() => {
-    const storedData = localStorage.getItem('driver-store');
-    if (storedData) {
-      try {
-        const parsedData = JSON.parse(storedData);
-        // Initialize the form with the data from localStorage
-        if (parsedData?.formData) {
-          Object.entries(parsedData.formData).forEach(([key, value]) => {
-            setField(key, value); // Update Zustand store with the localStorage data
-          });
-        }
-      } catch (error) {
-        console.error('Error parsing stored driver data:', error);
-      }
-    }
-  }, [setField]);
 
   const form = useForm<z.infer<typeof driverSchema>>({
     resolver: zodResolver(driverSchema),
@@ -50,14 +37,11 @@ export default function DriverForm() {
   });
 
   const onSubmit = (values: z.infer<typeof driverSchema>) => {
-    console.groupCollapsed('DriverAttachmentForm.onSubmit');
-    console.log('values:', values);
     Object.entries(values).forEach(([key, value]) => {
-      console.log(`Setting field ${key} to`, value);
       setField(key, value); // Save each field to the store
     });
-    console.groupEnd();
-    toast.success('Form submitted successfully 🎉');
+
+    switchTab('attachments');
   };
 
   return (
@@ -69,6 +53,7 @@ export default function DriverForm() {
         >
           <div className="col-span-full">
             <ImageUploader
+              initialPreview={formData.Profile}
               onImageUpload={(file) => form.setValue('Profile', file)}
               maxFileSize={2000000}
               acceptedFormats={{
@@ -153,13 +138,19 @@ export default function DriverForm() {
             )}
           />
 
-          <Button
-            type="submit"
-            disabled={form.formState.isSubmitting}
-            className="w-full rounded-lg mt-4"
-          >
-            Submit
-          </Button>
+          <FormItem>
+            <FormLabel>Go To Next Step</FormLabel>
+            <FormControl>
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="w-full rounded-lg mt-7"
+              >
+                Next
+              </Button>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
         </form>
       </Form>
     </Card>

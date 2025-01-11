@@ -1,3 +1,4 @@
+// pages/driver/DriverAttachmentForm.tsx
 'use client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,39 +8,60 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { driverSchema } from '@/types/schemas';
+import { driverSchema, driverAttachmentSchema } from '@/types/schemas'; // Import attachment schema
 import ImageUploader from '@/components/image-uploader';
 import { Card } from '@/components/ui/card';
-import { DRIVER_ROLE } from '@/constants';
 import { useDriverStore } from '@/store/driverStore';
+import { useCreateDriver } from '@/services/driverService';
 
-export default function DriverAttachmentForm() {
-  const { formData, setField, resetForm } = useDriverStore();
-  console.log('🚀 ~ DriverAttachmentForm ~ formData:', formData);
+export default function DriverAttachmentForm({
+  switchTab,
+}: {
+  switchTab: (tab: string) => void;
+}) {
+  const { formData, setField } = useDriverStore();
+  const { mutateAsync } = useCreateDriver(); // Use the custom mutation hook to create a driver
 
-  const form = useForm<z.infer<typeof driverSchema>>({
-    resolver: zodResolver(driverSchema),
+  const form = useForm<
+    z.infer<typeof driverSchema & typeof driverAttachmentSchema>
+  >({
+    resolver: zodResolver(driverSchema.merge(driverAttachmentSchema)), // Merge driver schema with attachment schema
     mode: 'onBlur',
     defaultValues: {
       ...formData,
-      role: DRIVER_ROLE,
+      drivingLicense: formData.drivingLicense || null,
+      nationalId: formData.nationalId || null,
+      insuranceDocument: formData.insuranceDocument || null,
+      others: formData.others || null,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof driverSchema>) => {
-    console.groupCollapsed('DriverAttachmentForm.onSubmit');
-    console.log('values:', values);
+  const onSubmit = (
+    values: z.infer<typeof driverSchema & typeof driverAttachmentSchema>
+  ) => {
     Object.entries(values).forEach(([key, value]) => {
       console.log(`Setting field ${key} to`, value);
       setField(key, value); // Save each field to the store
     });
-    console.groupEnd();
-    toast.success('Form submitted successfully 🎉');
+    const promise = mutateAsync(values); // The promise returned by mutateAsync
+
+    toast.promise(promise, {
+      loading: 'Creating driver...',
+      success: () => {
+        return `Driver successfully created!`; // Success message
+      },
+      error: (error) => {
+        return `Error: ${error}`; // Error message
+      },
+    });
+  };
+
+  const handleBackClick = () => {
+    switchTab('person'); // Switch back to the personal tab
   };
 
   return (
@@ -53,6 +75,7 @@ export default function DriverAttachmentForm() {
             { label: 'Driving License', name: 'drivingLicense' },
             { label: 'National ID', name: 'nationalId' },
             { label: 'Insurance Document', name: 'insuranceDocument' },
+            { label: 'Others', name: 'others' },
           ].map((field) => (
             <div key={field.name}>
               <FormField
@@ -62,6 +85,7 @@ export default function DriverAttachmentForm() {
                   <FormItem>
                     <FormLabel>{field.label}</FormLabel>
                     <ImageUploader
+                      initialPreview={form.getValues(field.name)}
                       onImageUpload={(file) => form.setValue(field.name, file)}
                       maxFileSize={5000000}
                       acceptedFormats={{
@@ -78,6 +102,14 @@ export default function DriverAttachmentForm() {
             </div>
           ))}
 
+          <Button
+            type="button" // Make this a button with type "button" to not trigger form submission
+            onClick={handleBackClick} // Call the back handler
+            className="w-full rounded-lg mt-auto"
+            variant="outline"
+          >
+            Back
+          </Button>
           <Button
             type="submit"
             disabled={form.formState.isSubmitting}

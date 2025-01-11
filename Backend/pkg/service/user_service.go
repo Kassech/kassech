@@ -216,3 +216,8 @@ func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 
 	return nil
 }
+
+func (us *UserService) CreateDriver(driver *models.Driver) (*models.Driver, error) {
+	return us.Repo.CreateDriver(driver)
+}
+
