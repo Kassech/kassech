@@ -12,3 +12,11 @@ export const driverSchema = z.object({
         .instanceof(File)
         .refine((file) => file.size !== 0, { message: "Please upload an image file. The file cannot be empty" }),
 });
+
+
+export const driverAttachmentSchema = z.object({
+    drivingLicense: z.instanceof(File).optional(),
+    nationalId: z.instanceof(File).optional(),
+    insuranceDocument: z.instanceof(File).optional(),
+    others: z.instanceof(File).optional(),
+  });
