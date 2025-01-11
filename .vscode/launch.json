@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "driver_app",
+            "cwd": "Mobile\\driver_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "driver_app (profile mode)",
+            "cwd": "Mobile\\driver_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "driver_app (release mode)",
+            "cwd": "Mobile\\driver_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "queue_manager_app",
+            "cwd": "Mobile\\queue_manager_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "queue_manager_app (profile mode)",
+            "cwd": "Mobile\\queue_manager_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "queue_manager_app (release mode)",
+            "cwd": "Mobile\\queue_manager_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

@@ -28,7 +28,10 @@ export const MapView: React.FC<{ stations: Station[] }> = ({ stations }) => {
   }, [stations, map]);
 
   L.Routing.control({
-    waypoints: [L.latLng(57.74, 11.94), L.latLng(57.6792, 11.949)],
+    waypoints: [
+      L.latLng(stations[0].Latitude, stations[0].Longitude),
+      L.latLng(stations[1].Latitude, stations[1].Longitude),
+    ],
   }).addTo(map);
 
   return null;

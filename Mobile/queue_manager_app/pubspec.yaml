@@ -50,6 +50,9 @@ dependencies:
   firebase_core: ^3.9.0
   firebase_messaging: ^15.1.6
   shared_preferences: ^2.3.5
+  flutter_riverpod: ^2.6.1
+  web_socket_channel: ^3.0.1
+  riverpod: ^2.6.1
   
 
 dev_dependencies:

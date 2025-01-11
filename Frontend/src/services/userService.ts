@@ -1,11 +1,20 @@
+import { useQuery, useMutation } from 'react-query';
 import api from '../api/axiosInstance';
 
-export const fetchUserData = async () => {
-  const response = await api.get('/users');
-  return response.data;
+// Fetch user data with react-query
+export const useFetchUserData = () => {
+  return useQuery('userData', async () => {
+    const response = await api.get('/users');
+    return response.data;
+  });
 };
 
-export const updateUserData = async (userData: unknown) => {
-  const response = await api.put('/users', userData);
-  return response.data;
+// Update user data with react-query
+export const useUpdateUserData = () => {
+  return useMutation(
+    async (userData: unknown) => {
+      const response = await api.put('/users', userData);
+      return response.data;
+    }
+  );
 };
