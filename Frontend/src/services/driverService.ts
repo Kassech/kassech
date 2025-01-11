@@ -1,66 +1,72 @@
-import { useDriverStore } from "@/store/driverStore";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import api from '@/api/axiosInstance';
+import { useCustomMutation, useCustomQuery } from '@/hooks/useQueryHelpers';
 
-// Types
-interface Driver {
-    id: number;
-    name: string;
-}
+// CRUD Operations for Driver
 
-// API Functions
-const fetchDrivers = async (): Promise<Driver[]> => {
-    const response = await fetch("/api/drivers");
-    if (!response.ok) throw new Error("Failed to fetch drivers");
-    return response.json();
+// Create Driver
+export const createDriver = async (data: any) => {
+  const formData = new FormData();
+  Object.keys(data).forEach(key => {
+    formData.append(key, data[key]);
+  });
+  const response = await api.post('/users', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }); // Post request to create a driver
+  return response.data; // Standardized response data
 };
 
-const addDriverApi = async (driver: Driver) => {
-    const response = await fetch("/api/drivers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(driver),
-    });
-    if (!response.ok) throw new Error("Failed to add driver");
-    return response.json();
+// Get Driver
+export const getDriver = async (driverId: string) => {
+  const response = await api.get(`/users/${driverId}`); // Get request to fetch a specific driver
+  return response.data; // Standardized response data
 };
 
-const removeDriverApi = async (id: number) => {
-    const response = await fetch(`/api/drivers/${id}`, { method: "DELETE" });
-    if (!response.ok) throw new Error("Failed to remove driver");
+// Update Driver
+export const updateDriver = async (driverId: string, data: any) => {
+  const response = await api.put(`/users/${driverId}`, data); // Put request to update driver
+  return response.data; // Standardized response data
 };
 
-// Hooks
-export const useDrivers = () => {
-    const setDrivers = useDriverStore((state) => state.setDrivers);
-
-    return useQuery("drivers", fetchDrivers, {
-        onSuccess: (data) => setDrivers(data),
-        onError: (error) => console.error(error),
-    });
+// Delete Driver
+export const deleteDriver = async (driverId: string) => {
+  const response = await api.delete(`/users/${driverId}`); // Delete request to remove a driver
+  return response.data; // Standardized response data
 };
 
-export const useAddDriver = () => {
-    const queryClient = useQueryClient();
-    const addDriver = useDriverStore((state) => state.addDriver);
-
-    return useMutation(addDriverApi, {
-        onMutate: async (newDriver: Driver) => {
-            addDriver(newDriver); // Optimistic update
-        },
-        onSuccess: () => queryClient.invalidateQueries("drivers"),
-        onError: (error) => console.error(error),
-    });
+// Custom Hook to handle Create Driver Mutation
+export const useCreateDriver = () => {
+  return useCustomMutation(createDriver, {
+    onSuccess: (data) => {
+      console.log('Driver created successfully:', data);
+    },
+    onError: (error) => {
+      console.error('Error creating driver:', error);
+    },
+  });
 };
 
-export const useRemoveDriver = () => {
-    const queryClient = useQueryClient();
-    const removeDriver = useDriverStore((state) => state.removeDriver);
+// Custom Hook to handle Update Driver Mutation
+export const useUpdateDriver = () => {
+  return useCustomMutation(updateDriver, {
+    onSuccess: (data) => {
+      console.log('Driver updated successfully:', data);
+    },
+    onError: (error) => {
+      console.error('Error updating driver:', error);
+    },
+  });
+};
 
-    return useMutation(removeDriverApi, {
-        onMutate: async (id: number) => {
-            removeDriver(id); // Optimistic update
-        },
-        onSuccess: () => queryClient.invalidateQueries("drivers"),
-        onError: (error) => console.error(error),
-    });
+// Custom Hook to handle Delete Driver Mutation
+export const useDeleteDriver = () => {
+  return useCustomMutation(deleteDriver, {
+    onSuccess: (data) => {
+      console.log('Driver deleted successfully:', data);
+    },
+    onError: (error) => {
+      console.error('Error deleting driver:', error);
+    },
+  });
 };
