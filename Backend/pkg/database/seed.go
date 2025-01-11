@@ -61,7 +61,7 @@ func SeedDB() {
 		PhoneNumber: "+251984852481",
 		IsOnline:    false,
 		Password:    "$2a$10$pkluPLasY7LCXOK25EBkmeUsQDuZwrOhKMhu5EXfN4W0YOZPqST7S", // hashed password
-		IsVerified:  false,
+		IsVerified:  true,
 	}
 
 	// Check if user exists, if not, create it
