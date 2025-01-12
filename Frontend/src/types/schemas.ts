@@ -62,3 +62,37 @@ export const vehicleSchema = z.object({
     message: 'Libre document is required',
   }),
 });
+
+export const ownerSchema = z.object({
+  firstName: z.string().min(1, { message: 'First name is required' }),
+  lastName: z.string().min(1, { message: 'Last name is required' }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  phoneNumber: z
+    .string()
+    .regex(/^\+251\d{9}$/, { message: 'Invalid phone number format' }),
+  profilePicture: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Profile picture is required',
+    }),
+  KebeleId: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Kebele id document is required',
+    })
+    .refine((file) => file && file.size <= 5 * 1024 * 1024, {
+      message: 'Kebele id document must be less than 5MB',
+    }),
+  insurance: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Insurance document is required',
+    })
+    .refine((file) => file && file.size <= 5 * 1024 * 1024, {
+      message: 'Insurance document must be less than 5MB',
+    }),
+});
+
