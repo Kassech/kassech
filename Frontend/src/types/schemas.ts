@@ -20,6 +20,8 @@ export const driverAttachmentSchema = z.object({
     insuranceDocument: z.instanceof(File).optional(),
     others: z.instanceof(File).optional(),
   });
+
+  
 export const vehicleSchema = z.object({
   carType: z.string().min(1, { message: 'Car type is required' }),
   licenseNumber: z.string().min(1, { message: 'License number is required' }),
@@ -29,38 +31,51 @@ export const vehicleSchema = z.object({
     .string()
     .regex(/^\d{4}$/, { message: 'Year must be a valid 4-digit year' }),
   color: z.string().min(1, { message: 'Car color is required' }),
+
+  // For carPicture: nullable and optional
   carPicture: z
-    .any()
-    .refine((file) => file instanceof File && file.size > 0, {
+    .instanceof(File)
+    .nullable() // Allows the value to be null
+    .refine((file) => file === null || (file && file.size > 0), {
       message: 'Car picture is required',
     })
-    .refine(
-      (file) => file instanceof File && file.size <= 5 * 1024 * 1024, // Max size: 5MB
-      { message: 'Car picture must be less than 5MB' }
-    )
-    .optional(),
+    .optional(), // Makes the field optional
+
+  // Bollo: nullable and optional
   bollo: z
-    .any()
-    .refine((file) => file instanceof File && file.size > 0, {
+    .instanceof(File)
+    .nullable() // Allows null
+    .refine((file) => file === null || file.size > 0, {
       message: 'Bollo document is required',
     })
-    .refine((file) => file instanceof File && file.size <= 5 * 1024 * 1024, {
+    .refine((file) => file === null || file.size <= 5 * 1024 * 1024, {
       message: 'Bollo document must be less than 5MB',
-    }),
+    })
+    .optional(),
+
+  // Insurance: nullable and optional
   insurance: z
-    .any()
-    .refine((file) => file instanceof File && file.size > 0, {
+    .instanceof(File)
+    .nullable() // Allows null
+    .refine((file) => file === null || file.size > 0, {
       message: 'Insurance document is required',
     })
-    .refine((file) => file instanceof File && file.size <= 5 * 1024 * 1024, {
+    .refine((file) => file === null || file.size <= 5 * 1024 * 1024, {
       message: 'Insurance document must be less than 5MB',
-    }),
-  profile: z.instanceof(File).refine((file) => file.size !== 0, {
-    message: 'Please upload an image file. The file cannot be empty',
-  }),
-  libre: z.any().refine((file) => file instanceof File && file.size > 0, {
-    message: 'Libre document is required',
-  }),
+    })
+    .optional(),
+
+  // Libre: nullable and optional
+  libre: z
+    .instanceof(File)
+    .nullable() // Allows null
+    .refine((file) => file === null || file.size > 0, {
+      message: 'Libre document is required',
+    })
+    .refine((file) => file === null || file.size <= 5 * 1024 * 1024, {
+      message: 'Libre document must be less than 5MB',
+    })
+    .optional(),
 });
 
 export const ownerSchema = z.object({
