@@ -12,7 +12,7 @@ export default function OwnerRegistration() {
     <>
       <Header paths={paths} />
       <div className="w-full">
-        <Owner />
+          <Owner />
       </div>
     </>
   );
