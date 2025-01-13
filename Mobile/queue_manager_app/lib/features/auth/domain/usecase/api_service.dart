@@ -1,4 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:queue_manager_app/core/util/token_storage.dart';
+import 'package:queue_manager_app/features/auth/domain/entitites/authStatus.dart';
+import 'package:queue_manager_app/features/auth/domain/usecase/authServiceProvider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -168,18 +173,89 @@ class ApiService {
     return token;
   }
 
-  Future<void> logout() async {
+  // Future<void> logout(BuildContext context) async {
+
+  //    // Call the logout API (see Step 2)
+  //   final success = await logoutApi();
+
+  //   if (success) {
+  //     // Clear local token storage
+  //     await clearTokens();
+  //     // await SharedPreferences.getInstance().remove(key: 'accessToken');
+
+  //     // Navigate to the login screen
+  //     Navigator.pushNamedAndRemoveUntil(
+  //       context,
+  //       '/login', // Your login page route
+  //       (route) => false, // Remove all previous routes
+  //     );
+  //   } else {
+  //     // Show an error message
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Failed to logout. Please try again.')),
+  //     );
+  //   }
+  //   try {
+  //     await SharedPreferences.getInstance().then((prefs) async {
+  //       await prefs.remove('accessToken');
+  //       await prefs.remove('refreshToken');
+  //     });
+  //     print('Logged out');
+  //   } catch (e) {
+  //     print('Error during logout: $e');
+  //   }
+  // }
+Future<bool> logoutApi() async {
     try {
-      await SharedPreferences.getInstance().then((prefs) async {
-        await prefs.remove('accessToken');
-        await prefs.remove('refreshToken');
-      });
-      print('Logged out');
+      final response = await _dio.post(
+        'https://yourapi.com/logout',
+        options: Options(
+          validateStatus: (status) {
+            return status! < 500; // Accept all status codes below 500
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 403) {
+        print('Logout failed: Unauthorized request');
+        return false;
+      } else {
+        print('Logout failed: ${response.statusCode}');
+        return false;
+      }
     } catch (e) {
-      print('Error during logout: $e');
+      print('Logout failed: $e');
+      return false;
     }
   }
+//   Future<void> clearTokens() async {
+//     try {
+//       await SharedPreferences.getInstance().then((prefs) async {
+//         await prefs.remove('accessToken');
+//       });
+//       print('Cleared stored access token');
+//     } catch (e) {
+//       print('Error clearing stored access token: $e');
+//     }
+//   }
 
+//     if (response.statusCode == 200) {
+//       return true;
+//     } else {
+//       print('Failed to logout, status code: ${response.statusCode}');
+//       return false;
+//     }
+//   } on DioError catch (dioError) {
+//     print('DioError during logout: ${dioError.message}');
+//     return false;
+//   } catch (e) {
+//     print('Unexpected error during logout: $e');
+//     return false;
+//   }
+// }
+  
   Future<void> saveTokens(String accessToken, String refreshToken) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('accessToken', accessToken);

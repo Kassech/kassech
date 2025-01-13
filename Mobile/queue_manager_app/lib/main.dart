@@ -4,6 +4,7 @@ import 'package:queue_manager_app/config/provider/webSocket.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:queue_manager_app/core/util/notification.dart';
+import 'package:queue_manager_app/features/queue/domain/usecase/sendlocation.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -11,6 +12,10 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize location tracking on app start.
+  initializeLocation();
   runApp(const ProviderScope(child: MyApp()));
 }
 
