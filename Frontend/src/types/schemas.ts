@@ -111,3 +111,34 @@ export const ownerSchema = z.object({
     }),
 });
 
+
+export const queueManagerSchema = z.object({
+  firstname: z
+    .string()
+    .min(1, 'First name is required')
+    .max(50, 'First name must be less than 50 characters'),
+  lastname: z
+    .string()
+    .min(1, 'Last name is required')
+    .max(50, 'Last name must be less than 50 characters'),
+  email: z.string().email('Invalid email format').min(1, 'Email is required'),
+  phonenumber: z
+    .string()
+    .min(10, 'Phone number must be at least 10 digits')
+    .regex(/^\d+$/, 'Phone number must contain only digits'),
+  KebeleId: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Kebele id document is required',
+    })
+    .refine((file) => file && file.size <= 5 * 1024 * 1024, {
+      message: 'Kebele id document must be less than 5MB',
+    }),
+  profile: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Profile picture is required',
+    }),
+});
