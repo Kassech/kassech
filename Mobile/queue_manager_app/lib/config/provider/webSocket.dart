@@ -7,7 +7,7 @@ final webSocketProvider = StreamProvider.autoDispose<String>((ref) async* {
   final channel = WebSocketChannel.connect(
     Uri.parse('ws://10.0.2.2:5000/ws/queue_manager?token=$accessToken'),
   );
-
+  print('WebSocket connected');
   // Automatically close the WebSocket connection when the provider is disposed
   ref.onDispose(() => channel.sink.close());
 
