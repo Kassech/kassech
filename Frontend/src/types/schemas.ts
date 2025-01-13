@@ -1,14 +1,113 @@
 import { z } from "zod";
 export const driverSchema = z.object({
-    firstName: z.string().min(3, { message: "First name is required and cannot be empty" }),
-    lastName: z.string().min(3, { message: "Last name is required and cannot be empty" }),
-    email: z.string().email({ message: "Invalid email address format. Please enter a valid email" }),
-    phoneNumber: z
+    FirstName: z.string().min(3, { message: "First name is required and cannot be empty" }),
+    LastName: z.string().min(3, { message: "Last name is required and cannot be empty" }),
+    Email: z.string().email({ message: "Invalid email address format. Please enter a valid email" }),
+    PhoneNumber: z
         .string()
         .regex(/^\+251\d{9}$/, { message: "Invalid phone number format. It should start with +251 followed by 9 digits" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
-    role: z.number().min(1, { message: "Role is required and must be a positive number" }),
-    profile: z
+    Password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+    Role: z.number().min(1, { message: "Role is required and must be a positive number" }),
+    Profile: z
         .instanceof(File)
         .refine((file) => file.size !== 0, { message: "Please upload an image file. The file cannot be empty" }),
 });
+
+
+export const driverAttachmentSchema = z.object({
+    drivingLicense: z.instanceof(File).optional(),
+    nationalId: z.instanceof(File).optional(),
+    insuranceDocument: z.instanceof(File).optional(),
+    others: z.instanceof(File).optional(),
+  });
+
+  
+export const vehicleSchema = z.object({
+  carType: z.string().min(1, { message: 'Car type is required' }),
+  licenseNumber: z.string().min(1, { message: 'License number is required' }),
+  vin: z.string().min(1, { message: 'VIN is required' }),
+  make: z.string().min(1, { message: 'Make is required' }),
+  year: z
+    .string()
+    .regex(/^\d{4}$/, { message: 'Year must be a valid 4-digit year' }),
+  color: z.string().min(1, { message: 'Car color is required' }),
+
+  // For carPicture: nullable and optional
+  carPicture: z
+    .instanceof(File)
+    .nullable() // Allows the value to be null
+    .refine((file) => file === null || (file && file.size > 0), {
+      message: 'Car picture is required',
+    })
+    .optional(), // Makes the field optional
+
+  // Bollo: nullable and optional
+  bollo: z
+    .instanceof(File)
+    .nullable() // Allows null
+    .refine((file) => file === null || file.size > 0, {
+      message: 'Bollo document is required',
+    })
+    .refine((file) => file === null || file.size <= 5 * 1024 * 1024, {
+      message: 'Bollo document must be less than 5MB',
+    })
+    .optional(),
+
+  // Insurance: nullable and optional
+  insurance: z
+    .instanceof(File)
+    .nullable() // Allows null
+    .refine((file) => file === null || file.size > 0, {
+      message: 'Insurance document is required',
+    })
+    .refine((file) => file === null || file.size <= 5 * 1024 * 1024, {
+      message: 'Insurance document must be less than 5MB',
+    })
+    .optional(),
+
+  // Libre: nullable and optional
+  libre: z
+    .instanceof(File)
+    .nullable() // Allows null
+    .refine((file) => file === null || file.size > 0, {
+      message: 'Libre document is required',
+    })
+    .refine((file) => file === null || file.size <= 5 * 1024 * 1024, {
+      message: 'Libre document must be less than 5MB',
+    })
+    .optional(),
+});
+
+export const ownerSchema = z.object({
+  firstName: z.string().min(1, { message: 'First name is required' }),
+  lastName: z.string().min(1, { message: 'Last name is required' }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  phoneNumber: z
+    .string()
+    .regex(/^\+251\d{9}$/, { message: 'Invalid phone number format' }),
+  profilePicture: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Profile picture is required',
+    }),
+  KebeleId: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Kebele id document is required',
+    })
+    .refine((file) => file && file.size <= 5 * 1024 * 1024, {
+      message: 'Kebele id document must be less than 5MB',
+    }),
+  insurance: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Insurance document is required',
+    })
+    .refine((file) => file && file.size <= 5 * 1024 * 1024, {
+      message: 'Insurance document must be less than 5MB',
+    }),
+});
+

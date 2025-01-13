@@ -1,12 +1,6 @@
 import {create} from "zustand";
 import * as L from "leaflet";
 
-interface Station {
-  ID: number;
-  LocationName: string;
-  Latitude: number;
-  Longitude: number;
-}
 
 interface StationState {
   position: L.LatLng | null;
