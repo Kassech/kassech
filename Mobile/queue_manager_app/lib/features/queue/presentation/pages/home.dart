@@ -22,7 +22,7 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
     setState(() {
       _isDrawerOpen = !_isDrawerOpen;
     });
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {

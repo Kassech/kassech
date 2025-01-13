@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart';
+import 'package:queue_manager_app/core/util/token_storage.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends ConsumerWidget {
   final ApiService apiService = ApiService();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -56,9 +59,25 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () async {
-              await apiService.logout();
-              Navigator.pop(context); // Close the drawer
-              AppRouter.router.push('/signin'); // Close the drawer
+              try {
+                final isLoggedIn = await apiService.logoutApi();
+                if (isLoggedIn) {
+                  await storage.delete(key: 'accessToken');
+                  AppRouter.router.go('/signin');
+                } else {
+                  print('Logout failed');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Logout failed: Unauthorized request')),
+                  );
+                }
+              } catch (e) {
+                print('Logout failed: $e');
+                context.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Logout failed: $e')),
+                );
+              }
             },
           ),
         ],
