@@ -24,7 +24,7 @@ export const driverAttachmentSchema = z.object({
   
 export const vehicleSchema = z.object({
   carType: z.string().min(1, { message: 'Car type is required' }),
-  licenseNumber: z.string().min(1, { message: 'License number is required' }),
+  // licenseNumber: z.string().min(1, { message: 'License number is required' }),
   vin: z.string().min(1, { message: 'VIN is required' }),
   make: z.string().min(1, { message: 'Make is required' }),
   year: z
@@ -76,6 +76,10 @@ export const vehicleSchema = z.object({
       message: 'Libre document must be less than 5MB',
     })
     .optional(),
+  owner: z.object({
+    id: z.string().min(1, { message: 'Owner ID is required' }),
+    name: z.string().min(1, { message: 'Owner name is required' }),
+  }),
 });
 
 export const ownerSchema = z.object({
