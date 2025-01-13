@@ -41,7 +41,7 @@ func Connect() {
 	// Optionally, you can log the successful connection
 	log.Println("Successfully connected to the database")
 	REDIS = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "redis:6379",
 		Password: "",
 		DB:       0,
 		Protocol: 2,
