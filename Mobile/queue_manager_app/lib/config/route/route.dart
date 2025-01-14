@@ -10,6 +10,7 @@ import 'package:queue_manager_app/features/queue/presentation/pages/qmdetails.da
 import 'package:queue_manager_app/features/splash/splash.dart';
 
 class AppRouter {
+  
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     redirect: (context, state) async {
