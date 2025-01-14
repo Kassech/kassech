@@ -19,6 +19,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
+
 const StationsPage: React.FC = () => {
   const {
     position,
@@ -27,6 +28,7 @@ const StationsPage: React.FC = () => {
     setPosition,
     setLocationName,
     setEditingStationId,
+    clearLocations,
   } = useStationStore();
 
   const { data: stations, refetch } = useGetAllStations();
@@ -72,8 +74,9 @@ const StationsPage: React.FC = () => {
         {
           onSuccess: () => {
             refetch();
-            setPosition(null);
-            setLocationName('');
+            setPosition(null); // Clear position
+            setLocationName(''); // Clear location name
+            setEditingStationId(null); // Reset editing ID (if needed)
           },
         }
       );
@@ -95,8 +98,7 @@ const StationsPage: React.FC = () => {
           onSuccess: () => {
             refetch();
             setEditingStationId(null);
-            setPosition(null);
-            setLocationName('');
+            clearLocations();
           },
         }
       );
@@ -107,6 +109,7 @@ const StationsPage: React.FC = () => {
     { name: 'Home', href: '/' },
     { name: 'Stations', href: '/stations' },
   ];
+
   return (
     <div className="flex flex-col h-screen">
       <Header paths={paths} />
@@ -155,7 +158,6 @@ const StationsPage: React.FC = () => {
                   <Input
                     id="location"
                     value={LocationName}
-                    // readOnly
                     onChange={(e) => setLocationName(e.target.value)}
                     className="mb-4"
                   />
