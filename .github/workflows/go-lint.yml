@@ -30,4 +30,4 @@ jobs:
     - name: Run golangci-lint on Backend
       run: |
         cd Backend # Change to the Backend directory
-        golangci-lint run --config .golangci.yml # This assumes you have a golangci-lint config file in the Backend directory
+        golangci-lint run
