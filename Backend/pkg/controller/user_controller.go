@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"kassech/backend/pkg/constants"
+	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/domain"
 	"kassech/backend/pkg/mapper"
 	models "kassech/backend/pkg/model"
@@ -84,6 +85,13 @@ func (uc *UserController) Register(c *gin.Context) {
 	// Set the refresh token cookie
 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
 	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
+	// Save the access token to Redis
+	redisKey := fmt.Sprintf("session_token:%d", createdUser.ID)
+	err = database.REDIS.Set(c, redisKey, accessToken, service.AccessTokenExpiration).Err()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store access token"})
+		return
+	}
 
 	// Return the response with the created user and the token
 	c.JSON(http.StatusOK, gin.H{
@@ -141,6 +149,7 @@ func (uc *UserController) Login(c *gin.Context) {
 
 	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
+	database.REDIS.Set(c, fmt.Sprintf("session_token:%d", user.ID), accessToken, service.AccessTokenExpiration)
 
 	c.JSON(http.StatusOK, gin.H{
 		"user":        user,
@@ -240,10 +249,22 @@ func (uc *UserController) RefreshToken(c *gin.Context) {
 	}
 
 	// Call the service to refresh the token
-	accessToken, err := service.RefreshTokenService(refreshToken)
-	fmt.Println("accessToken:", accessToken)
+	accessToken, userId, err := service.RefreshTokenService(refreshToken)
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Println("accessToken:", accessToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	// Save the access token to Redis
+	redisKey := "session_token:" + userId
+	storedToken, err := database.REDIS.Get(c, redisKey).Result()
+	if err != nil || storedToken != accessToken {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Session not found or token mismatch"})
+		c.Abort()
 		return
 	}
 

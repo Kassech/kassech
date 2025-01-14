@@ -104,13 +104,9 @@ export function NavUser({ user }: { user: User }) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Languages />
-                Language
                 <LanguageSelector />
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Moon />
-                Theme
                 <ModeToggle />
               </DropdownMenuItem>
             </DropdownMenuGroup>

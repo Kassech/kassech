@@ -160,11 +160,12 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useUserStore((state) => state.user);
   console.log('🚀 ~ AppSidebar ~ user:', user);
-  const navigate = useNavigate()
+  console.log('🚀 ~ AppSidebar ~ user:', user);
+  const navigate = useNavigate();
 
-  if(!user){
-navigate('/login')
-return
+  if (!user) {
+    navigate('/login');
+    return;
   }
   return (
     <Sidebar variant="inset" {...props}>
@@ -192,9 +193,7 @@ return
         <NavProjects projects={data.projects} />
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
+      <SidebarFooter>{user ? <NavUser user={user} /> : null}</SidebarFooter>
     </Sidebar>
   );
 }
