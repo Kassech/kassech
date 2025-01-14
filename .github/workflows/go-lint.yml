@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - authentication
   push:
     branches:
       - main
