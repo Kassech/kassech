@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
-
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,33 +17,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useSearchUsers } from '../../services/carOwnerService';
 
-const frameworks = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
-  },
-];
+interface OwnerSearchProps {
+  onOwnerSelect: (id: string, name: string) => void;
+}
 
-export function OwnerSearch() {
+export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
   const [open, setOpen] = React.useState(false);
+  const [search, setSearch] = React.useState('');
   const [value, setValue] = React.useState('');
+
+  // Fetch users with role 1 and matching the search term
+  const { data, isLoading, isError } = useSearchUsers({
+    search,
+  });
+
+  // Extract users from data
+  const users = data?.users ?? [];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -56,36 +46,54 @@ export function OwnerSearch() {
           className="w-[200px] justify-between"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+            ? users.find((user) => user.ID.toString() === value)?.FirstName ??
+              'Select Owner'
             : 'Select Owner'}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search Owner..." />
+          <CommandInput
+            placeholder="Search Owner..."
+            value={search}
+            onValueChange={(value) => setSearch(value)}
+          />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup>
-              {frameworks.map((framework) => (
-                <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  {framework.label}
-                  <Check
-                    className={cn(
-                      'ml-auto',
-                      value === framework.value ? 'opacity-100' : 'opacity-0'
-                    )}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            {isLoading ? (
+              <CommandEmpty>Loading...</CommandEmpty>
+            ) : isError ? (
+              <CommandEmpty>Error fetching users.</CommandEmpty>
+            ) : users.length === 0 ? (
+              <CommandEmpty>No owner found.</CommandEmpty>
+            ) : (
+              <CommandGroup>
+                {users.map((user) => (
+                  <CommandItem
+                    key={user.ID}
+                    value={user.ID.toString()}
+                    onSelect={(currentValue) => {
+                      setValue(currentValue === value ? '' : currentValue);
+                      onOwnerSelect(
+                        user.ID.toString(),
+                        `${user.FirstName} ${user.LastName}`
+                      );
+                      setOpen(false);
+                    }}
+                  >
+                    {user.FirstName} {user.LastName}
+                    <Check
+                      className={cn(
+                        'ml-auto',
+                        value === user.ID.toString()
+                          ? 'opacity-100'
+                          : 'opacity-0'
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>
