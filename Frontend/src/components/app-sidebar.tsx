@@ -6,17 +6,14 @@ import {
   Bot,
   Command,
   Frame,
-  LifeBuoy,
   Map,
   PieChart,
-  Send,
   Settings2,
   SquareTerminal,
 } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
 import { NavProjects } from '@/components/nav-projects';
-import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
@@ -28,7 +25,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useUserStore } from '@/store/userStore';
-import { useNavigate, useNavigation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const data = {
   navMain: [
