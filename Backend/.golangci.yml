@@ -1,4 +1,3 @@
 - name: Run golangci-lint on Backend
   run: |
-    cd Backend
     golangci-lint run --config ../.golangci.yml
