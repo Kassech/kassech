@@ -193,6 +193,7 @@ func (uc *UserController) Login(c *gin.Context) {
 // If successful, it returns a success message and the created user object; otherwise, it returns an error response.
 func (uc *UserController) CreateUser(c *gin.Context) {
 	var user domain.User
+	user.Password = user.PhoneNumber
 	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -16,34 +16,55 @@ import { toast } from 'sonner';
 import { queueManagerSchema } from '@/types/schemas';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUploader from '@/components/image-uploader';
+import { useCreateUser } from '@/services/userService';
+import { QUEUE_MANAGER_ROLE } from '@/constants';
 
 export default function QueueManagerForm() {
   const form = useForm<z.infer<typeof queueManagerSchema>>({
     resolver: zodResolver(queueManagerSchema),
     mode: 'onBlur',
     defaultValues: {
-      firstname: '',
-      lastname: '',
-      email: '',
-      phonenumber: '',
-      KebeleId: null,
-      profile: null,
+      FirstName: '',
+      LastName: '',
+      Email: '',
+      PhoneNumber: '',
+      national_id: null,
+      Profile: null,
+      Role: QUEUE_MANAGER_ROLE,
     },
   });
+  const { mutateAsync } = useCreateUser(); // Use the custom mutation hook
+  const onSubmit = async (values: z.infer<typeof queueManagerSchema>) => {
+    console.log('Form values:', values); // Debug log
 
-  const onSubmit = (values: z.infer<typeof queueManagerSchema>) => {
-    console.log('Form values:', values); 
+    const formData = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      if (value instanceof File || typeof value === 'string') {
+        formData.append(key, value);
+      }
+    });
 
-    const queueManagerData = {
-      ...values,
-      profile: values.profile as File, 
-      kebeleId: values.KebeleId as File, 
-    };
+    console.log('Prepared form data for mutation:', formData); // Debug log
 
-    console.log('Prepared data:', queueManagerData); 
-    toast.success('Form data logged successfully!');
+    toast.promise(
+      (async () => {
+        const data = await mutateAsync(formData);
+        return data;
+      })(),
+      {
+        loading: 'Creating queue manager...',
+        success: 'Queue manager successfully created!',
+        error: (error) =>
+          error?.response?.data?.message || 'Submission failed.',
+      }
+    );
   };
 
+  const { errors } = form.formState;
+  console.log('🚀 ~ QueueManagerForm ~ errors:', errors);
+  const errorMessage = Object.values(errors)
+    .map((error) => error.message)
+    .join(', ');
 
   return (
     <Card className="py-8 px-4 w-full mx-2 flex flex-col items-center justify-center">
@@ -58,7 +79,7 @@ export default function QueueManagerForm() {
           <div className="col-span-full">
             <ImageUploader
               onImageUpload={(file: File | null) =>
-                form.setValue('profile', file)
+                form.setValue('Profile', file)
               }
               maxFileSize={2000000}
               acceptedFormats={{
@@ -70,7 +91,7 @@ export default function QueueManagerForm() {
           </div>
           <FormField
             control={form.control}
-            name="firstname"
+            name="FirstName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>First Name</FormLabel>
@@ -84,7 +105,7 @@ export default function QueueManagerForm() {
 
           <FormField
             control={form.control}
-            name="lastname"
+            name="LastName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
@@ -98,7 +119,7 @@ export default function QueueManagerForm() {
 
           <FormField
             control={form.control}
-            name="email"
+            name="Email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
@@ -112,7 +133,7 @@ export default function QueueManagerForm() {
 
           <FormField
             control={form.control}
-            name="phonenumber"
+            name="PhoneNumber"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
@@ -126,7 +147,7 @@ export default function QueueManagerForm() {
 
           <FormField
             control={form.control}
-            name="KebeleId"
+            name="national_id"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Kebele Id</FormLabel>
@@ -134,7 +155,7 @@ export default function QueueManagerForm() {
                   <Input
                     type="file"
                     onChange={(e) =>
-                      form.setValue('KebeleId', e.target.files?.[0] || null)
+                      form.setValue('national_id', e.target.files?.[0] || null)
                     }
                   />
                 </FormControl>
@@ -153,7 +174,7 @@ export default function QueueManagerForm() {
                 Submit
               </Button>
             </FormControl>
-            <FormMessage />
+            <FormMessage>{errorMessage}</FormMessage>
           </FormItem>
         </form>
       </Form>

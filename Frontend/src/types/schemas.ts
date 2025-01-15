@@ -1,5 +1,5 @@
 import { z } from "zod";
-export const driverSchema = z.object({
+export const userSchema = z.object({
     FirstName: z.string().min(3, { message: "First name is required and cannot be empty" }),
     LastName: z.string().min(3, { message: "Last name is required and cannot be empty" }),
     Email: z.string().email({ message: "Invalid email address format. Please enter a valid email" }),
@@ -9,10 +9,22 @@ export const driverSchema = z.object({
     Password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
     Role: z.number().min(1, { message: "Role is required and must be a positive number" }),
     Profile: z
-        .instanceof(File)
+        .instanceof(File).nullable()
         .refine((file) => file.size !== 0, { message: "Please upload an image file. The file cannot be empty" }),
 });
 
+export const driverSchema = userSchema.omit({ Password: true });
+
+export const queueManagerSchema = userSchema.omit({ Password: true }).extend({
+  national_id: z
+    .instanceof(File).nullable()
+    .refine((file) => file && file.size > 0, {
+      message: 'Kebele id document is required',
+    })
+    .refine((file) => file && file.size <= 5 * 1024 * 1024, {
+      message: 'Kebele id document must be less than 5MB',
+    }),
+});
 
 export const driverAttachmentSchema = z.object({
     drivingLicense: z.instanceof(File).optional(),
@@ -21,7 +33,7 @@ export const driverAttachmentSchema = z.object({
     others: z.instanceof(File).optional(),
   });
 
-  
+
 export const vehicleSchema = z.object({
   carType: z.string().min(1, { message: 'Car type is required' }),
   // licenseNumber: z.string().min(1, { message: 'License number is required' }),
@@ -112,37 +124,5 @@ export const ownerSchema = z.object({
     })
     .refine((file) => file && file.size <= 5 * 1024 * 1024, {
       message: 'Insurance document must be less than 5MB',
-    }),
-});
-
-
-export const queueManagerSchema = z.object({
-  firstname: z
-    .string()
-    .min(1, 'First name is required')
-    .max(50, 'First name must be less than 50 characters'),
-  lastname: z
-    .string()
-    .min(1, 'Last name is required')
-    .max(50, 'Last name must be less than 50 characters'),
-  email: z.string().email('Invalid email format').min(1, 'Email is required'),
-  phonenumber: z
-    .string()
-    .min(10, 'Phone number must be at least 10 digits')
-    .regex(/^\d+$/, 'Phone number must contain only digits'),
-  KebeleId: z
-    .instanceof(File)
-    .nullable()
-    .refine((file) => file && file.size > 0, {
-      message: 'Kebele id document is required',
-    })
-    .refine((file) => file && file.size <= 5 * 1024 * 1024, {
-      message: 'Kebele id document must be less than 5MB',
-    }),
-  profile: z
-    .instanceof(File)
-    .nullable()
-    .refine((file) => file && file.size > 0, {
-      message: 'Profile picture is required',
     }),
 });
