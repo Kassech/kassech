@@ -5,6 +5,7 @@ import 'package:queue_manager_app/features/auth/presentation/pages/forgotpasswor
 import 'package:queue_manager_app/features/auth/presentation/pages/signinpage.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/signuppage.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/home.dart';
+import 'package:queue_manager_app/features/queue/presentation/pages/noRoutesAssigned.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/profile.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/qmdetails.dart';
 import 'package:queue_manager_app/features/splash/splash.dart';
@@ -61,6 +62,8 @@ class AppRouter {
         name: '500',
         builder: (context, state) => const ErrorPage(),
       ),
+      GoRoute( path: '/noroutes', name: 'noroutes', builder: (context, state) => const NoRoutesAssignedYet() ),
+
       GoRoute(path: '/home/qmdetails', name: 'qmdetails', builder: (context, state) => const QueueManagerDetalils()),
 
       GoRoute(path: '*', builder: (context, state) => const ErrorPage()), 
