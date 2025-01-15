@@ -78,7 +78,6 @@ func RegisterUserSessionRoutes(router *gin.RouterGroup, controller *controller.U
 }
 
 func stationRoutes(api *gin.RouterGroup, ctrl *controller.StationController) {
-
 	stationApi := api.Group("/station")
 	{
 
@@ -97,7 +96,6 @@ func stationRoutes(api *gin.RouterGroup, ctrl *controller.StationController) {
 }
 
 func routeRoutes(api *gin.RouterGroup, ctrl *controller.RouteController) {
-
 	routeApi := api.Group("/routes")
 	{
 
@@ -110,7 +108,6 @@ func routeRoutes(api *gin.RouterGroup, ctrl *controller.RouteController) {
 }
 
 func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
-
 	api.POST("/register", ctrl.Register)
 
 	api.POST("/login", ctrl.Login)
@@ -132,7 +129,6 @@ func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 	api.PUT("/users/:id", ctrl.UpdateUser)
 
 	api.DELETE("/users/:id", ctrl.DeleteUser)
-
 }
 
 func RegisterUserRoleRoutes(api *gin.RouterGroup, ctrl *controller.UserRoleController) {
@@ -148,6 +144,7 @@ func RegisterUserRoleRoutes(api *gin.RouterGroup, ctrl *controller.UserRoleContr
 
 	}
 }
+
 func registerRoleRoutes(api *gin.RouterGroup, ctrl *controller.RoleController) {
 	roleApi := api.Group("/roles")
 	{
