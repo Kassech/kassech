@@ -7,7 +7,7 @@ import (
 type User struct {
 	ID                    uint   `json:"id"`
 	Email                 string `json:"email" binding:"required,email"`
-	Password              string `json:"password" binding:"required"` // Hashed password
+	Password              string `json:"password" ` // Hashed password
 	FirstName             string `json:"first_name" validate:"required"`
 	LastName              string `json:"last_name" validate:"required"`
 	ProfilePicture        *string

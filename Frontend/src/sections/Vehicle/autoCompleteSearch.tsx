@@ -19,15 +19,18 @@ import {
 } from '@/components/ui/popover';
 import { useSearchUsers } from '../../services/carOwnerService';
 
-export function OwnerSearch() {
+interface OwnerSearchProps {
+  onOwnerSelect: (id: string, name: string) => void;
+}
+
+export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const [value, setValue] = React.useState('');
 
   // Fetch users with role 1 and matching the search term
   const { data, isLoading, isError } = useSearchUsers({
-    search, 
-    // Only fetch users with role 1
+    search,
   });
 
   // Extract users from data
@@ -71,6 +74,10 @@ export function OwnerSearch() {
                     value={user.ID.toString()}
                     onSelect={(currentValue) => {
                       setValue(currentValue === value ? '' : currentValue);
+                      onOwnerSelect(
+                        user.ID.toString(),
+                        `${user.FirstName} ${user.LastName}`
+                      );
                       setOpen(false);
                     }}
                   >

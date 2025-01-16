@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"kassech/backend/pkg/config"
+	"kassech/backend/pkg/database"
+	"kassech/backend/pkg/delivery/socket"
+	"kassech/backend/pkg/service"
 	"log"
 	"os"
 	"time"
 
-	"kassech/backend/pkg/config"
-	"kassech/backend/pkg/database"
 	routes "kassech/backend/pkg/delivery/http"
-	"kassech/backend/pkg/delivery/socket"
-	"kassech/backend/pkg/service"
+
 	scripts "kassech/backend/script"
 
 	"github.com/gin-contrib/cors"

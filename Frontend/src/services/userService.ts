@@ -18,3 +18,13 @@ export const useUpdateUserData = () => {
     }
   );
 };
+
+// Create a new user
+export const useCreateUser = () => {
+  return useMutation(
+    async (newUser: unknown) => {
+      const response = await api.post('/users', newUser);
+      return response.data;
+    }
+  );
+};

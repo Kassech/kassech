@@ -2,7 +2,10 @@
 
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
+)
 
 type Driver struct {
 	gorm.Model
@@ -14,4 +17,9 @@ type Driver struct {
 	NationalIdPath     string
 	InsuranceDocPath   string
 	OtherFilePath      string
+}
+
+func (d Driver) Validate() error {
+	v := validator.New()
+	return v.Struct(d)
 }

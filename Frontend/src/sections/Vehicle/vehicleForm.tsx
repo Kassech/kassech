@@ -1,5 +1,4 @@
 'use client';
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,22 +23,38 @@ export default function VehicleForm() {
     resolver: zodResolver(vehicleSchema),
     mode: 'onBlur',
     defaultValues: {
-      carType: '', 
+      carType: '',
       vin: '',
       make: '',
       year: '',
       color: '#000000',
-      bollo: null, 
+      bollo: null,
       insurance: null,
       libre: null,
       carPicture: null,
+      owner: { id: '', name: '' },
     },
   });
 
   const onSubmit = (values: z.infer<typeof vehicleSchema>) => {
-    console.log('Form values:', values); // Debug log
-    toast.success(`Form submitted successfully 🎉`);
+    console.log('Form values:', values);
+
+    const vehicleData = {
+      ...values,
+      carPicture: values.carPicture as File,
+      bollo: values.bollo as File,
+      insurance: values.insurance as File,
+      libre: values.libre as File,
+    };
+
+    console.log('Prepared data:', vehicleData);
+    toast.success('Form data logged successfully!');
   };
+
+ const handleOwnerSelect = (id: string, name: string) => {
+   form.setValue('owner', { id, name }); 
+ };
+
 
   return (
     <Card className="py-8 px-4 w-full mx-2 flex flex-col items-center justify-center">
@@ -48,7 +63,11 @@ export default function VehicleForm() {
       </CardHeader>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={(e) => {
+            console.log('Before submission:', form.getValues());
+            form.handleSubmit(onSubmit)(e);
+             console.log('Form errors:', form.formState.errors);
+          }}
           className="grid grid-cols-1 gap-4 md:grid-cols-2"
         >
           <div className="col-span-full">
@@ -194,20 +213,20 @@ export default function VehicleForm() {
             )}
           />
           <div>
-            <OwnerSearch />
+            <OwnerSearch onOwnerSelect={handleOwnerSelect} />
           </div>
+
           <FormItem className="col-span-full">
             <FormControl>
               <Button
                 type="submit"
-                disabled={
-                  form.formState.isSubmitting || !form.formState.isValid
-                }
-                className="w-full rounded-lg"
+                disabled={form.formState.isSubmitting}
+                className="w-full rounded-lg mt-7"
               >
                 Submit
               </Button>
             </FormControl>
+            <FormMessage />
           </FormItem>
         </form>
       </Form>

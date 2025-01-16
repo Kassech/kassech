@@ -1,8 +1,10 @@
 package middleware
 
 import (
+	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/service"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -33,6 +35,20 @@ func AuthMiddleware() gin.HandlerFunc {
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			c.Abort()
+			return
+		}
+		userIDFloat64, ok := claims["user_id"].(float64)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID in token claims"})
+			c.Abort()
+			return
+		}
+		userID := strconv.FormatFloat(userIDFloat64, 'f', -1, 64)
+		redisKey := "session_token:" + userID
+		storedToken, err := database.REDIS.Get(c, redisKey).Result()
+		if err != nil || storedToken != tokenStr {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Session not found or token mismatch"})
 			c.Abort()
 			return
 		}
