@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 import 'package:queue_manager_app/features/auth/presentation/widgets/authButton.dart';
+import 'package:queue_manager_app/features/queue/presentation/provider/profileChangeProvider.dart';
 import 'package:queue_manager_app/features/queue/presentation/widgets/profileLists.dart';
-
+import 'package:image_picker/image_picker.dart';
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -23,10 +27,46 @@ class ProfilePage extends StatelessWidget {
               child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage('assets/test.jpg'),
+          const SizedBox(
+            height: 20,
           ),
+          CircleAvatar(
+            backgroundColor: Colors.black,
+            radius: 70,
+            child: Stack(
+              children: [
+                CircleAvatar(
+                  radius: 100,
+                  child: Image.asset(
+                    'assets/dummyProfile.jpg',
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: CircleAvatar(backgroundColor: Colors.black, child: Icon(Icons.camera_alt, color: Colors.white,)),
+                    onPressed: () {
+                      // Add functionality to pick a new profile picture
+                      final ref = ProviderScope.containerOf(context);
+                      final ImagePicker _picker = ImagePicker();
+                      _picker.pickImage(source: ImageSource.gallery).then((value) {
+                        if (value != null) {
+                          ref.read(profilePictureProvider)!.state = value.path;
+                        }
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),),
+           const SizedBox(
+            height: 20,
+          ),
+               
           const SizedBox(
             height: 20,
           ),
@@ -53,4 +93,8 @@ class ProfilePage extends StatelessWidget {
       ))),
     );
   }
+}
+
+extension on File {
+  set state(String state) {}
 }

@@ -166,7 +166,7 @@ class SigninPage extends StatelessWidget {
                         style: TextStyle(fontSize: 15, color: Colors.black54)),
                     TextButton(
                         onPressed: () {
-                          AppRouter.router.go('/signup');
+                          AppRouter.router.go('/selectRole');
                         },
                         child: Text(
                           'Sign Up',
