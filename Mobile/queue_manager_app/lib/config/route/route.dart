@@ -5,8 +5,10 @@ import 'package:queue_manager_app/features/auth/presentation/pages/forgotpasswor
 import 'package:queue_manager_app/features/auth/presentation/pages/signinpage.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/signuppage.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/home.dart';
+import 'package:queue_manager_app/features/queue/presentation/pages/noRoutesAssigned.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/profile.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/qmdetails.dart';
+import 'package:queue_manager_app/features/role/selectRole.dart';
 import 'package:queue_manager_app/features/splash/splash.dart';
 
 class AppRouter {
@@ -40,7 +42,7 @@ class AppRouter {
       GoRoute(
         path: '/signup',
         name: 'signup',
-        builder: (context, state) => SignUpPage(),
+        builder: (context, state) => SignUpPage(role: 2,),
       ),
       GoRoute(
         path: '/forgotpassword',
@@ -61,11 +63,15 @@ class AppRouter {
         name: '500',
         builder: (context, state) => const ErrorPage(),
       ),
+      GoRoute( path: '/noroutes', name: 'noroutes', builder: (context, state) => const NoRoutesAssignedYet() ),
+
       GoRoute(path: '/home/qmdetails', name: 'qmdetails', builder: (context, state) => const QueueManagerDetalils()),
 
       GoRoute(path: '*', builder: (context, state) => const ErrorPage()), 
 
       GoRoute(path: '/profile', builder: (context, state)=> const ProfilePage())
+      ,
+      GoRoute(path: '/selectRole', builder: (context, state)=>  SelectRolePage())
     ],
   );
 }

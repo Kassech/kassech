@@ -218,25 +218,7 @@ func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 	return nil
 }
 
-// DeleteUserByEmailOrPhoneNumber deletes a user by email or phone number
-func (us *UserService) DeleteUserByEmailOrPhoneNumber(email string, phone string) error {
-	existingUser, findErr := us.Repo.FindByEmailOrPhone(email, phone)
-	if findErr != nil {
-		return errors.New("user not found")
-	}
-
-	// Delete the user
-	deleteErr := us.Repo.Delete(existingUser, true)
-	if deleteErr != nil {
-		return deleteErr
-	}
-
-	return nil
-}
 func (us *UserService) CreateDriver(driver *models.Driver) (*models.Driver, error) {
 	return us.Repo.CreateDriver(driver)
 }
 
-func (us *UserService) CreateQM(driver *models.Driver) (*models.Driver, error) {
-	return us.Repo.CreateDriver(driver)
-}

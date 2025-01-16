@@ -1,9 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:queue_manager_app/core/util/token_storage.dart';
-import 'package:queue_manager_app/features/auth/domain/entitites/authStatus.dart';
-import 'package:queue_manager_app/features/auth/domain/usecase/authServiceProvider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -272,3 +267,6 @@ Future<bool> logoutApi() async {
     // print('Saved refresh token: $refreshToken');
   }
 }
+
+
+// Signup page api services

@@ -15,7 +15,8 @@ func SeedDB() {
 		{RoleName: "Admin", Description: "Administrator with full access"},
 		{RoleName: "Driver", Description: "Regular user with limited access"},
 		{RoleName: "QueueManager", Description: "Manager with elevated permissions"},
-		{RoleName: "CS", Description: "Manager with elevated permissions"},
+		{RoleName: "Owner", Description: "Manager with elevated permissions"},
+		{RoleName: "CustomerService", Description: "Manager with elevated permissions"},
 	}
 
 	for _, role := range roles {

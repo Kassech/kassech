@@ -150,7 +150,7 @@ export default function QueueManagerForm() {
             name="national_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Kebele Id</FormLabel>
+                <FormLabel>National Id</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
