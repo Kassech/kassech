@@ -1,6 +1,8 @@
 package domain
 
 import (
+	models "kassech/backend/pkg/model"
+
 	"mime/multipart"
 )
 
@@ -23,6 +25,8 @@ type User struct {
 	NationalId            *string               `json:"national_id"`
 	InsuranceDocument     *string               `json:"insurance_document"`
 	OtherDocument         *string               `json:"other_document"`
+	Permissions           []string              `json:"permissions,omitempty"`
+	Roles                 []models.UserRole     `json:"roles,omitempty"`
 }
 
 type LoginResponse struct {

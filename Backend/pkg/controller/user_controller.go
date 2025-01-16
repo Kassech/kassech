@@ -107,7 +107,7 @@ func (uc *UserController) Register(c *gin.Context) {
 	}
 
 	// Call the service with the user and role
-	accessToken, refreshToken, err := uc.Service.GenerateAuthentication(insertedUser)
+	domainUser, accessToken, refreshToken, err := uc.Service.GenerateAuthentication(insertedUser)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -116,6 +116,7 @@ func (uc *UserController) Register(c *gin.Context) {
 	// Set the refresh token cookie
 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
 	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
+
 	// Save the access token to Redis
 	redisKey := fmt.Sprintf("session_token:%d", insertedUser.ID)
 	err = database.REDIS.Set(c, redisKey, accessToken, service.AccessTokenExpiration).Err()
@@ -127,7 +128,7 @@ func (uc *UserController) Register(c *gin.Context) {
 	// Return the response with the created user and the token
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "registration successful",
-		"user":        insertedUser,
+		"user":        domainUser,
 		"accessToken": accessToken,
 	})
 }

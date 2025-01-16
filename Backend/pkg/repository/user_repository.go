@@ -44,8 +44,6 @@ func (ur *UserRepository) CreateDriver(driver *models.Driver) (*models.Driver, e
 	return driver, nil
 }
 
-
-
 // FindByEmailOrPhone searches for a user by either email or phone number
 func (ur *UserRepository) FindByEmailOrPhone(email string, phone string) (*models.User, error) {
 	var user models.User
@@ -163,4 +161,26 @@ func (ur *UserRepository) SaveNotificationToken(userID uint, token string, devic
 	}
 
 	return nil
+}
+
+// GetPermissionsByUserID gets a list of permissions based on a user ID
+func (ur *UserRepository) GetPermissionsByUserID(userID uint) ([]string, error) {
+	var permissions []models.Permission
+
+	err := database.DB.Model(&models.UserRole{}).
+		Select("DISTINCT p.*").
+		Joins("JOIN user_roles AS ur2 ON ur2.user_id = ?", userID).
+		Joins("JOIN role_permissions AS rp ON rp.role_id = ur2.role_id").
+		Joins("JOIN permissions AS p ON p.id = rp.permission_id").
+		Find(&permissions).Error
+	if err != nil {
+		return nil, err
+	}
+
+	permissionList := make([]string, len(permissions))
+	for i, p := range permissions {
+		permissionList[i] = p.PermissionName
+	}
+
+	return permissionList, nil
 }
