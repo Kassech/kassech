@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"kassech/backend/pkg/domain"
+	"kassech/backend/pkg/mapper"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/repository"
 
@@ -46,22 +48,29 @@ func (us *UserService) CreateUser(user *models.User, role uint) (*models.User, e
 }
 
 // GenerateAuthentication generates an access token and a refresh token for a user
-func (us *UserService) GenerateAuthentication(user *models.User) (string, string, error) {
+func (us *UserService) GenerateAuthentication(user *models.User) (*domain.User, string, string, error) {
 	// Make sure the user exists
 	existingUser, err := us.Repo.FindByEmailOrPhone(user.Email, user.PhoneNumber)
 	if err != nil {
-		return "", "", errors.New("invalid credentials")
+		return nil, "", "", errors.New("invalid credentials")
 	}
-
-	user = existingUser
 
 	// Generate the JWT tokens
-	accessToken, refreshToken, err := GenerateToken(user.ID)
+	domainUser := mapper.ToDomainUser(existingUser)
+	userPermissions, err := us.Repo.GetPermissionsByUserID(user.ID)
+	fmt.Println("userPermissions:", userPermissions)
 	if err != nil {
-		return "", "", errors.New("failed to generate token")
+		domainUser.Permissions = []string{}
+	} else {
+		domainUser.Permissions = userPermissions
 	}
 
-	return accessToken, refreshToken, nil
+	accessToken, refreshToken, err := GenerateToken(user.ID)
+	if err != nil {
+		return nil, "", "", errors.New("failed to generate token")
+	}
+
+	return domainUser, accessToken, refreshToken, nil
 }
 
 // SaveNotificationToken saves the notification token for a user
@@ -76,7 +85,7 @@ func (us *UserService) SaveNotificationToken(userID uint, token string, device_i
 }
 
 // Login handles the user login
-func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*models.User, string, string, error) {
+func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*domain.User, string, string, error) {
 	user, err := us.Repo.FindByEmailOrPhone(emailOrPhone, emailOrPhone)
 	if err != nil {
 		return nil, "", "", errors.New("invalid credentials")
@@ -85,6 +94,16 @@ func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*m
 	// Compare password hash with the stored hash
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, "", "", errors.New("invalid credentials")
+	}
+
+	// Convert the model to domain
+	domainUser := mapper.ToDomainUser(user)
+	userPermissions, err := us.Repo.GetPermissionsByUserID(user.ID)
+	fmt.Println("userPermissions:", userPermissions)
+	if err != nil {
+		domainUser.Permissions = []string{}
+	} else {
+		domainUser.Permissions = userPermissions
 	}
 
 	// Generate the JWT tokens
@@ -98,7 +117,7 @@ func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*m
 	// Log the login event
 	us.LogLoginEvent(user, r)
 
-	return user, accessToken, refreshToken, nil
+	return domainUser, accessToken, refreshToken, nil
 }
 
 // LogLoginEvent logs the login event for a user
@@ -199,31 +218,7 @@ func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 	return nil
 }
 
-<<<<<<< HEAD
-=======
-// DeleteUserByEmailOrPhoneNumber deletes a user by email or phone number
-func (us *UserService) DeleteUserByEmailOrPhoneNumber(email string, phone string) error {
-	existingUser, findErr := us.Repo.FindByEmailOrPhone(email, phone)
-	if findErr != nil {
-		return errors.New("user not found")
-	}
-
-	// Delete the user
-	deleteErr := us.Repo.Delete(existingUser, true)
-	if deleteErr != nil {
-		return deleteErr
-	}
-
-	return nil
-}
->>>>>>> 4ba6269097128baecc7f69a12dffd39bd0872463
 func (us *UserService) CreateDriver(driver *models.Driver) (*models.Driver, error) {
 	return us.Repo.CreateDriver(driver)
 }
 
-<<<<<<< HEAD
-=======
-func (us *UserService) CreateQM(driver *models.Driver) (*models.Driver, error) {
-	return us.Repo.CreateDriver(driver)
-}
->>>>>>> 4ba6269097128baecc7f69a12dffd39bd0872463

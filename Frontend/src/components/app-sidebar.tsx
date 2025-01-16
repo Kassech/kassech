@@ -25,11 +25,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useUserStore } from '@/store/userStore';
-<<<<<<< HEAD
-import { useNavigate, useNavigation } from 'react-router-dom';
-=======
 import { useNavigate } from 'react-router-dom';
->>>>>>> 4ba6269097128baecc7f69a12dffd39bd0872463
 
 const data = {
   navMain: [
@@ -161,20 +157,12 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useUserStore((state) => state.user);
   console.log('🚀 ~ AppSidebar ~ user:', user);
-<<<<<<< HEAD
-  const navigate = useNavigate()
-
-  if(!user){
-navigate('/login')
-return
-=======
   console.log('🚀 ~ AppSidebar ~ user:', user);
   const navigate = useNavigate();
 
   if (!user) {
     navigate('/login');
     return;
->>>>>>> 4ba6269097128baecc7f69a12dffd39bd0872463
   }
   return (
     <Sidebar variant="inset" {...props}>
