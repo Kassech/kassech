@@ -24,8 +24,34 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController fathersNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  bool _validateEmail(String input) {
+    final regex = RegExp(
+        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
+    return regex.hasMatch(input);
+  }
+
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  // ..text = '+251'
+  // ..selection = const TextSelection(baseOffset: 3, extentOffset: 3);
+
+  // bool _validatePhoneNumber(String input) {
+  //   final regex = RegExp(r'^\+251\d+$');
+  //   return regex.hasMatch(input);
+  // }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    phoneController.addListener(() {
+      // if (!_validatePhoneNumber(phoneController.text)) {
+      //   phoneController.text = '+251';
+      //   phoneController.selection =
+      //       const TextSelection(baseOffset: 3, extentOffset: 3);
+      // }
+    });
+  }
+
   final TextEditingController kebeleIdController = TextEditingController();
   final TextEditingController queueManagerIdController =
       TextEditingController();
@@ -65,12 +91,12 @@ class _SignUpPageState extends State<SignUpPage> {
           await MultipartFile.fromFile(kebeleId.path!, filename: kebeleId.name),
       'Profile': await MultipartFile.fromFile(profilePicture.path!,
           filename: profilePicture.name),
-      if (widget.role == 3)
-        if (widget.role == 2)
+      if (widget.role == 2)
+        if (widget.role == 4)
           'DrivingLicenseFile': await MultipartFile.fromFile(
               drivingLicenseFile!.path!,
               filename: drivingLicenseFile.name),
-      if (widget.role == 2)
+      if (widget.role == 4)
         'InsuranceDocumentFile': await MultipartFile.fromFile(
             insuranceDocumentFile!.path!,
             filename: insuranceDocumentFile.name),
@@ -98,7 +124,11 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(onPressed: (){AppRouter.router.go('/signin');}, icon: Icon(Icons.arrow_back)),
+        leading: IconButton(
+            onPressed: () {
+              AppRouter.router.go('/signin');
+            },
+            icon: Icon(Icons.arrow_back)),
         backgroundColor: Colors.white,
       ),
       body: Padding(
@@ -141,7 +171,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       labelText: 'Password',
                       controller: passwordController,
                       hintText: 'Password',
-                      // obscureText: true,
                     ),
                     const SizedBox(height: 10),
                     MyTextField(
@@ -164,16 +193,16 @@ class _SignUpPageState extends State<SignUpPage> {
                     if (files['profilePicture'] != null)
                       Text(
                           'Selected Profile Picture: ${files['profilePicture']!.name}'),
-                    if (widget.role == 3) ...[
-                      FileSelectorWidget(
-                        onPressed: () => pickFile('queueManagerId', ref),
-                        label: 'Upload Queue Manager ID',
-                      ),
-                      if (files['queueManagerId'] != null)
-                        Text(
-                            'Selected Queue Manager ID file: ${files['queueManagerId']!.name}'),
-                    ],
-                    if (widget.role == 2) ...[
+                    // if (widget.role == 3) ...[
+                    //   FileSelectorWidget(
+                    //     onPressed: () => pickFile('queueManagerId', ref),
+                    //     label: 'Upload Queue Manager ID',
+                    //   ),
+                    //   if (files['queueManagerId'] != null)
+                    //     Text(
+                    //         'Selected Queue Manager ID file: ${files['queueManagerId']!.name}'),
+                    // ],
+                    if (widget.role == 2|| widget.role == 4) ...[
                       FileSelectorWidget(
                         onPressed: () => pickFile('drivingLicense', ref),
                         label: 'Upload Driving License',

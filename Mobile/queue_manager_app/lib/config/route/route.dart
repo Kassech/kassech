@@ -12,7 +12,6 @@ import 'package:queue_manager_app/features/role/selectRole.dart';
 import 'package:queue_manager_app/features/splash/splash.dart';
 
 class AppRouter {
-  
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     redirect: (context, state) async {
@@ -40,10 +39,12 @@ class AppRouter {
         builder: (context, state) => SigninPage(),
       ),
       GoRoute(
-        path: '/signup',
-        name: 'signup',
-        builder: (context, state) => SignUpPage(role: 2,),
-      ),
+          path: '/signup',
+          name: 'signup',
+          builder: (context, state) {
+            final roleId = state.extra as int;
+            return SignUpPage(role: roleId);
+          }),
       GoRoute(
         path: '/forgotpassword',
         builder: (context, state) => ForgotPassword(),
@@ -63,15 +64,19 @@ class AppRouter {
         name: '500',
         builder: (context, state) => const ErrorPage(),
       ),
-      GoRoute( path: '/noroutes', name: 'noroutes', builder: (context, state) => const NoRoutesAssignedYet() ),
-
-      GoRoute(path: '/home/qmdetails', name: 'qmdetails', builder: (context, state) => const QueueManagerDetalils()),
-
-      GoRoute(path: '*', builder: (context, state) => const ErrorPage()), 
-
-      GoRoute(path: '/profile', builder: (context, state)=> const ProfilePage())
-      ,
-      GoRoute(path: '/selectRole', builder: (context, state)=>  SelectRolePage())
+      GoRoute(
+          path: '/noroutes',
+          name: 'noroutes',
+          builder: (context, state) => const NoRoutesAssignedYet()),
+      GoRoute(
+          path: '/home/qmdetails',
+          name: 'qmdetails',
+          builder: (context, state) => const QueueManagerDetalils()),
+      GoRoute(path: '*', builder: (context, state) => const ErrorPage()),
+      GoRoute(
+          path: '/profile', builder: (context, state) => const ProfilePage()),
+      GoRoute(
+          path: '/selectRole', builder: (context, state) => SelectRolePage())
     ],
   );
 }
