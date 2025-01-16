@@ -34,33 +34,49 @@ class _SelectRolePageState extends State<SelectRolePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
-        child: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(5),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Select a Role',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-            child: DropdownButton<String>(
-              value: selectedRole,
-              hint: Text('Choose a role'),
-              items: roles.map((String role) {
-                return DropdownMenuItem<String>(
-                  value: role,
-                  child: Text(role),
-                );
-              }).toList(),
-              onChanged: (String? newRole) {
-                setState(() {
-                  selectedRole = newRole;
-                });
-              },
-              style: TextStyle(color: Colors.black),
-              focusColor: Colors.black,
-              icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-              dropdownColor: Colors.white,
-              isExpanded: true,
+            const SizedBox(height: 20),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: DropdownButton<String>(
+                value: selectedRole,
+                hint: Text('Choose a role'),
+                items: roles.map((String role) {
+                  return DropdownMenuItem<String>(
+                    
+                    value: role,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Adjust padding as needed(8.0),
+                      child: Text(role, style: TextStyle(fontSize: 16),),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newRole) {
+                  setState(() {
+                    selectedRole = newRole;
+                  });
+                },
+                style: TextStyle(color: Colors.black),
+                focusColor: Colors.black,
+                icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                dropdownColor: Colors.white,
+                isExpanded: true,
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
