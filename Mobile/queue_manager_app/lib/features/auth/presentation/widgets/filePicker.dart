@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class FileSelectorWidget extends StatefulWidget {
   final String label; // The label to differentiate the file selector
 
-  const FileSelectorWidget({super.key, required this.label});
+  const FileSelectorWidget({super.key, required this.label, required Future<void> Function() onPressed});
 
   @override
   _FileSelectorWidgetState createState() => _FileSelectorWidgetState();
@@ -52,9 +52,16 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
                   Text(
                     _selectedFilePath == null
                         ? 'Select a file'
-                        : _selectedFilePath!
-                            .split('/')
-                            .last, // Show file name if selected
+                        : _selectedFilePath != null
+                            ? _selectedFilePath!
+                                .split('/')
+                                .last
+                                .length > 10
+                                ? '${_selectedFilePath!.split('/').last.substring(0, 10)}...'
+                                : _selectedFilePath!
+                                    .split('/')
+                                    .last // Show file name if selected
+                            : 'Select a file',
                     style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
                   const Icon(Icons.attach_file, color: Colors.grey),

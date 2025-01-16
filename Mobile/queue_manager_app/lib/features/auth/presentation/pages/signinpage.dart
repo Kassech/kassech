@@ -13,7 +13,7 @@ class SigninPage extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
 
 //private instatiation of the authservice
-  final ApiService _apiService = ApiService();
+  final  _apiService = ApiService();
 
 // Extract the refresh token from cookies
   String? extractRefreshToken(String cookies) {
@@ -56,13 +56,19 @@ class SigninPage extends StatelessWidget {
         }
         await _apiService.saveTokens(accessToken, refreshToken.toString());
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login successful')));
+        AppRouter.router.go('/home');
         print(accessToken);
         print(refreshToken);
 
         // Send the access token to the backend
         await _apiService.sendTokensToBackend(
             accessToken, refreshToken.toString());
-        AppRouter.router.go('/home');
+        // final user = await _apiService.getUser(accessToken);
+        // if (user.routes.isNotEmpty) {
+        //   AppRouter.router.go('/home');
+        // } else {
+        //   AppRouter.router.go('/noroutes');
+        // }
         // Get notifications
         // await _apiService.getNotifications(accessToken);
       } else {
@@ -160,7 +166,7 @@ class SigninPage extends StatelessWidget {
                         style: TextStyle(fontSize: 15, color: Colors.black54)),
                     TextButton(
                         onPressed: () {
-                          AppRouter.router.go('/signup');
+                          AppRouter.router.go('/selectRole');
                         },
                         child: Text(
                           'Sign Up',
