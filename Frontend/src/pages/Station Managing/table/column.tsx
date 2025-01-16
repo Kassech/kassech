@@ -39,13 +39,20 @@ export const columns: ColumnDef<Station>[] = [
     id: 'actions',
     cell: ({ row }) => {
       const station = row.original;
-      const handleDeleteStation = (id: number) => {
-        deleteStationMutation.mutate(id);
-      };
-
       const deleteStationMutation = useDeleteStation();
       const { setPosition, setLocationName, setEditingStationId } =
         useStationStore();
+
+      const handleEditStation = () => {
+        setEditingStationId(station.ID);
+        setPosition(new L.LatLng(station.Latitude, station.Longitude));
+        setLocationName(station.LocationName);
+      };
+
+      const handleDeleteStation = () => {
+        deleteStationMutation.mutate(station.ID);
+      };
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -57,22 +64,16 @@ export const columns: ColumnDef<Station>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                setEditingStationId(station.ID);
-                setPosition(new L.LatLng(station.Latitude, station.Longitude));
-                setLocationName(station.LocationName);
-              }}
-            >
+            <DropdownMenuItem onClick={handleEditStation}>
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDeleteStation(station.ID)}>
+            <DropdownMenuItem onClick={handleDeleteStation}>
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
     },
-    size: 80, // Define column width for actions
+    size: 80,
   },
 ];

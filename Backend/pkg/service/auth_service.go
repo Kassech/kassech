@@ -99,10 +99,10 @@ func GenerateToken(userID uint) (string, string, error) {
 }
 
 // RefreshTokenService is used to refresh an expired access token using a valid refresh token
-func RefreshTokenService(refreshToken string) (string, error) {
+func RefreshTokenService(refreshToken string) (string, string, error) {
 	// Ensure that the JWT secret is initialized
 	if JwtSecret == "" {
-		return "", errors.New("JWT secret not initialized")
+		return "", "", errors.New("JWT secret not initialized")
 	}
 
 	// Parse and validate the refresh token
@@ -113,7 +113,7 @@ func RefreshTokenService(refreshToken string) (string, error) {
 
 	// Check for errors in parsing or invalid expiration
 	if err != nil || claims["exp"] == nil || time.Now().Unix() > int64(claims["exp"].(float64)) {
-		return "", errors.New("invalid or expired refresh token")
+		return "", "", errors.New("invalid or expired refresh token")
 	}
 
 	// Extract the user ID from the refresh token
@@ -129,9 +129,9 @@ func RefreshTokenService(refreshToken string) (string, error) {
 		accessToken, _, err := GenerateToken(userID)
 		fmt.Println("accessToken, _, err:", accessToken, err)
 		if err != nil {
-			return "", errors.New("failed to cache refresh token in Redis")
+			return "", "", errors.New("failed to cache refresh token in Redis")
 		}
-		return accessToken, nil
+		return accessToken, fmt.Sprintf("%d", int(userID)), nil
 
 	}
 
@@ -143,23 +143,23 @@ func RefreshTokenService(refreshToken string) (string, error) {
 	WHERE token = ? AND is_active = TRUE AND expires_at > NOW()
 `, refreshToken).Scan(&isValid).Error
 	if err != nil || !isValid {
-		return "", errors.New("refresh token is invalid or expired")
+		return "", "", errors.New("refresh token is invalid or expired")
 	}
 
 	// Cache token in Redis for future requests
 	err = database.REDIS.Set(ctx, redisKey, "active", 24*time.Hour).Err()
 	if err != nil {
-		return "", errors.New("failed to cache refresh token in Redis")
+		return "", "", errors.New("failed to cache refresh token in Redis")
 	}
 
 	// Generate a new access token
 	accessToken, _, err := GenerateToken(userID)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	// Return the newly generated access token
-	return accessToken, nil
+	return accessToken, fmt.Sprintf("%d", int(userID)), nil
 }
 
 // ValidateToken validates the given JWT token and returns the user information if valid

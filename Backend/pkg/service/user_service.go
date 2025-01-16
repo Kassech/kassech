@@ -45,41 +45,23 @@ func (us *UserService) CreateUser(user *models.User, role uint) (*models.User, e
 	return user, nil
 }
 
-// Register a new user
-func (us *UserService) Register(user *models.User, role uint) (*models.User, string, string, error) {
-	if err := user.Validate(); err != nil {
-		return nil, "", "", err
-	}
-
-	existingUser, _ := us.Repo.FindByEmailOrPhone(user.Email, user.PhoneNumber)
-	if existingUser != nil {
-		// User already exists
-		return nil, "", "", errors.New("user with that email or phone number already exists")
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+// GenerateAuthentication generates an access token and a refresh token for a user
+func (us *UserService) GenerateAuthentication(user *models.User) (string, string, error) {
+	// Make sure the user exists
+	existingUser, err := us.Repo.FindByEmailOrPhone(user.Email, user.PhoneNumber)
 	if err != nil {
-		return nil, "", "", errors.New("failed to hash password")
+		return "", "", errors.New("invalid credentials")
 	}
-	user.Password = string(hashedPassword)
 
-	// Create the user in the database
-	user, err = us.Repo.Create(user, role)
-
-	if err != nil {
-		return nil, "", "", err
-	}
+	user = existingUser
 
 	// Generate the JWT tokens
 	accessToken, refreshToken, err := GenerateToken(user.ID)
 	if err != nil {
-		return nil, "", "", errors.New("failed to generate token")
+		return "", "", errors.New("failed to generate token")
 	}
 
-	// Log the registration login event
-	us.LogLoginEvent(user, nil) // No IP or UserAgent needed during registration
-
-	return user, accessToken, refreshToken, nil
+	return accessToken, refreshToken, nil
 }
 
 // SaveNotificationToken saves the notification token for a user
@@ -217,7 +199,31 @@ func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 	return nil
 }
 
+<<<<<<< HEAD
+=======
+// DeleteUserByEmailOrPhoneNumber deletes a user by email or phone number
+func (us *UserService) DeleteUserByEmailOrPhoneNumber(email string, phone string) error {
+	existingUser, findErr := us.Repo.FindByEmailOrPhone(email, phone)
+	if findErr != nil {
+		return errors.New("user not found")
+	}
+
+	// Delete the user
+	deleteErr := us.Repo.Delete(existingUser, true)
+	if deleteErr != nil {
+		return deleteErr
+	}
+
+	return nil
+}
+>>>>>>> 4ba6269097128baecc7f69a12dffd39bd0872463
 func (us *UserService) CreateDriver(driver *models.Driver) (*models.Driver, error) {
 	return us.Repo.CreateDriver(driver)
 }
 
+<<<<<<< HEAD
+=======
+func (us *UserService) CreateQM(driver *models.Driver) (*models.Driver, error) {
+	return us.Repo.CreateDriver(driver)
+}
+>>>>>>> 4ba6269097128baecc7f69a12dffd39bd0872463

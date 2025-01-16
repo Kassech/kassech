@@ -1,16 +1,16 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"kassech/backend/pkg/constants"
+	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/domain"
 	"kassech/backend/pkg/mapper"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/service"
 	"kassech/backend/pkg/utils"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 	"time"
@@ -24,58 +24,90 @@ type UserController struct {
 }
 
 func (uc *UserController) Register(c *gin.Context) {
-	var user models.User
-
-	// Read the request body
-	body, _ := io.ReadAll(c.Request.Body)
-	// Extract and upload profile picture
-	file, _, err := c.Request.FormFile("profile_picture")
-	fmt.Println("file:", file)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Profile picture is required"})
-		return
-	}
-	defer file.Close()
-
-	// profilePictureName, err := utils.UploadFile(c.Request, "profile_picture", constants.ProfilePictureDirectory)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload profile picture"})
-	// 	return
-	// }
-
-	// // Assign the profile picture location to the user
-	// user.ProfilePicture = &profilePictureName
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-		return
-	}
-
-	// Parse the body to extract the role
-	var requestBody map[string]interface{}
-	if err := json.Unmarshal(body, &requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
-		return
-	}
-
-	// Check if "role" exists and is valid
-	roleFloat, ok := requestBody["role"].(float64)
-	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Role is required and must be a valid number"})
-		return
-	}
-
-	// Convert the role to uint
-	role := uint(roleFloat)
-
-	// Rebind the body for user struct parsing
-	if err := json.Unmarshal(body, &user); err != nil {
+	var user domain.User
+	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	uploadAndAssignPath := func(file *multipart.FileHeader, directory string, assign func(path string)) error {
+		if file != nil {
+			path, err := utils.UploadFile(file, directory)
+			if err != nil {
+				return err
+			}
+			assign(path)
+		}
+		return nil
+	}
+
+	if err := uploadAndAssignPath(user.ProfilePictureFile, constants.ProfilePictureDirectory, func(path string) {
+		user.ProfilePicture = &path
+	}); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save profile picture"})
+		return
+	}
+
+	user.IsVerified = false
+	userModel := mapper.ToGormUser(&user)
+
+	insertedUser, err := uc.Service.CreateUser(userModel, user.Role)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if user.Role == constants.DriverRoleID {
+		driverPaths := make(map[string]*string)
+
+		assignPath := func(key string, file *multipart.FileHeader, directory string) error {
+			if file != nil {
+				path, err := utils.UploadFile(file, directory)
+				if err != nil {
+					return err
+				}
+				driverPaths[key] = &path
+			}
+			return nil
+		}
+
+		if err := assignPath("driving_license", user.DrivingLicenseFile, constants.DrivingLicenseDirectory); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save driving license"})
+			return
+		}
+
+		if err := assignPath("national_id", user.NationalIdFile, constants.NationalIdDirectory); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save national ID"})
+			return
+		}
+
+		if err := assignPath("insurance_document", user.InsuranceDocumentFile, constants.InsuranceDocumentDirectory); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save insurance document"})
+			return
+		}
+
+		if err := assignPath("other_document", user.OtherFile, constants.OthersDirectory); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save other document"})
+			return
+		}
+
+		driver := models.Driver{
+			UserID:             insertedUser.ID,
+			Status:             "offline",
+			DrivingLicensePath: *driverPaths["driving_license"],
+			NationalIdPath:     *driverPaths["national_id"],
+			InsuranceDocPath:   *driverPaths["insurance_document"],
+			OtherFilePath:      *driverPaths["other_document"],
+		}
+
+		if _, err := uc.Service.CreateDriver(&driver); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
 	// Call the service with the user and role
-	createdUser, accessToken, refreshToken, err := uc.Service.Register(&user, role)
+	accessToken, refreshToken, err := uc.Service.GenerateAuthentication(insertedUser)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -84,11 +116,18 @@ func (uc *UserController) Register(c *gin.Context) {
 	// Set the refresh token cookie
 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
 	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
+	// Save the access token to Redis
+	redisKey := fmt.Sprintf("session_token:%d", insertedUser.ID)
+	err = database.REDIS.Set(c, redisKey, accessToken, service.AccessTokenExpiration).Err()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store access token"})
+		return
+	}
 
 	// Return the response with the created user and the token
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "registration successful",
-		"user":        createdUser,
+		"user":        insertedUser,
 		"accessToken": accessToken,
 	})
 }
@@ -141,88 +180,99 @@ func (uc *UserController) Login(c *gin.Context) {
 
 	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
+	database.REDIS.Set(c, fmt.Sprintf("session_token:%d", user.ID), accessToken, service.AccessTokenExpiration)
 
 	c.JSON(http.StatusOK, gin.H{
 		"user":        user,
 		"accessToken": accessToken,
 	})
 }
+
+// CreateUser handles the creation of a new user. It binds incoming JSON data to a User object,
+// uploads and assigns file paths for various user documents, and saves the user information to the database.
+// If successful, it returns a success message and the created user object; otherwise, it returns an error response.
 func (uc *UserController) CreateUser(c *gin.Context) {
 	var user domain.User
+	user.Password = user.PhoneNumber
 	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Save the profile picture file
-	if user.ProfilePictureFile != nil {
-		profilePicturePath, err := utils.UploadFile(user.ProfilePictureFile, constants.ProfilePictureDirectory)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save profile picture"})
-			return
+	uploadAndAssignPath := func(file *multipart.FileHeader, directory string, assign func(path string)) error {
+		if file != nil {
+			path, err := utils.UploadFile(file, directory)
+			if err != nil {
+				return err
+			}
+			assign(path)
 		}
-		user.ProfilePicture = &profilePicturePath
+		return nil
 	}
 
-	// Save other files (driving license, national ID, insurance document, others)
-	if user.DrivingLicenseFile != nil {
-		licensePath, err := utils.UploadFile(user.DrivingLicenseFile, constants.DrivingLicenseDirectory)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save driving license"})
-			return
-		}
-		user.DrivingLicense = &licensePath
+	if err := uploadAndAssignPath(user.ProfilePictureFile, constants.ProfilePictureDirectory, func(path string) {
+		user.ProfilePicture = &path
+	}); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save profile picture"})
+		return
 	}
 
-	if user.NationalIdFile != nil {
-		nationalIdPath, err := utils.UploadFile(user.NationalIdFile, constants.NationalIdDirectory)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save national ID"})
-			return
-		}
-		user.NationalId = &nationalIdPath
-	}
-
-	if user.InsuranceDocumentFile != nil {
-		insuranceDocPath, err := utils.UploadFile(user.InsuranceDocumentFile, constants.InsuranceDocumentDirectory)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save insurance document"})
-			return
-		}
-		user.InsuranceDocument = &insuranceDocPath
-	}
-
-	if user.OtherFile != nil {
-		otherFilePath, err := utils.UploadFile(user.OtherFile, constants.OthersDirectory)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save other document"})
-			return
-		}
-		user.OtherDocument = &otherFilePath
-	}
-
-	// Make user is verified to true
 	user.IsVerified = true
-	// Convert the domain user to GORM user
-	var userModel *models.User = mapper.ToGormUser(&user)
+	userModel := mapper.ToGormUser(&user)
 
 	insertedUser, err := uc.Service.CreateUser(userModel, user.Role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	driver := models.Driver{
-		UserID:             insertedUser.ID,
-		Status:             "offline",
-		DrivingLicensePath: *user.DrivingLicense,
-		NationalIdPath:     *user.NationalId,
-		InsuranceDocPath:   *user.InsuranceDocument,
-		OtherFilePath:      *user.OtherDocument,
-	}
 
-	if _, err := uc.Service.CreateDriver(&driver); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+	if user.Role == constants.DriverRoleID {
+		driverPaths := make(map[string]*string)
+
+		assignPath := func(key string, file *multipart.FileHeader, directory string) error {
+			if file != nil {
+				path, err := utils.UploadFile(file, directory)
+				if err != nil {
+					return err
+				}
+				driverPaths[key] = &path
+			}
+			return nil
+		}
+
+		if err := assignPath("driving_license", user.DrivingLicenseFile, constants.DrivingLicenseDirectory); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save driving license"})
+			return
+		}
+
+		if err := assignPath("national_id", user.NationalIdFile, constants.NationalIdDirectory); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save national ID"})
+			return
+		}
+
+		if err := assignPath("insurance_document", user.InsuranceDocumentFile, constants.InsuranceDocumentDirectory); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save insurance document"})
+			return
+		}
+
+		if err := assignPath("other_document", user.OtherFile, constants.OthersDirectory); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save other document"})
+			return
+		}
+
+		driver := models.Driver{
+			UserID:             insertedUser.ID,
+			Status:             "offline",
+			DrivingLicensePath: *driverPaths["driving_license"],
+			NationalIdPath:     *driverPaths["national_id"],
+			InsuranceDocPath:   *driverPaths["insurance_document"],
+			OtherFilePath:      *driverPaths["other_document"],
+		}
+
+		if _, err := uc.Service.CreateDriver(&driver); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -240,10 +290,22 @@ func (uc *UserController) RefreshToken(c *gin.Context) {
 	}
 
 	// Call the service to refresh the token
-	accessToken, err := service.RefreshTokenService(refreshToken)
-	fmt.Println("accessToken:", accessToken)
+	accessToken, userId, err := service.RefreshTokenService(refreshToken)
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Println("accessToken:", accessToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	// Save the access token to Redis
+	redisKey := "session_token:" + userId
+	storedToken, err := database.REDIS.Get(c, redisKey).Result()
+	if err != nil || storedToken != accessToken {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Session not found or token mismatch"})
+		c.Abort()
 		return
 	}
 
