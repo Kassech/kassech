@@ -10,7 +10,7 @@ export const userSchema = z.object({
     Role: z.number().min(1, { message: "Role is required and must be a positive number" }),
     Profile: z
         .instanceof(File).nullable()
-        .refine((file) => file.size !== 0, { message: "Please upload an image file. The file cannot be empty" }),
+        .refine((file) => file && file.size !== 0, { message: "Please upload an image file. The file cannot be empty" }),
 });
 
 export const driverSchema = userSchema.omit({ Password: true });
