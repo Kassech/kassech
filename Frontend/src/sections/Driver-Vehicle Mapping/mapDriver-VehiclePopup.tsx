@@ -24,23 +24,24 @@ export default function DialogDemo() {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Edit profile</DialogTitle>
+        <DialogTitle>Assign Driver</DialogTitle>
         <DialogDescription>
-          Make changes to your profile here. Click save when you're done.
+          Select a registered driver, assign a vehicle, and save or cancel the
+          changes.
         </DialogDescription>
       </DialogHeader>
-      <div className="grid gap-4 py-4">
+      <div className="grid gap-4 py-1">
         <form onSubmit={handleSubmit(onSubmit)}>
           {' '}
           {/* Add submit handler */}
           <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Name</Label>
+            <div className="flex flex-col space-y-2 w-full">
+              <Label htmlFor="name">Registered Driver</Label>
               <DriverDropDown onOwnerSelect={handleOwnerSelect} />{' '}
               {/* Capitalized */}
             </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="framework">Framework</Label>
+            <div className="flex flex-col space-y-2 pb-2">
+              <Label htmlFor="framework">Registered Vehicle</Label>
               <VehicleDropDown onOwnerSelect={handleOwnerSelect} />{' '}
               {/* Capitalized */}
             </div>

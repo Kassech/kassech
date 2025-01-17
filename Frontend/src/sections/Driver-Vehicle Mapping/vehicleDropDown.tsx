@@ -43,19 +43,19 @@ export default function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between"
         >
           {value
             ? users.find((user) => user.ID.toString() === value)?.FirstName ??
-              'Select Owner'
-            : 'Select Owner'}
+              'Select Vehicle'
+            : 'Select Vehicle'}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput
-            placeholder="Search Owner..."
+            placeholder="Search Vehicle..."
             value={search}
             onValueChange={(value) => setSearch(value)}
           />
@@ -63,9 +63,9 @@ export default function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
             {isLoading ? (
               <CommandEmpty>Loading...</CommandEmpty>
             ) : isError ? (
-              <CommandEmpty>Error fetching users.</CommandEmpty>
+              <CommandEmpty>Error fetching vehicle.</CommandEmpty>
             ) : users.length === 0 ? (
-              <CommandEmpty>No owner found.</CommandEmpty>
+              <CommandEmpty>No vehicle found.</CommandEmpty>
             ) : (
               <CommandGroup>
                 {users.map((user) => (
