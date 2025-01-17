@@ -56,18 +56,20 @@ export function NavUser({ user }: { user: User }) {
                 {user.ProfilePicture ? (
                   <AvatarImage
                     src={`${apiEndpoint}/${user.ProfilePicture}`}
-                    alt={`${user.FirstName} ${user.LastName}`}
+                    alt={`${user.first_name} ${user.last_name}`}
                   />
                 ) : (
                   <AvatarFallback className="rounded-lg">
-                    {user.FirstName.charAt(0)}
-                    {user.LastName.charAt(0)}
+                    {user.first_name.charAt(0)}
+                    {user.last_name.charAt(0)}
                   </AvatarFallback>
                 )}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.FirstName}</span>
-                <span className="truncate text-xs">{user.Email}</span>
+                <span className="truncate font-semibold">
+                  {user.first_name}
+                </span>
+                <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -84,20 +86,20 @@ export function NavUser({ user }: { user: User }) {
                   {user.ProfilePicture ? (
                     <AvatarImage
                       src={`${apiEndpoint}/${user.ProfilePicture}`}
-                      alt={`${user.FirstName} ${user.LastName}`}
+                      alt={`${user.first_name} ${user.last_name}`}
                     />
                   ) : (
                     <AvatarFallback className="rounded-lg">
-                      {user.FirstName.charAt(0)}
-                      {user.LastName.charAt(0)}
+                      {user.first_name.charAt(0)}
+                      {user.last_name.charAt(0)}
                     </AvatarFallback>
                   )}
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {user.FirstName}
+                    {user.first_name}
                   </span>
-                  <span className="truncate text-xs">{user.Email}</span>
+                  <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
