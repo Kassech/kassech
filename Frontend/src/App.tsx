@@ -24,6 +24,7 @@ import RolePermission from './pages/RolePermission';
 import { Toaster } from 'sonner';
 import DriverPage from './pages/driver';
 import RoutePage from './pages/route';
+import DriverVehicleMapping from './pages/Driver-VehicleMapping';
 
 function App() {
   return (
@@ -57,6 +58,10 @@ function App() {
             <Route path="/stations" element={<StationsPage />} />
             <Route path="/route" element={<RoutePage />} />
             <Route path="/rolepermission" element={<RolePermission />} />
+            <Route
+              path="/driverVehicleMap"
+              element={<DriverVehicleMapping />}
+            />
           </Route>
 
           {/* Catch-all route for 404 */}
