@@ -58,6 +58,14 @@ func (uc *UserController) Register(c *gin.Context) {
 	}
 
 	if user.Role == constants.DriverRoleID {
+
+		var driverDomain domain.Driver
+
+		if err := c.ShouldBind(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
 		driverPaths := make(map[string]*string)
 
 		assignPath := func(key string, file *multipart.FileHeader, directory string) error {
@@ -71,22 +79,22 @@ func (uc *UserController) Register(c *gin.Context) {
 			return nil
 		}
 
-		if err := assignPath("driving_license", user.DrivingLicenseFile, constants.DrivingLicenseDirectory); err != nil {
+		if err := assignPath("driving_license", driverDomain.DrivingLicenseFile, constants.DrivingLicenseDirectory); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save driving license"})
 			return
 		}
 
-		if err := assignPath("national_id", user.NationalIdFile, constants.NationalIdDirectory); err != nil {
+		if err := assignPath("national_id", driverDomain.NationalIdFile, constants.NationalIdDirectory); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save national ID"})
 			return
 		}
 
-		if err := assignPath("insurance_document", user.InsuranceDocumentFile, constants.InsuranceDocumentDirectory); err != nil {
+		if err := assignPath("insurance_document", driverDomain.InsuranceDocumentFile, constants.InsuranceDocumentDirectory); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save insurance document"})
 			return
 		}
 
-		if err := assignPath("other_document", user.OtherFile, constants.OthersDirectory); err != nil {
+		if err := assignPath("other_document", driverDomain.OtherFile, constants.OthersDirectory); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save other document"})
 			return
 		}
@@ -200,18 +208,7 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	uploadAndAssignPath := func(file *multipart.FileHeader, directory string, assign func(path string)) error {
-		if file != nil {
-			path, err := utils.UploadFile(file, directory)
-			if err != nil {
-				return err
-			}
-			assign(path)
-		}
-		return nil
-	}
-
-	if err := uploadAndAssignPath(user.ProfilePictureFile, constants.ProfilePictureDirectory, func(path string) {
+	if err := utils.UploadAndAssignPath(user.ProfilePictureFile, constants.ProfilePictureDirectory, func(path string) {
 		user.ProfilePicture = &path
 	}); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save profile picture"})
@@ -228,6 +225,11 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 	}
 
 	if user.Role == constants.DriverRoleID {
+		var driverDomain domain.Driver
+		if err := c.ShouldBind(&driverDomain); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		driverPaths := make(map[string]*string)
 
 		assignPath := func(key string, file *multipart.FileHeader, directory string) error {
@@ -241,22 +243,22 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 			return nil
 		}
 
-		if err := assignPath("driving_license", user.DrivingLicenseFile, constants.DrivingLicenseDirectory); err != nil {
+		if err := assignPath("driving_license", driverDomain.DrivingLicenseFile, constants.DrivingLicenseDirectory); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save driving license"})
 			return
 		}
 
-		if err := assignPath("national_id", user.NationalIdFile, constants.NationalIdDirectory); err != nil {
+		if err := assignPath("national_id", driverDomain.NationalIdFile, constants.NationalIdDirectory); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save national ID"})
 			return
 		}
 
-		if err := assignPath("insurance_document", user.InsuranceDocumentFile, constants.InsuranceDocumentDirectory); err != nil {
+		if err := assignPath("insurance_document", driverDomain.InsuranceDocumentFile, constants.InsuranceDocumentDirectory); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save insurance document"})
 			return
 		}
 
-		if err := assignPath("other_document", user.OtherFile, constants.OthersDirectory); err != nil {
+		if err := assignPath("other_document", driverDomain.OtherFile, constants.OthersDirectory); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save other document"})
 			return
 		}

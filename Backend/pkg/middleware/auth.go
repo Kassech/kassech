@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/service"
 	"net/http"
 	"strconv"
@@ -45,15 +44,30 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 		userID := strconv.FormatFloat(userIDFloat64, 'f', -1, 64)
-		redisKey := "session_token:" + userID
-		storedToken, err := database.REDIS.Get(c, redisKey).Result()
-		if err != nil || storedToken != tokenStr {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Session not found or token mismatch"})
+		role, ok := claims["role"].([]interface{})
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid role in token claims"})
 			c.Abort()
 			return
 		}
-
-		c.Set("userID", claims["user_id"])
+		var roles []string
+		for _, r := range role {
+			if roleStr, valid := r.(string); valid {
+				roles = append(roles, roleStr)
+			}
+		}
+		isAdmin := contains(roles, "Admin")
+		c.Set("isAdmin", isAdmin)
+		c.Set("userID", userID)
 		c.Next()
 	}
+}
+
+func contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
 }

@@ -163,24 +163,42 @@ func (ur *UserRepository) SaveNotificationToken(userID uint, token string, devic
 	return nil
 }
 
-// GetPermissionsByUserID gets a list of permissions based on a user ID
-func (ur *UserRepository) GetPermissionsByUserID(userID uint) ([]string, error) {
-	var permissions []models.Permission
+// GetPermissionsAndRolesByUserID gets a list of permissions and roles based on a user ID
+func (ur *UserRepository) GetPermissionsAndRolesByUserID(userID uint) ([]string, []string, error) {
+	var permissions []struct {
+		PermissionName string
+	}
+	var roles []struct {
+		RoleName string
+	}
 
 	err := database.DB.Model(&models.UserRole{}).
-		Select("DISTINCT p.*").
+		Select("DISTINCT p.permission_name").
 		Joins("JOIN user_roles AS ur2 ON ur2.user_id = ?", userID).
 		Joins("JOIN role_permissions AS rp ON rp.role_id = ur2.role_id").
 		Joins("JOIN permissions AS p ON p.id = rp.permission_id").
 		Find(&permissions).Error
 	if err != nil {
-		return nil, err
+		return nil, nil, err
+	}
+
+	err = database.DB.Model(&models.UserRole{}).
+		Select("DISTINCT r.role_name").
+		Joins("JOIN user_roles AS ur2 ON ur2.user_id = ?", userID).
+		Joins("JOIN roles AS r ON r.id = ur2.role_id").
+		Find(&roles).Error
+	if err != nil {
+		return nil, nil, err
 	}
 
 	permissionList := make([]string, len(permissions))
+	roleList := make([]string, len(roles))
 	for i, p := range permissions {
 		permissionList[i] = p.PermissionName
 	}
+	for i, r := range roles {
+		roleList[i] = r.RoleName
+	}
 
-	return permissionList, nil
+	return permissionList, roleList, nil
 }
