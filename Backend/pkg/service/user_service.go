@@ -176,9 +176,9 @@ func (us *UserService) LogLoginEvent(user *models.User, r *http.Request) {
 	}
 }
 
-func (us *UserService) ListUsers(page, limit int, search string, typ string) ([]models.User, int64, error) {
+func (us *UserService) ListUsers(page, limit int, search string, typ string, role string) ([]models.User, int64, error) {
 	// Call the repository method
-	return us.Repo.ListUsers(page, limit, search, typ)
+	return us.Repo.ListUsers(page, limit, search, typ,role )
 }
 
 // UpdateUser updates a user by ID

@@ -90,7 +90,7 @@ func (ur *UserRepository) Delete(user *models.User, isForce bool) error {
 }
 
 // ListUsers fetches users with pagination, optional search filter, and active/deleted filter
-func (ur *UserRepository) ListUsers(page, limit int, search string, typ string) ([]models.User, int64, error) {
+func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) ([]models.User, int64, error) {
 	var users []models.User
 	var total int64
 
@@ -117,6 +117,11 @@ func (ur *UserRepository) ListUsers(page, limit int, search string, typ string) 
 		query = query.Where("users.deleted_at IS NULL")
 	}
 
+	// Filter by the 'role' parameter
+	if role != "" {
+		query = query.Where("roles.id = ?", role)
+	}
+
 	// Get the total number of users matching the filters
 	err := query.Count(&total).Error
 	if err != nil {
@@ -131,8 +136,6 @@ func (ur *UserRepository) ListUsers(page, limit int, search string, typ string) 
 
 	return users, total, nil
 }
-
-// SaveNotificationToken inserts a new notification token for the user or updates the existing one if the device ID matches
 func (ur *UserRepository) SaveNotificationToken(userID uint, token string, deviceID string) error {
 	var existingToken models.NotificationToken
 
