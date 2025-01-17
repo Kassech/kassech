@@ -21,6 +21,7 @@ import (
 func init() { // Load environment variables
 	config.LoadEnv()
 	service.InitJWTSecret()
+	service.InitFirebaseClient()
 }
 
 func main() {
@@ -53,7 +54,6 @@ func main() {
 	}))
 
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
-
 	// Register routes
 	socket.RegisterRoutes(r)
 	r.Static("/uploads", "./uploads")

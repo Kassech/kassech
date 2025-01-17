@@ -58,7 +58,7 @@ func InitJWTSecret() error {
 }
 
 // GenerateToken creates an access JWT token and a refresh JWT token for the given userID
-func GenerateToken(userID uint) (string, string, error) {
+func GenerateToken(userID uint, role []string) (string, string, error) {
 	// Ensure that the JWT secret and expiration times are initialized
 	if JwtSecret == "" || AccessTokenExpiration == 0 || RefreshTokenExpiration == 0 {
 		return "", "", errors.New("JWT secret or expiration times not initialized")
@@ -68,6 +68,7 @@ func GenerateToken(userID uint) (string, string, error) {
 	accessClaims := jwt.MapClaims{
 		"user_id": userID,
 		"exp":     time.Now().Add(AccessTokenExpiration).Unix(), // Token expires in the duration specified in ACCESS_TOKEN_EXPIRATION
+		"role":    role,
 	}
 
 	// Generate the access token with claims and signing method
@@ -118,6 +119,14 @@ func RefreshTokenService(refreshToken string) (string, string, error) {
 
 	// Extract the user ID from the refresh token
 	userID := uint(claims["user_id"].(float64))
+	role, ok := claims["role"].([]interface{})
+	if !ok {
+		return "", "", errors.New("invalid role in refresh token")
+	}
+	roleStr := make([]string, len(role))
+	for i, r := range role {
+		roleStr[i] = fmt.Sprint(r)
+	}
 	// Redis key
 	ctx := context.Background()
 	redisKey := "refresh_token:" + fmt.Sprintf("%d", int(userID))
@@ -126,7 +135,7 @@ func RefreshTokenService(refreshToken string) (string, string, error) {
 	val, redisErr := database.REDIS.Get(ctx, redisKey).Result()
 	if redisErr == nil && val == "active" {
 		// Token is valid in Redis, proceed to generate a new access token
-		accessToken, _, err := GenerateToken(userID)
+		accessToken, _, err := GenerateToken(userID, roleStr)
 		fmt.Println("accessToken, _, err:", accessToken, err)
 		if err != nil {
 			return "", "", errors.New("failed to cache refresh token in Redis")
@@ -153,7 +162,7 @@ func RefreshTokenService(refreshToken string) (string, string, error) {
 	}
 
 	// Generate a new access token
-	accessToken, _, err := GenerateToken(userID)
+	accessToken, _, err := GenerateToken(userID,roleStr)
 	if err != nil {
 		return "", "", err
 	}

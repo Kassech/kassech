@@ -1,16 +1,16 @@
 package middleware
 
 import (
+	"fmt"
 	"kassech/backend/pkg/database"
 	models "kassech/backend/pkg/model"
 	"log"
-
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RoleMiddleware(requiredRole string) gin.HandlerFunc {
+func RoleMiddleware(requiredRole uint) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, exists := c.Get("userID")
 		log.Println("userID:", userID) // Debug log
@@ -27,10 +27,10 @@ func RoleMiddleware(requiredRole string) gin.HandlerFunc {
 		for _, userRole := range userRoles {
 			var role models.Role
 			database.DB.First(&role, userRole.RoleID)
-			log.Println("ROLE:", string(role.RoleName))        // Debug log
-			log.Println("requiredRole:", string(requiredRole)) // Debug log
+			log.Println("ROLE:", string(role.RoleName))            // Debug log
+			log.Println("requiredRole:", fmt.Sprint(requiredRole)) // Debug log
 
-			if role.RoleName == requiredRole {
+			if role.ID == requiredRole {
 				c.Next()
 				return
 			}
