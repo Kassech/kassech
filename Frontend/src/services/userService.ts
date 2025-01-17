@@ -1,12 +1,23 @@
 import { useQuery, useMutation } from 'react-query';
 import api from '../api/axiosInstance';
 
+type SearchParams = {
+  search?: string;
+  role?: number;
+};
+
 // Fetch user data with react-query
-export const useFetchUserData = () => {
-  return useQuery('userData', async () => {
-    const response = await api.get('/users');
-    return response.data;
-  });
+export const useFetchUserData = ({ search = '', role }: SearchParams = {}) => {
+   return useQuery(['userData', search, role], async () => {
+     const params: Record<string, string | number | undefined> = {
+       search: search || '',
+       page: 1,
+       limit: 5,
+       role,
+     };
+     const response = await api.get('/users', { params });
+     return response.data;
+   });
 };
 
 // Update user data with react-query
