@@ -389,8 +389,10 @@ func (uc *UserController) ListUsers(c *gin.Context) {
 	typ := c.DefaultQuery("type", "active")
 	log.Println(typ)
 	search := c.DefaultQuery("search", "")
+	role := c.DefaultQuery("role", "")
+	fmt.Println("role:", role)
 
-	users, total, err := uc.Service.ListUsers(page, limit, search, typ)
+	users, total, err := uc.Service.ListUsers(page, limit, search, typ, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
