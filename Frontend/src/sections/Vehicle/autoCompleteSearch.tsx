@@ -43,7 +43,7 @@ export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between"
         >
           {value
             ? users.find((user) => user.ID.toString() === value)?.FirstName ??
@@ -52,7 +52,7 @@ export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput
             placeholder="Search Owner..."

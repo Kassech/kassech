@@ -17,6 +17,16 @@ import { vehicleSchema } from '@/types/schemas';
 import ImageUploader from '@/components/image-uploader';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { OwnerSearch } from './autoCompleteSearch';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useCreateVehicle } from '@/services/vehicleService';
 
 export default function VehicleForm() {
   const form = useForm<z.infer<typeof vehicleSchema>>({
@@ -32,27 +42,36 @@ export default function VehicleForm() {
       insurance: null,
       libre: null,
       carPicture: null,
-      owner: { id: '', name: '' },
+      ownerID: { id: ''},
     },
   });
+   const { mutateAsync } = useCreateVehicle(); 
+    const onSubmit = async (values: z.infer<typeof vehicleSchema>) => {
+      console.log('Form values:', values); 
 
-  const onSubmit = (values: z.infer<typeof vehicleSchema>) => {
-    console.log('Form values:', values);
-
-    const vehicleData = {
-      ...values,
-      carPicture: values.carPicture as File,
-      bollo: values.bollo as File,
-      insurance: values.insurance as File,
-      libre: values.libre as File,
+      const formData = new FormData();
+      Object.entries(values).forEach(([key, value]) => {
+        if (value instanceof File || typeof value === 'string') {
+          formData.append(key, value);
+        }
+      });
+      console.log('Prepared data:', formData);
+      toast.promise(
+        (async () => {
+          const data = await mutateAsync(formData);
+          return data;
+        })(),
+        {
+          loading: 'Creating queue manager...',
+          success: 'Queue manager successfully created!',
+          error: (error) =>
+            error?.response?.data?.message || 'Submission failed.',
+        }
+      );
     };
-
-    console.log('Prepared data:', vehicleData);
-    toast.success('Form data logged successfully!');
-  };
-
- const handleOwnerSelect = (id: string, name: string) => {
-   form.setValue('owner', { id, name }); 
+ 
+ const handleOwnerSelect = (id: string) => {
+   form.setValue('ownerID', { id}); 
  };
 
 
@@ -63,11 +82,7 @@ export default function VehicleForm() {
       </CardHeader>
       <Form {...form}>
         <form
-          onSubmit={(e) => {
-            console.log('Before submission:', form.getValues());
-            form.handleSubmit(onSubmit)(e);
-             console.log('Form errors:', form.formState.errors);
-          }}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="grid grid-cols-1 gap-4 md:grid-cols-2"
         >
           <div className="col-span-full">
@@ -81,20 +96,6 @@ export default function VehicleForm() {
               }}
             />
           </div>
-
-          <FormField
-            control={form.control}
-            name="carType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Car Type</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter car type" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <FormField
             control={form.control}
@@ -209,6 +210,32 @@ export default function VehicleForm() {
                   />
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="carType"
+            render={({ field }) => (
+              <FormItem className="md:pt-8">
+                <Select
+                  onValueChange={(value) => form.setValue('carType', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a fruit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Car type</SelectLabel>
+                      <SelectItem value="12">Mini Bus12</SelectItem>
+                      <SelectItem value="13">Mini Bus12</SelectItem>
+                      <SelectItem value="14">Mini Bus12</SelectItem>
+                      <SelectItem value="15">Mini Bus12</SelectItem>
+                      <SelectItem value="16">Mini Bus12e</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </FormItem>
             )}
           />
