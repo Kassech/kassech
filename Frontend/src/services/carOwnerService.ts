@@ -23,25 +23,27 @@ type PaginatedResponse = {
 
 type SearchParams = {
   search: string;
-  //   role?: number;
+  role?: number;
 };
 
-export const useSearchUsers = ({ search }: SearchParams) => {
+export const useSearchUsers = ({ search, role }: SearchParams) => {
   return useQuery<PaginatedResponse>(
-    ['users', { search }],
+    ['users', { search, role }],
     async () => {
       const params: Record<string, string | number | undefined> = {
         search,
         page: 1,
         limit: 5,
+        ...(role && { role }),
       };
 
       const response = await api.get('/users', { params });
       return response.data;
     },
     {
-      enabled: Boolean(search),
-      keepPreviousData: true,
+      enabled: Boolean(search), // Only fetch data if search is provided
+      keepPreviousData: true, // Keep previous data while new request is loading
     }
   );
 };
+

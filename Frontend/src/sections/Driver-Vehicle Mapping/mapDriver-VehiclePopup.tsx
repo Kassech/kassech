@@ -13,9 +13,13 @@ import VehicleDropDown from './vehicleDropDown';
 export default function DialogDemo() {
   const { setValue, handleSubmit } = useForm(); // Initialize useForm
 
-  const handleOwnerSelect = (id: string, name: string) => {
-    setValue('owner', { id, name });
+  const handleVehicleSelect = (id: string, name: string) => {
+    setValue('Vehicle', { id, name });
   };
+
+   const handleDriverSelect = (id: string, name: string) => {
+     setValue('Driver', { id, name });
+   };
 
   const onSubmit = (data: any) => {
     console.log('Form submitted:', data);
@@ -37,12 +41,11 @@ export default function DialogDemo() {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-2 w-full">
               <Label htmlFor="name">Registered Driver</Label>
-              <DriverDropDown onOwnerSelect={handleOwnerSelect} />{' '}
-              {/* Capitalized */}
+              <DriverDropDown onDriverSelect={handleDriverSelect} />{' '}
             </div>
             <div className="flex flex-col space-y-2 pb-2">
               <Label htmlFor="framework">Registered Vehicle</Label>
-              <VehicleDropDown onOwnerSelect={handleOwnerSelect} />{' '}
+              <VehicleDropDown onVehicleSelect={handleVehicleSelect} />{' '}
               {/* Capitalized */}
             </div>
           </div>
