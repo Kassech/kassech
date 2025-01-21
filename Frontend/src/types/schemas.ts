@@ -41,7 +41,8 @@ export const vehicleSchema = z.object({
   make: z.string().min(1, { message: 'Make is required' }),
   year: z
     .string()
-    .regex(/^\d{4}$/, { message: 'Year must be a valid 4-digit year' }),
+    .regex(/^\d{4}$/, { message: 'Year must be a valid 4-digit number' }),
+
   color: z.string().min(1, { message: 'Car color is required' }),
 
   // For carPicture: nullable and optional
@@ -88,9 +89,7 @@ export const vehicleSchema = z.object({
       message: 'Libre document must be less than 5MB',
     })
     .optional(),
-  ownerID: z.object({
-    id: z.string().min(1, { message: 'Owner ID is required' }),
-  }),
+  ownerID: z.string().min(1, { message: 'Owner ID is required' }),
 });
 
 export const ownerSchema = userSchema.omit({ Password: true }).extend({

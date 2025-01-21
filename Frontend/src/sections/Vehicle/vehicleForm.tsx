@@ -37,24 +37,26 @@ export default function VehicleForm() {
       vin: '',
       make: '',
       year: '',
-      color: '#000000',
+      color: '',
       bollo: null,
       insurance: null,
       libre: null,
       carPicture: null,
-      ownerID: { id: ''},
+      ownerID: '',
     },
   });
    const { mutateAsync } = useCreateVehicle(); 
     const onSubmit = async (values: z.infer<typeof vehicleSchema>) => {
       console.log('Form values:', values); 
 
-      const formData = new FormData();
-      Object.entries(values).forEach(([key, value]) => {
-        if (value instanceof File || typeof value === 'string') {
-          formData.append(key, value);
-        }
-      });
+        const formData = new FormData();
+        Object.entries(values).forEach(([key, value]) => {
+          if (value instanceof File || typeof value === 'string') {
+            console.log(key,value)
+            formData.append(key, value);
+          }
+        });
+    
       console.log('Prepared data:', formData);
       toast.promise(
         (async () => {
@@ -62,8 +64,8 @@ export default function VehicleForm() {
           return data;
         })(),
         {
-          loading: 'Creating queue manager...',
-          success: 'Queue manager successfully created!',
+          loading: 'Creating vehicle...',
+          success: 'Vehicle successfully created!',
           error: (error) =>
             error?.response?.data?.message || 'Submission failed.',
         }
@@ -71,7 +73,7 @@ export default function VehicleForm() {
     };
  
  const handleOwnerSelect = (id: string) => {
-   form.setValue('ownerID', { id}); 
+   form.setValue('ownerID', id); 
  };
 
 
@@ -138,24 +140,24 @@ export default function VehicleForm() {
               </FormItem>
             )}
           />
+<FormField
+  control={form.control}
+  name="color"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Color</FormLabel>
+      <FormControl>
+        <Input
+          type="text"
+          {...field}
+          placeholder="Enter color name (e.g., red, blue, black)"
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
-          <FormField
-            control={form.control}
-            name="color"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Color</FormLabel>
-                <FormControl>
-                  <Input
-                    type="color"
-                    {...field}
-                    placeholder="Enter car color"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <FormField
             control={form.control}
@@ -228,11 +230,11 @@ export default function VehicleForm() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Car type</SelectLabel>
-                      <SelectItem value="12">Mini Bus12</SelectItem>
-                      <SelectItem value="13">Mini Bus12</SelectItem>
-                      <SelectItem value="14">Mini Bus12</SelectItem>
-                      <SelectItem value="15">Mini Bus12</SelectItem>
-                      <SelectItem value="16">Mini Bus12e</SelectItem>
+                      <SelectItem value="5">Mini Bus15</SelectItem>
+                      <SelectItem value="6">Mini Bus16</SelectItem>
+                      <SelectItem value="7">Mini Bus17</SelectItem>
+                      <SelectItem value="8">Mini Bus18</SelectItem>
+                      <SelectItem value="9">Mini Bus19</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
