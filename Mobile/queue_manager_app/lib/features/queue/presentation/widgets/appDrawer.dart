@@ -48,34 +48,36 @@ class AppDrawer extends ConsumerWidget {
               AppRouter.router.go('/profile'); // Close the drawer
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.settings),
+          //   title: const Text('Settings'),
+          //   onTap: () {
+          //     Navigator.pop(context); // Close the drawer
+          //   },
+          // ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () async {
               try {
-                final isLoggedIn = await apiService.logoutApi();
-                if (isLoggedIn) {
+                final response = await ApiService().dio_instance.post('${ApiService().dio_baseUrl}logout');
+                if (response.statusCode == 200) {
                   await storage.delete(key: 'accessToken');
                   AppRouter.router.go('/signin');
                 } else {
                   print('Logout failed');
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text('Logout failed: Unauthorized request')),
+                      content: Text('Logout failed'),
+                    ),
                   );
                 }
               } catch (e) {
-                print('Logout failed: $e');
-                context.pop(context);
+                print('An error occurred: $e');
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Logout failed: $e')),
+                  SnackBar(
+                    content: Text('Logout failed'),
+                  ),
                 );
               }
             },

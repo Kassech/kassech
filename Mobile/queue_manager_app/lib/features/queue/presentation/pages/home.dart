@@ -29,6 +29,14 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Queue Manager'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              AppRouter.router.go('/notifications');
+            },
+          ),
+        ],
       ),
       drawer: AppDrawer(),
       body: ListView.builder(

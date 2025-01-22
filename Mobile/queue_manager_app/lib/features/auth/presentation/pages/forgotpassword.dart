@@ -36,6 +36,7 @@ class ForgotPassword extends StatelessWidget {
           MyTextField(
               labelText: 'Enter your phone number',
               controller: phoneController,
+              validator: (val) => val.isEmpty ? 'Enter your phone number' : null,
               hintText: "+251 ___ ___ ___"),
           const SizedBox(
             height: 20,
