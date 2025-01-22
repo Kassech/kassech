@@ -20,56 +20,60 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCreateUser } from '@/services/userService';
 import { OWNER_ROLE } from '@/constants';
 
-export default function CarOwnerForm() {
- const { mutateAsync } = useCreateUser(); // Use async mutation
+export default function CarOwnerForm({
+  defaultValues = null,
+}: {
+  defaultValues?: Partial<z.infer<typeof ownerSchema>> | null;
+}) {
+  const { mutateAsync } = useCreateUser(); // Use async mutation
 
- const form = useForm<z.infer<typeof ownerSchema>>({
-   resolver: zodResolver(ownerSchema),
-   mode: 'onBlur',
-   defaultValues: {
-     FirstName: '',
-     LastName: '',
-     Email: '',
-     PhoneNumber: '',
-     Profile: null,
-     national_id: null,
-     insurance_document: null,
-     Role: OWNER_ROLE,
-   },
- });
+  const form = useForm<z.infer<typeof ownerSchema>>({
+    resolver: zodResolver(ownerSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      FirstName: defaultValues?.FirstName || '',
+      LastName: defaultValues?.LastName || '',
+      Email: defaultValues?.Email || '',
+      PhoneNumber: defaultValues?.PhoneNumber || '',
+      Profile: defaultValues?.Profile || null,
+      national_id: defaultValues?.national_id || null,
+      insurance_document: defaultValues?.insurance_document || null,
+      Role: OWNER_ROLE,
+    },
+  });
 
- const onSubmit = async (values: z.infer<typeof ownerSchema>) => {
-   console.log('Form values:', values); // Debug log
+  const onSubmit = async (values: z.infer<typeof ownerSchema>) => {
+    console.log('Form values:', values); // Debug log
 
-   const formData = new FormData();
-   Object.entries(values).forEach(([key, value]) => {
-     if (value instanceof File || typeof value === 'string') {
-       formData.append(key, value);
-     }
-   });
+    const formData = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      if (value instanceof File || typeof value === 'string') {
+        formData.append(key, value);
+      }
+    });
 
-   for (let pair of formData.entries()) {
-     console.log(`${pair[0]}:`, pair[1]);
-   } // Debug log
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    } // Debug log
 
-   toast.promise(
-     (async () => {
-       const data = await mutateAsync(formData);
-       return data;
-     })(),
-     {
-       loading: 'Creating owner...',
-       success: 'Owner successfully created!',
-       error: (error) => error?.response?.data?.message || 'Submission failed.',
-     }
-   );
- };
-
+    toast.promise(
+      (async () => {
+        const data = await mutateAsync(formData);
+        return data;
+      })(),
+      {
+        loading: 'Creating owner...',
+        success: 'Owner successfully created!',
+        error: (error) =>
+          error?.response?.data?.message || 'Submission failed.',
+      }
+    );
+  };
 
   return (
     <>
       <Card className="py-8 px-4 w-full mx-2 flex flex-col items-center justify-center">
-        <CardHeader  className="w-full flex items-start justify-start">
+        <CardHeader className="w-full flex items-start justify-start">
           <CardTitle>Car Owner Registration</CardTitle>
         </CardHeader>
         <Form {...form}>
@@ -156,7 +160,10 @@ export default function CarOwnerForm() {
                     <Input
                       type="file"
                       onChange={(e) =>
-                        form.setValue('insurance_document', e.target.files?.[0] || null)
+                        form.setValue(
+                          'insurance_document',
+                          e.target.files?.[0] || null
+                        )
                       }
                     />
                   </FormControl>
@@ -175,7 +182,10 @@ export default function CarOwnerForm() {
                     <Input
                       type="file"
                       onChange={(e) =>
-                        form.setValue('national_id', e.target.files?.[0] || null)
+                        form.setValue(
+                          'national_id',
+                          e.target.files?.[0] || null
+                        )
                       }
                     />
                   </FormControl>
