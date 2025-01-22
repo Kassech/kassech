@@ -41,8 +41,8 @@ export const useSearchUsers = ({ search, role }: SearchParams) => {
       return response.data;
     },
     {
-      enabled: Boolean(search), // Only fetch data if search is provided
-      keepPreviousData: true, // Keep previous data while new request is loading
+      enabled: search !== undefined, 
+      keepPreviousData: true,
     }
   );
 };

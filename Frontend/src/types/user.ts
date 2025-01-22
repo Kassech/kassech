@@ -1,5 +1,5 @@
 export interface User {
-  Id: number;
+  ID: number;
   email: string;
   password: string; // Hashed password
   first_name: string;
@@ -8,6 +8,6 @@ export interface User {
   ProfilePictureFile?: File;
   PhoneNumber: string;
   IsVerified: boolean;
-  Role: number;
+  roles: string;
   IsOnline: boolean;
 }
