@@ -120,7 +120,7 @@ export default function DriverForm({
             )}
           />
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="Password"
             render={({ field }) => (
@@ -136,7 +136,7 @@ export default function DriverForm({
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           <FormItem>
             <FormLabel>Go To Next Step</FormLabel>

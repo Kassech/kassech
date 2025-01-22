@@ -16,7 +16,7 @@ import { driverSchema, driverAttachmentSchema } from '@/types/schemas'; // Impor
 import ImageUploader from '@/components/image-uploader';
 import { Card } from '@/components/ui/card';
 import { useDriverStore } from '@/store/driverStore';
-import { useCreateDriver } from '@/services/driverService';
+import { useCreateUser } from '@/services/userService';
 
 export default function DriverAttachmentForm({
   switchTab,
@@ -24,7 +24,7 @@ export default function DriverAttachmentForm({
   switchTab: (tab: string) => void;
 }) {
   const { formData, setField } = useDriverStore();
-  const { mutateAsync } = useCreateDriver(); // Use the custom mutation hook to create a driver
+  const { mutateAsync } = useCreateUser(); // Use the custom mutation hook to create a driver
 
   const form = useForm<
     z.infer<typeof driverSchema & typeof driverAttachmentSchema>
@@ -33,32 +33,39 @@ export default function DriverAttachmentForm({
     mode: 'onBlur',
     defaultValues: {
       ...formData,
-      drivingLicense: formData.drivingLicense || null,
-      nationalId: formData.nationalId || null,
-      insuranceDocument: formData.insuranceDocument || null,
-      others: formData.others || null,
+      driving_license: formData.drivingLicense || null,
+      national_id: formData.nationalId || null,
+      insurance_document: formData.insuranceDocument || null,
+      other_file: formData.others || null,
     },
   });
 
   const onSubmit = (
     values: z.infer<typeof driverSchema & typeof driverAttachmentSchema>
   ) => {
+    const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
-      console.log(`Setting field ${key} to`, value);
-      setField(key, value); // Save each field to the store
+      if (value instanceof File || typeof value === 'string') {
+        formData.append(key, value);
+      }
     });
-    const promise = mutateAsync(values); // The promise returned by mutateAsync
 
-    toast.promise(promise, {
-      loading: 'Creating driver...',
-      success: () => {
-        return `Driver successfully created!`; // Success message
-      },
-      error: (error) => {
-        return `Error: ${error}`; // Error message
-      },
-    });
+    console.log(formData);
+
+    toast.promise(
+      (async () => {
+        const data = await mutateAsync(formData);
+        return data;
+      })(),
+      {
+        loading: 'Creating driver...',
+        success: 'Driver successfully created!',
+        error: (error) =>
+          error?.response?.data?.message || 'Submission failed.',
+      }
+    );
   };
+
 
   const handleBackClick = () => {
     switchTab('person'); // Switch back to the personal tab
@@ -72,10 +79,10 @@ export default function DriverAttachmentForm({
           className="grid grid-cols-2 gap-4 md:grid-cols-2"
         >
           {[
-            { label: 'Driving License', name: 'drivingLicense' },
-            { label: 'National ID', name: 'nationalId' },
-            { label: 'Insurance Document', name: 'insuranceDocument' },
-            { label: 'Others', name: 'others' },
+            { label: 'Driving License', name: 'driving_license' as const },
+            { label: 'National ID', name: 'national_id' as const },
+            { label: 'Insurance Document', name: 'insurance_document' as const },
+            { label: 'Others', name: 'other_file' as const},
           ].map((field) => (
             <div key={field.name}>
               <FormField

@@ -1,59 +1,60 @@
-import * as React from 'react';
-
+import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import DriverDropDown from './driverDropDown';
+import VehicleDropDown from './vehicleDropDown';
 
-export function CardWithForm() {
+export default function DialogDemo() {
+  const { setValue, handleSubmit } = useForm(); // Initialize useForm
+
+  const handleVehicleSelect = (id: string, name: string) => {
+    setValue('Vehicle', { id, name });
+  };
+
+   const handleDriverSelect = (id: string, name: string) => {
+     setValue('Driver', { id, name });
+   };
+
+  const onSubmit = (data: any) => {
+    console.log('Form submitted:', data);
+  };
+
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>Create project</CardTitle>
-        <CardDescription>Deploy your new project in one-click.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form>
+    <>
+      <DialogHeader>
+        <DialogTitle>Assign Driver</DialogTitle>
+        <DialogDescription>
+          Select a registered driver, assign a vehicle, and save or cancel the
+          changes.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="grid gap-4 py-1">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {' '}
+          {/* Add submit handler */}
           <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="Name of your project" />
+            <div className="flex flex-col space-y-2 w-full">
+              <Label htmlFor="name">Registered Driver</Label>
+              <DriverDropDown onDriverSelect={handleDriverSelect} />{' '}
             </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="framework">Framework</Label>
-              <Select>
-                <SelectTrigger id="framework">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectItem value="next">Next.js</SelectItem>
-                  <SelectItem value="sveltekit">SvelteKit</SelectItem>
-                  <SelectItem value="astro">Astro</SelectItem>
-                  <SelectItem value="nuxt">Nuxt.js</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="flex flex-col space-y-2 pb-2">
+              <Label htmlFor="framework">Registered Vehicle</Label>
+              <VehicleDropDown onVehicleSelect={handleVehicleSelect} />{' '}
+              {/* Capitalized */}
             </div>
           </div>
+          <DialogFooter>
+            <Button type="submit">Save changes</Button>{' '}
+            {/* Submit button inside form */}
+          </DialogFooter>
         </form>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </>
   );
 }

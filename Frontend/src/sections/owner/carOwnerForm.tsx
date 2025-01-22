@@ -17,57 +17,63 @@ import { toast } from 'sonner';
 import { ownerSchema } from '@/types/schemas';
 import ImageUploader from '@/components/image-uploader';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { useCreateOwner } from '@/services/OwnerRegistration';
+import { useCreateUser } from '@/services/userService';
+import { OWNER_ROLE } from '@/constants';
 
-export default function CarOwnerForm() {
-  const { mutate } = useCreateOwner();
+export default function CarOwnerForm({
+  defaultValues = null,
+}: {
+  defaultValues?: Partial<z.infer<typeof ownerSchema>> | null;
+}) {
+  const { mutateAsync } = useCreateUser(); // Use async mutation
 
   const form = useForm<z.infer<typeof ownerSchema>>({
     resolver: zodResolver(ownerSchema),
     mode: 'onBlur',
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      profilePicture: null,
-      KebeleId: null,
-      insurance: null,
+      FirstName: defaultValues?.FirstName || '',
+      LastName: defaultValues?.LastName || '',
+      Email: defaultValues?.Email || '',
+      PhoneNumber: defaultValues?.PhoneNumber || '',
+      Profile: defaultValues?.Profile || null,
+      national_id: defaultValues?.national_id || null,
+      insurance_document: defaultValues?.insurance_document || null,
+      Role: OWNER_ROLE,
     },
   });
 
-
-  const onSubmit = (values: z.infer<typeof ownerSchema>) => {
+  const onSubmit = async (values: z.infer<typeof ownerSchema>) => {
     console.log('Form values:', values); // Debug log
 
-    const ownerData = {
-      ...values,
-      profilePicture: values.profilePicture as File,
-      kebeleId: values.KebeleId as File, // Ensure camelCase
-      insurance: values.insurance as File,
-    };
-
-    console.log('Prepared data for mutation:', ownerData); // Debug log
-
-    mutate(ownerData, {
-      onSuccess: () => {
-        console.log('Mutation successful'); // Debug log
-        toast.success('Form submitted successfully!');
-        form.reset();
-      },
-      onError: (error: any) => {
-        console.error('Mutation error:', error); // Debug log
-        toast.error(
-          error?.response?.data?.message || 'Form submission failed.'
-        );
-      },
+    const formData = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      if (value instanceof File || typeof value === 'string') {
+        formData.append(key, value);
+      }
     });
+
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    } // Debug log
+
+    toast.promise(
+      (async () => {
+        const data = await mutateAsync(formData);
+        return data;
+      })(),
+      {
+        loading: 'Creating owner...',
+        success: 'Owner successfully created!',
+        error: (error) =>
+          error?.response?.data?.message || 'Submission failed.',
+      }
+    );
   };
 
   return (
     <>
       <Card className="py-8 px-4 w-full mx-2 flex flex-col items-center justify-center">
-        <CardHeader  className="w-full flex items-start justify-start">
+        <CardHeader className="w-full flex items-start justify-start">
           <CardTitle>Car Owner Registration</CardTitle>
         </CardHeader>
         <Form {...form}>
@@ -77,8 +83,8 @@ export default function CarOwnerForm() {
           >
             <div className="col-span-full">
               <ImageUploader
-                initialPreview={form.getValues('profilePicture')}
-                onImageUpload={(file) => form.setValue('profilePicture', file)}
+                initialPreview={form.getValues('Profile')}
+                onImageUpload={(file) => form.setValue('Profile', file)}
                 maxFileSize={2000000}
                 acceptedFormats={{
                   'image/png': [],
@@ -90,7 +96,7 @@ export default function CarOwnerForm() {
 
             <FormField
               control={form.control}
-              name="firstName"
+              name="FirstName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>First Name</FormLabel>
@@ -104,7 +110,7 @@ export default function CarOwnerForm() {
 
             <FormField
               control={form.control}
-              name="lastName"
+              name="LastName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Last Name</FormLabel>
@@ -118,7 +124,7 @@ export default function CarOwnerForm() {
 
             <FormField
               control={form.control}
-              name="email"
+              name="Email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
@@ -132,7 +138,7 @@ export default function CarOwnerForm() {
 
             <FormField
               control={form.control}
-              name="phoneNumber"
+              name="PhoneNumber"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Phone Number</FormLabel>
@@ -146,7 +152,7 @@ export default function CarOwnerForm() {
 
             <FormField
               control={form.control}
-              name="insurance"
+              name="insurance_document"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Insurance</FormLabel>
@@ -154,7 +160,10 @@ export default function CarOwnerForm() {
                     <Input
                       type="file"
                       onChange={(e) =>
-                        form.setValue('insurance', e.target.files?.[0] || null)
+                        form.setValue(
+                          'insurance_document',
+                          e.target.files?.[0] || null
+                        )
                       }
                     />
                   </FormControl>
@@ -165,15 +174,18 @@ export default function CarOwnerForm() {
 
             <FormField
               control={form.control}
-              name="KebeleId"
+              name="national_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Kebele Id</FormLabel>
+                  <FormLabel>National Id</FormLabel>
                   <FormControl>
                     <Input
                       type="file"
                       onChange={(e) =>
-                        form.setValue('KebeleId', e.target.files?.[0] || null)
+                        form.setValue(
+                          'national_id',
+                          e.target.files?.[0] || null
+                        )
                       }
                     />
                   </FormControl>

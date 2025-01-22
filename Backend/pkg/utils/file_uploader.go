@@ -43,3 +43,13 @@ func UploadFile(file *multipart.FileHeader, uploadPath string) (string, error) {
 
 	return filepath.Join(uploadPath, filename), nil
 }
+func UploadAndAssignPath(file *multipart.FileHeader, directory string, assign func(path string)) error {
+	if file != nil {
+		path, err := UploadFile(file, directory)
+		if err != nil {
+			return err
+		}
+		assign(path)
+	}
+	return nil
+}

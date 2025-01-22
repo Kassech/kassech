@@ -19,23 +19,27 @@ import ImageUploader from '@/components/image-uploader';
 import { useCreateUser } from '@/services/userService';
 import { QUEUE_MANAGER_ROLE } from '@/constants';
 
-export default function QueueManagerForm() {
+export default function QueueManagerForm({
+  defaultValues = null,
+}: {
+  defaultValues?: Partial<z.infer<typeof queueManagerSchema>> | null;
+}) {
   const form = useForm<z.infer<typeof queueManagerSchema>>({
     resolver: zodResolver(queueManagerSchema),
     mode: 'onBlur',
     defaultValues: {
-      FirstName: '',
-      LastName: '',
-      Email: '',
-      PhoneNumber: '',
-      national_id: null,
-      Profile: null,
-      Role: QUEUE_MANAGER_ROLE,
+      FirstName: defaultValues?.FirstName || '',
+      LastName: defaultValues?.LastName || '',
+      Email: defaultValues?.Email || '',
+      PhoneNumber: defaultValues?.PhoneNumber || '',
+      national_id: defaultValues?.national_id || null,
+      Profile: defaultValues?.Profile || null,
+      Role: defaultValues?.Role ?? QUEUE_MANAGER_ROLE, 
     },
   });
-  const { mutateAsync } = useCreateUser(); // Use the custom mutation hook
+  const { mutateAsync } = useCreateUser(); 
   const onSubmit = async (values: z.infer<typeof queueManagerSchema>) => {
-    console.log('Form values:', values); // Debug log
+    console.log('Form values:', values); 
 
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
@@ -44,7 +48,7 @@ export default function QueueManagerForm() {
       }
     });
 
-    console.log('Prepared form data for mutation:', formData); // Debug log
+    console.log('Prepared form data for mutation:', formData); 
 
     toast.promise(
       (async () => {

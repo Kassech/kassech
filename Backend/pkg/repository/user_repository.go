@@ -90,7 +90,7 @@ func (ur *UserRepository) Delete(user *models.User, isForce bool) error {
 }
 
 // ListUsers fetches users with pagination, optional search filter, and active/deleted filter
-func (ur *UserRepository) ListUsers(page, limit int, search string, typ string) ([]models.User, int64, error) {
+func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) ([]models.User, int64, error) {
 	var users []models.User
 	var total int64
 
@@ -117,10 +117,15 @@ func (ur *UserRepository) ListUsers(page, limit int, search string, typ string) 
 		query = query.Where("users.deleted_at IS NULL")
 	}
 
+	// Filter by the 'role' parameter
+	if role != "" {
+		query = query.Where("roles.id = ?", role)
+	}
+
 	// Get the total number of users matching the filters
 	err := query.Count(&total).Error
 	if err != nil {
-		return nil, 0, err
+		return []models.User{}, 0, err
 	}
 
 	// Retrieve the users with roles and pagination
@@ -131,8 +136,6 @@ func (ur *UserRepository) ListUsers(page, limit int, search string, typ string) 
 
 	return users, total, nil
 }
-
-// SaveNotificationToken inserts a new notification token for the user or updates the existing one if the device ID matches
 func (ur *UserRepository) SaveNotificationToken(userID uint, token string, deviceID string) error {
 	var existingToken models.NotificationToken
 
@@ -163,24 +166,42 @@ func (ur *UserRepository) SaveNotificationToken(userID uint, token string, devic
 	return nil
 }
 
-// GetPermissionsByUserID gets a list of permissions based on a user ID
-func (ur *UserRepository) GetPermissionsByUserID(userID uint) ([]string, error) {
-	var permissions []models.Permission
+// GetPermissionsAndRolesByUserID gets a list of permissions and roles based on a user ID
+func (ur *UserRepository) GetPermissionsAndRolesByUserID(userID uint) ([]string, []string, error) {
+	var permissions []struct {
+		PermissionName string
+	}
+	var roles []struct {
+		RoleName string
+	}
 
 	err := database.DB.Model(&models.UserRole{}).
-		Select("DISTINCT p.*").
+		Select("DISTINCT p.permission_name").
 		Joins("JOIN user_roles AS ur2 ON ur2.user_id = ?", userID).
 		Joins("JOIN role_permissions AS rp ON rp.role_id = ur2.role_id").
 		Joins("JOIN permissions AS p ON p.id = rp.permission_id").
 		Find(&permissions).Error
 	if err != nil {
-		return nil, err
+		return nil, nil, err
+	}
+
+	err = database.DB.Model(&models.UserRole{}).
+		Select("DISTINCT r.role_name").
+		Joins("JOIN user_roles AS ur2 ON ur2.user_id = ?", userID).
+		Joins("JOIN roles AS r ON r.id = ur2.role_id").
+		Find(&roles).Error
+	if err != nil {
+		return nil, nil, err
 	}
 
 	permissionList := make([]string, len(permissions))
+	roleList := make([]string, len(roles))
 	for i, p := range permissions {
 		permissionList[i] = p.PermissionName
 	}
+	for i, r := range roles {
+		roleList[i] = r.RoleName
+	}
 
-	return permissionList, nil
+	return permissionList, roleList, nil
 }

@@ -19,6 +19,8 @@ func RegisterRoutes(r *gin.Engine) {
 	sessionRepo := &repository.UserSessionsRepository{}
 	stationRepo := &repository.StationRepository{}
 	routeRepo := &repository.RouteRepository{}
+	vehicleTypeRepo := &repository.VehicleTypeRepository{}
+	vehicleRepo := &repository.VehicleRepository{}
 
 	// Initialize Services
 	userSvc := &service.UserService{Repo: userRepo}
@@ -29,6 +31,8 @@ func RegisterRoutes(r *gin.Engine) {
 	sessionService := &service.UserSessionsService{Repo: sessionRepo}
 	stationSvc := &service.StationService{Repo: stationRepo}
 	routeSvc := &service.RouteService{Repo: routeRepo}
+	vehicleTypeSvc := &service.VehicleTypeService{Repo: vehicleTypeRepo}
+	vehicleSvc := &service.VehicleService{Repo: vehicleRepo}
 	// Initialize Controllersz
 	userCtrl := &controller.UserController{Service: userSvc, SessionService: sessionService}
 	roleCtrl := &controller.RoleController{Service: roleSvc}
@@ -38,6 +42,8 @@ func RegisterRoutes(r *gin.Engine) {
 	sessionController := &controller.UserSessionController{Service: sessionService}
 	stationCtrl := &controller.StationController{Service: stationSvc}
 	routeCtrl := &controller.RouteController{Service: routeSvc}
+	vehicleTypeCtrl := &controller.VehicleTypeController{Service: vehicleTypeSvc}
+	vehicleCtrl := &controller.VehicleController{Service: vehicleSvc}
 
 	// Group API routes
 	api := r.Group("/api")
@@ -64,6 +70,10 @@ func RegisterRoutes(r *gin.Engine) {
 
 		// route routes
 		routeRoutes(api, routeCtrl)
+
+		vehicleTypeRoutes(api, vehicleTypeCtrl)
+
+		vehicleRoutes(api, vehicleCtrl)
 
 	}
 }
@@ -107,6 +117,28 @@ func routeRoutes(api *gin.RouterGroup, ctrl *controller.RouteController) {
 	}
 }
 
+func vehicleRoutes(api *gin.RouterGroup, ctrl *controller.VehicleController) {
+	vehicleApi := api.Group("/vehicles")
+	{
+		vehicleApi.POST("/", ctrl.CreateVehicle)      // Create a vehicle
+		vehicleApi.GET("/:id", ctrl.FindVehicleByID)  // Get vehicle by ID
+		vehicleApi.GET("/", ctrl.GetAllVehicles)      // Get all vehicles
+		vehicleApi.PUT("/:id", ctrl.UpdateVehicle)    // Update a vehicle by ID
+		vehicleApi.DELETE("/:id", ctrl.DeleteVehicle) // Delete a vehicle by ID
+
+	}
+}
+
+func vehicleTypeRoutes(api *gin.RouterGroup, ctrl *controller.VehicleTypeController) {
+	vehicleTypeApi := api.Group("/vehicle_types")
+	{
+		vehicleTypeApi.POST("/", ctrl.CreateVehicleType)      // Create a vehicle type
+		vehicleTypeApi.GET("/:id", ctrl.FindVehicleTypeByID)  // Get vehicle type by ID
+		vehicleTypeApi.GET("/", ctrl.GetAllVehicleTypes)      // Get all vehicle types
+		vehicleTypeApi.PUT("/:id", ctrl.UpdateVehicleType)    // Update a vehicle type by ID
+		vehicleTypeApi.DELETE("/:id", ctrl.DeleteVehicleType) // Delete a vehicle type by ID
+	}
+}
 func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 	api.POST("/register", ctrl.Register)
 

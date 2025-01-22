@@ -74,6 +74,10 @@ const data = {
           title: 'Role And Permission',
           url: '/rolepermission',
         },
+        {
+          title: 'Assign Driver to Vehicle',
+          url: '/driverVehicleMap',
+        },
       ],
     },
     {

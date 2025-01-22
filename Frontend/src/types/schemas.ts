@@ -27,10 +27,10 @@ export const queueManagerSchema = userSchema.omit({ Password: true }).extend({
 });
 
 export const driverAttachmentSchema = z.object({
-    drivingLicense: z.instanceof(File).optional(),
-    nationalId: z.instanceof(File).optional(),
-    insuranceDocument: z.instanceof(File).optional(),
-    others: z.instanceof(File).optional(),
+    driving_license: z.instanceof(File).optional(),
+    national_id: z.instanceof(File).optional(),
+    insurance_document: z.instanceof(File).optional(),
+    other_file: z.instanceof(File).optional(),
   });
 
 
@@ -41,7 +41,8 @@ export const vehicleSchema = z.object({
   make: z.string().min(1, { message: 'Make is required' }),
   year: z
     .string()
-    .regex(/^\d{4}$/, { message: 'Year must be a valid 4-digit year' }),
+    .regex(/^\d{4}$/, { message: 'Year must be a valid 4-digit number' }),
+
   color: z.string().min(1, { message: 'Car color is required' }),
 
   // For carPicture: nullable and optional
@@ -88,26 +89,11 @@ export const vehicleSchema = z.object({
       message: 'Libre document must be less than 5MB',
     })
     .optional(),
-  owner: z.object({
-    id: z.string().min(1, { message: 'Owner ID is required' }),
-    name: z.string().min(1, { message: 'Owner name is required' }),
-  }),
+  ownerID: z.string().min(1, { message: 'Owner ID is required' }),
 });
 
-export const ownerSchema = z.object({
-  firstName: z.string().min(1, { message: 'First name is required' }),
-  lastName: z.string().min(1, { message: 'Last name is required' }),
-  email: z.string().email({ message: 'Invalid email address' }),
-  phoneNumber: z
-    .string()
-    .regex(/^\+251\d{9}$/, { message: 'Invalid phone number format' }),
-  profilePicture: z
-    .instanceof(File)
-    .nullable()
-    .refine((file) => file && file.size > 0, {
-      message: 'Profile picture is required',
-    }),
-  KebeleId: z
+export const ownerSchema = userSchema.omit({ Password: true }).extend({
+  national_id: z
     .instanceof(File)
     .nullable()
     .refine((file) => file && file.size > 0, {
@@ -116,7 +102,7 @@ export const ownerSchema = z.object({
     .refine((file) => file && file.size <= 5 * 1024 * 1024, {
       message: 'Kebele id document must be less than 5MB',
     }),
-  insurance: z
+  insurance_document: z
     .instanceof(File)
     .nullable()
     .refine((file) => file && file.size > 0, {

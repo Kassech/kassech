@@ -57,7 +57,8 @@ func (us *UserService) GenerateAuthentication(user *models.User) (*domain.User, 
 
 	// Generate the JWT tokens
 	domainUser := mapper.ToDomainUser(existingUser)
-	userPermissions, err := us.Repo.GetPermissionsByUserID(user.ID)
+	userPermissions, userRole, err := us.Repo.GetPermissionsAndRolesByUserID(user.ID)
+	fmt.Println("userRole:", userRole)
 	fmt.Println("userPermissions:", userPermissions)
 	if err != nil {
 		domainUser.Permissions = []string{}
@@ -65,7 +66,7 @@ func (us *UserService) GenerateAuthentication(user *models.User) (*domain.User, 
 		domainUser.Permissions = userPermissions
 	}
 
-	accessToken, refreshToken, err := GenerateToken(user.ID)
+	accessToken, refreshToken, err := GenerateToken(user.ID, userRole)
 	if err != nil {
 		return nil, "", "", errors.New("failed to generate token")
 	}
@@ -98,16 +99,19 @@ func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*d
 
 	// Convert the model to domain
 	domainUser := mapper.ToDomainUser(user)
-	userPermissions, err := us.Repo.GetPermissionsByUserID(user.ID)
+	userPermissions, userRole, err := us.Repo.GetPermissionsAndRolesByUserID(user.ID)
+	fmt.Println("userRole:", userRole)
 	fmt.Println("userPermissions:", userPermissions)
 	if err != nil {
 		domainUser.Permissions = []string{}
+		domainUser.Roles = []string{}
 	} else {
 		domainUser.Permissions = userPermissions
+		domainUser.Roles = userRole
 	}
 
 	// Generate the JWT tokens
-	accessToken, refreshToken, err := GenerateToken(user.ID)
+	accessToken, refreshToken, err := GenerateToken(user.ID, userRole)
 	fmt.Println("accessToken, refreshToken, err:", accessToken, refreshToken, err)
 
 	if err != nil {
@@ -172,9 +176,9 @@ func (us *UserService) LogLoginEvent(user *models.User, r *http.Request) {
 	}
 }
 
-func (us *UserService) ListUsers(page, limit int, search string, typ string) ([]models.User, int64, error) {
+func (us *UserService) ListUsers(page, limit int, search string, typ string, role string) ([]models.User, int64, error) {
 	// Call the repository method
-	return us.Repo.ListUsers(page, limit, search, typ)
+	return us.Repo.ListUsers(page, limit, search, typ,role )
 }
 
 // UpdateUser updates a user by ID
@@ -221,4 +225,3 @@ func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 func (us *UserService) CreateDriver(driver *models.Driver) (*models.Driver, error) {
 	return us.Repo.CreateDriver(driver)
 }
-
