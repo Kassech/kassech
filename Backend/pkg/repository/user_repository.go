@@ -125,7 +125,7 @@ func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) (
 	// Get the total number of users matching the filters
 	err := query.Count(&total).Error
 	if err != nil {
-		return nil, 0, err
+		return []models.User{}, 0, err
 	}
 
 	// Retrieve the users with roles and pagination
