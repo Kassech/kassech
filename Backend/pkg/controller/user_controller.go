@@ -433,6 +433,33 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 	})
 }
 
+func (uc *UserController) VerifyUser(c *gin.Context) {
+	userId := c.Param("id")
+	state := c.Query("state")
+	stateBool, err := strconv.ParseBool(state)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state"})
+		return
+	}
+
+	userIdUint, err := utils.StringToUint(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	updatedUser, err := uc.Service.VerifyUser(userIdUint, stateBool)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User verified successfully",
+		"user":    updatedUser,
+	})
+}
+
 // DeleteUser method (Delete User by ID)
 func (uc *UserController) DeleteUser(c *gin.Context) {
 	userId := c.Param("id")
