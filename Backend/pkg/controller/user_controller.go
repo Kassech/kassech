@@ -387,7 +387,6 @@ func (uc *UserController) ListUsers(c *gin.Context) {
 	}
 
 	typ := c.DefaultQuery("type", "active")
-	log.Println(typ)
 	search := c.DefaultQuery("search", "")
 	role := c.DefaultQuery("role", "")
 	fmt.Println("role:", role)
