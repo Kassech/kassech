@@ -158,6 +158,8 @@ func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 
 	api.GET("/users", ctrl.ListUsers)
 
+	api.GET("/users/verify/:id", ctrl.VerifyUser)
+
 	api.PUT("/users/:id", ctrl.UpdateUser)
 
 	api.DELETE("/users/:id", ctrl.DeleteUser)

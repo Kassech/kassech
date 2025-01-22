@@ -85,6 +85,16 @@ func (us *UserService) SaveNotificationToken(userID uint, token string, device_i
 	return nil
 }
 
+func (us *UserService) VerifyUser(userID uint, state bool) (*models.User, error) {
+	// Call the repository method to save the notification token
+	user, err := us.Repo.VerifyUser(userID,state)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 // Login handles the user login
 func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*domain.User, string, string, error) {
 	user, err := us.Repo.FindByEmailOrPhone(emailOrPhone, emailOrPhone)
@@ -178,7 +188,7 @@ func (us *UserService) LogLoginEvent(user *models.User, r *http.Request) {
 
 func (us *UserService) ListUsers(page, limit int, search string, typ string, role string) ([]models.User, int64, error) {
 	// Call the repository method
-	return us.Repo.ListUsers(page, limit, search, typ,role )
+	return us.Repo.ListUsers(page, limit, search, typ, role)
 }
 
 // UpdateUser updates a user by ID
