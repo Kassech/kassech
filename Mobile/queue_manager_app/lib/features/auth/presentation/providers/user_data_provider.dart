@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/models/user_params.dart';
 
-final userDataProvider = NotifierProvider<UserDataNotifier, UserParams?>(() {
+final userDataProvider = AutoDisposeNotifierProvider<UserDataNotifier, UserParams?>(() {
   return UserDataNotifier();
 });
 
-class UserDataNotifier extends Notifier<UserParams?> {
+class UserDataNotifier extends AutoDisposeNotifier<UserParams?> {
   @override
   UserParams? build() {
     return UserParams();
