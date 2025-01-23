@@ -91,6 +91,7 @@ class _SelectRolePageState extends State<SelectRolePage> {
                   isExpanded: true,
                 ),
               ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (selectedRole != null) {

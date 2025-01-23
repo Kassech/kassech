@@ -176,6 +176,23 @@ class _SignUpPageState extends State<SignUpPage> {
                             pickFile: () => pickFile('insuranceDocument', ref),
                             filePath: ref.watch(userDataProvider)?.insuranceDocumentFile?.path,
                           ),
+                        // Row(
+                        //   children: [
+                        //     Radio(
+                        //       value: true,
+                        //       groupValue: ref.watch(userDataProvider)?.isAlsoDriver,
+                        //       onChanged: (val) {
+                        //         ref.read(userDataProvider.notifier).updateUserParams(
+                        //               isAlsoDriver: val as bool,
+                        //             );
+                        //       },
+                        //     ),
+                        //     const Text('Is also driver')
+                        //   ],
+                        // ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         ]
                       ],
                       ElevatedButton(
