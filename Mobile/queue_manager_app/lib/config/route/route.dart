@@ -3,12 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/features/Owner/carLocation/car_location.dart';
 import 'package:queue_manager_app/features/Owner/delegate/delegation.dart';
 import 'package:queue_manager_app/features/Owner/list/list_of_cars.dart';
-import 'package:queue_manager_app/features/auth/domain/usecase/authentication_service.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/errorpage.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/forgotpassword.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/signinpage.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/signuppage.dart';
-import 'package:queue_manager_app/features/auth/presentation/pages/waitpage.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/home.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/noRoutesAssigned.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/notificaton_page.dart';
@@ -17,12 +11,19 @@ import 'package:queue_manager_app/features/queue/presentation/pages/qmdetails.da
 import 'package:queue_manager_app/features/role/selectRole.dart';
 import 'package:queue_manager_app/features/splash/splash.dart';
 
+import '../../features/auth/pages/errorpage.dart';
+import '../../features/auth/pages/forgotpassword.dart';
+import '../../features/auth/pages/signinpage.dart';
+import '../../features/auth/pages/signuppage.dart';
+import '../../features/auth/pages/waitpage.dart';
+
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: true,
     redirect: (context, state) async {
-      final isLoggedIn = await AuthenticationService().isAuthenticated();
+      // final isLoggedIn = await AuthenticationService().isAuthenticated();
+      final isLoggedIn = true;
 
       final protectedRoutes = [
         '/home',

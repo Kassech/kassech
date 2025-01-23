@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:queue_manager_app/core/theme/app_theme.dart';
 import 'package:queue_manager_app/features/notification/notification_service.dart';
 import 'package:queue_manager_app/features/queue/domain/usecase/sendlocation.dart';
+import 'core/services/api_service.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -15,6 +16,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   WidgetsFlutterBinding.ensureInitialized();
+  ApiService();
 
   // Initialize location tracking on app start.
   initializeLocation();
@@ -22,6 +24,8 @@ Future<void> main() async {
 }
 
 class MyApp extends ConsumerStatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }

@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 
-class MyPasswordTextField extends StatefulWidget {
+class MyTextField extends StatefulWidget {
   final String labelText;
   final String hintText;
+  final bool isPassword;
   final TextEditingController controller;
 
-  const MyPasswordTextField({
-    super.key,
-    required this.labelText,
-    required this.controller,
-    required this.hintText, required String? Function(dynamic val) validator,
-  });
+  const MyTextField(
+      {super.key,
+      required this.labelText,
+      required this.controller,
+      required this.hintText,
+      required String? Function(dynamic val) validator,  this.isPassword = false});
 
   @override
-  _MyPasswordTextFieldState createState() => _MyPasswordTextFieldState();
+  State<MyTextField> createState() => _MyTextFieldState();
 }
 
-class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
-  bool _isObscure = true; // This variable will control password visibility
+class _MyTextFieldState extends State<MyTextField> {
+  bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +26,17 @@ class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: TextFormField(
         controller: widget.controller,
-        obscureText: _isObscure, // If true, password will be obscured
+        validator: (value) {
+          if (value?.isEmpty ?? true) {
+            return ('please enter value');
+          }
+          return null;
+        },
+        obscureText: widget.isPassword ? _isObscure : false,
         decoration: InputDecoration(
           labelText: widget.labelText,
           hintText: widget.hintText,
-          suffixIcon: IconButton(
+          suffixIcon: widget.isPassword ? IconButton(
             icon: Icon(
               _isObscure
                   ? Icons.visibility_off
@@ -41,7 +48,7 @@ class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
                 _isObscure = !_isObscure; // Toggle the obscured state
               });
             },
-          ),
+          ) : null,
         ),
       ),
     );

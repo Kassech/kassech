@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:queue_manager_app/core/util/token_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 class ApiService {
   static final Dio dio = Dio(BaseOptions(
     baseUrl: 'http://10.0.2.2:5000/api/',

@@ -1,25 +1,24 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/mytextfield.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/filePicker.dart';
 import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/password.dart';
 
-import '../../domain/models/user_params.dart';
+import '../models/user_params.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_data_provider.dart';
+import '../widgets/filePicker.dart';
+import '../widgets/mytextfield.dart';
 
-class SignUpPage extends StatefulWidget {
+class SignUpPage extends ConsumerStatefulWidget {
   final int role;
 
   const SignUpPage({required this.role, super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  ConsumerState<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends ConsumerState<SignUpPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController fathersNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -66,6 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProviders = ref.watch(authProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -132,10 +132,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(
                         height: 20,
                       ),
-                      MyPasswordTextField(
+                      MyTextField(
                         labelText: 'Password',
                         controller: passwordController,
                         hintText: 'Password',
+                        isPassword: true,
                         validator: (val) {
                           return val.isEmpty ? 'Enter your password' : null;
                         },
