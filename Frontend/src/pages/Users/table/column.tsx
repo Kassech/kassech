@@ -28,6 +28,8 @@ import { toast } from '@/hooks/use-toast';
 import CarOwnerForm from '@/sections/owner/carOwnerForm';
 import QueueManagerForm from '@/sections/QueueManager/queueManagerForm';
 import DriverForm from '@/pages/DriverForm';
+import { useState } from 'react';
+import { Toggle } from '@/components/ui/toggle';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -66,7 +68,24 @@ export const columns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Verified" />
     ),
-    cell: ({ row }) => (row.original.IsVerified ? 'Yes' : 'No'),
+    cell: ({ row }) => {
+      const [isVerified, setIsVerified] = useState(row.original.IsVerified);
+
+      const handleToggle = () => {
+        const newVerifiedState = !isVerified;
+        setIsVerified(newVerifiedState);
+        // You can also make an API call here to update the 'IsVerified' status in your database
+        console.log('Toggled Verified:', newVerifiedState);
+      };
+
+      return (
+        <>
+          <Toggle aria-label="Toggle Verified" onClick={handleToggle}>
+            {isVerified ? 'Verified' : 'Not Verified'}
+          </Toggle>
+        </>
+      );
+    },
   },
   {
     id: 'actions',

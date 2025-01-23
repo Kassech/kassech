@@ -1,11 +1,16 @@
 // app_router.dart
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/features/Owner/carLocation/car_location.dart';
+import 'package:queue_manager_app/features/Owner/list/list_of_cars.dart';
+import 'package:queue_manager_app/features/auth/domain/usecase/authentication_service.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/errorpage.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/forgotpassword.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/signinpage.dart';
 import 'package:queue_manager_app/features/auth/presentation/pages/signuppage.dart';
+import 'package:queue_manager_app/features/auth/presentation/pages/waitpage.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/home.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/noRoutesAssigned.dart';
+import 'package:queue_manager_app/features/queue/presentation/pages/notificaton_page.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/profile.dart';
 import 'package:queue_manager_app/features/queue/presentation/pages/qmdetails.dart';
 import 'package:queue_manager_app/features/role/selectRole.dart';
@@ -15,14 +20,21 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     redirect: (context, state) async {
-      // Check if the user is authenticated
-      // final isLoggedIn = await AuthenticationService().checkUserAuthentication();
+      final isLoggedIn = await AuthenticationService().isAuthenticated();
 
-      // Protect /home and any authenticated routes
+      final protectedRoutes = [
+        '/home',
+        '/profile',
+        '/home/qmdetails',
+        '/noroutes'
+      ];
+      final isGoingToProtectedRoute = protectedRoutes.contains(state.path);
       state.path?.startsWith('/home');
-      // if (isGoingToProtectedRoute != null && !isLoggedIn!) {
-      //   return '/signin'; // Redirect to sign-in if unauthenticated
-      // }
+
+      if (isGoingToProtectedRoute && !isLoggedIn) {
+        // Redirect to sign-in if unauthenticated
+        return '/signin';
+      }
 
       return null;
     },
@@ -76,7 +88,13 @@ class AppRouter {
       GoRoute(
           path: '/profile', builder: (context, state) => const ProfilePage()),
       GoRoute(
-          path: '/selectRole', builder: (context, state) => SelectRolePage())
+          path: '/selectRole', builder: (context, state) => SelectRolePage()),
+          GoRoute(path: '/wait', builder: (context, state) => const WaitPage()),
+          
+         //Owner Routes
+          GoRoute(path: '/cars', builder: (context, state)=>  ListOfCars()),
+          GoRoute(path: '/carlocation',builder: (context, state)=> CarLocation()),
+          GoRoute(path:'/notifications',builder: (context, state)=>  NotificationPage(), )
     ],
   );
 }

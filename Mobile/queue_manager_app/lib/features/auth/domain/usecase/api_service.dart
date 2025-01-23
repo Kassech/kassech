@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:queue_manager_app/core/util/token_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -14,6 +15,7 @@ class ApiService {
 
   // Getter method for the base URL
   String get dio_baseUrl => _dio.options.baseUrl;
+ 
 
   ApiService() {
     // Add interceptors
@@ -270,3 +272,6 @@ Future<bool> logoutApi() async {
 
 
 // Signup page api services
+Future<void> saveToken(String token) async {
+  await storage.write(key: 'accessToken', value: token);
+}
