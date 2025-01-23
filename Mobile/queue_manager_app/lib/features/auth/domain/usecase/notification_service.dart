@@ -7,21 +7,8 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
-    // Request permission for iOS
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      print('User granted provisional permission');
-    } else {
-      print('User declined or has not accepted permission');
-    }
+    // Request permission for Android
+    await _firebaseMessaging.requestPermission();
 
     // Initialize local notifications
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -67,3 +54,4 @@ class NotificationService {
     });
   }
 }
+
