@@ -5,13 +5,16 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/utils"
 )
 
 func GetForceDeleteFromHeader(c *gin.Context) (bool, error) {
-	isAdmin, _ := c.Get("isAdmin")
-	fmt.Println("isAdmin GetForceDeleteFromHeader :", isAdmin)
-	fmt.Println("isAdmin == true:", isAdmin == true)
-	if isAdmin == true {
+	roles, ok := c.Get("role")
+	if !ok {
+		return false, nil
+	}
+	isAdmin := utils.Contains(roles.([]string), "Admin")
+	if isAdmin {
 		forceDeleteStr := c.Query("force")
 		fmt.Println("forceDeleteStr:", forceDeleteStr)
 		if forceDeleteStr != "" {
@@ -24,7 +27,6 @@ func GetForceDeleteFromHeader(c *gin.Context) (bool, error) {
 	}
 	return false, nil
 }
-
 
 func GetPageFromQuery(c *gin.Context) (int, error) {
 	pageStr := c.Query("page")
@@ -41,7 +43,6 @@ func GetPageFromQuery(c *gin.Context) (int, error) {
 	return page, nil
 }
 
-
 func GetPerPageFromQuery(c *gin.Context) (int, error) {
 	perPageStr := c.Query("per_page")
 	if perPageStr == "" {
@@ -56,4 +57,3 @@ func GetPerPageFromQuery(c *gin.Context) (int, error) {
 	}
 	return perPage, nil
 }
-

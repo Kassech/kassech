@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"kassech/backend/pkg/service"
+	"kassech/backend/pkg/utils"
 	"net/http"
 	"strconv"
 	"strings"
@@ -56,18 +57,10 @@ func AuthMiddleware() gin.HandlerFunc {
 				roles = append(roles, roleStr)
 			}
 		}
-		isAdmin := contains(roles, "Admin")
+		isAdmin := utils.Contains(roles, "Admin")
 		c.Set("isAdmin", isAdmin)
 		c.Set("userID", userID)
+		c.Set("role", roles)
 		c.Next()
 	}
-}
-
-func contains(arr []string, str string) bool {
-	for _, a := range arr {
-		if a == str {
-			return true
-		}
-	}
-	return false
 }

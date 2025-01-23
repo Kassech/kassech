@@ -9,6 +9,7 @@ import (
 	"kassech/backend/pkg/utils"
 	"mime/multipart"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -160,6 +161,7 @@ func (vc *VehicleController) FindVehicleByID(c *gin.Context) {
 }
 
 // GetAllVehicles handles HTTP requests to get all vehicles
+// TODO: fix the role based query
 func (vc *VehicleController) GetAllVehicles(c *gin.Context) {
 	page, err := utils.GetPageFromQuery(c)
 	if err != nil {
@@ -171,9 +173,22 @@ func (vc *VehicleController) GetAllVehicles(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+
 	search := c.Query("search")
 	ownerID := c.Query("owner_id")
 	typeID := c.Query("type_id")
+	roles, ok := c.Get("role")
+	if !ok {
+		return
+	}
+
+	if utils.Contains(roles.([]string), constants.DriverRoleName) || utils.Contains(roles.([]string), constants.OwnerRoleName) {
+		ownerID = fmt.Sprint(c.Get("userID"))
+	}
 
 	vehicles, total, err := vc.Service.GetAllVehicles(page, perPage, search, ownerID, typeID)
 	if err != nil {

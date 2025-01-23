@@ -44,6 +44,19 @@ func (ur *UserRepository) CreateDriver(driver *models.Driver) (*models.Driver, e
 	return driver, nil
 }
 
+func (ur *UserRepository) VerifyUser(userID uint, state bool) (*models.User, error) {
+	var user models.User
+	err := database.DB.First(&user, userID).Error
+	if err != nil {
+		return nil, err
+	}
+	user.IsVerified = state
+	if err := database.DB.Save(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 // FindByEmailOrPhone searches for a user by either email or phone number
 func (ur *UserRepository) FindByEmailOrPhone(email string, phone string) (*models.User, error) {
 	var user models.User
