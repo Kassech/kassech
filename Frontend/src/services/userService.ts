@@ -51,3 +51,10 @@ export const useDeleteUser = () => {
     }
   );
 };
+
+
+export const useVerifyUser = () => {
+  return useMutation((data: { id: number; state: boolean }) => {
+    return api.get(`/users/verify/${data.id}?state=${data.state}`);
+  });
+};
