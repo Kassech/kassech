@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 import 'package:queue_manager_app/features/queue/presentation/widgets/appDrawer.dart';
-
+import 'package:queue_manager_app/features/queue/presentation/widgets/bottomNavBar.dart';
+import 'package:queue_manager_app/features/queue/presentation/widgets/notification_modal.dart';
 
 class HomeQueueManager extends StatefulWidget {
   const HomeQueueManager({super.key});
@@ -11,18 +13,67 @@ class HomeQueueManager extends StatefulWidget {
 }
 
 class _HomeQueueManagerState extends State<HomeQueueManager> {
+   final List<String> navTitles = ['Queue', 'Map', 'Profile'];
+  final List<String> navRoutes = ['/home', '/home/qmdetails', '/profile'];
+
   final List<Map<String, dynamic>> queues = [
     {'routeName': 'Route 1', 'routeId': 'R001', 'queueCount': 5},
     {'routeName': 'Route 2', 'routeId': 'R002', 'queueCount': 3},
     {'routeName': 'Route 3', 'routeId': 'R003', 'queueCount': 10},
   ];
   bool _isDrawerOpen = false;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFirebaseMessaging();
+  }
+
+  void _initializeFirebaseMessaging() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _showNotificationModal(message.notification?.title ?? 'Notification',
+          message.notification?.body ?? 'You have a new notification');
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // Handle notification tapped logic here
+    });
+  }
+
+  void _showNotificationModal(String title, String body) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return NotificationModal(title: title, body: body);
+      },
+    );
+  }
 
   void _toggleDrawer() {
     setState(() {
       _isDrawerOpen = !_isDrawerOpen;
     });
-  } 
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        AppRouter.router.go('/home');
+        break;
+      case 1:
+        AppRouter.router.go('/map');
+        break;
+      case 2:
+        AppRouter.router.go('/profile');
+        break;
+      default:
+        AppRouter.router.go('/home');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +90,30 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ListView.builder(
-        itemCount: queues.length,
-        itemBuilder: (context, index) {
-          return QueueCard(
-            routeName: queues[index]['routeName'],
-            routeId: queues[index]['routeId'],
-            initialCount: queues[index]['queueCount'],
-          );
-        },
+      body: Stack(
+        children: [
+          ListView.builder(
+            itemCount: queues.length,
+            itemBuilder: (context, index) {
+              return QueueCard(
+                routeName: queues[index]['routeName'],
+                routeId: queues[index]['routeId'],
+                initialCount: queues[index]['queueCount'],
+              );
+            },
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: BottomNavBar(
+              onItemTapped: _onItemTapped,
+              selectedIndex: _selectedIndex,
+              navTitles: navTitles,
+              navRoutes: navRoutes,
+            ),
+          ),
+        ],
       ),
     );
   }
