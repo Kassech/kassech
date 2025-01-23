@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useDeleteUser } from '@/services/userService';
 
-import CarOwnerForm from '@/sections/owner/carOwnerForm';
+import CarOwnerForm from '@/sections/Owner/carOwnerForm';
 import QueueManagerForm from '@/sections/QueueManager/queueManagerForm';
 import DriverForm from '@/pages/DriverForm';
 import VerificationToggle from './verificationToggle';
@@ -69,7 +69,7 @@ export const columns: ColumnDef<User>[] = [
       <DataTableColumnHeader column={column} title="Verified" />
     ),
     cell: ({ row }) => {
-      console.log('is verified: ',row.original.IsVerified)
+      console.log('is verified: ', row.original.IsVerified);
       return (
         <VerificationToggle
           initialVerified={row.original.IsVerified}
