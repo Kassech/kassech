@@ -9,7 +9,7 @@ class MyPasswordTextField extends StatefulWidget {
     super.key,
     required this.labelText,
     required this.controller,
-    required this.hintText,
+    required this.hintText, required String? Function(dynamic val) validator,
   });
 
   @override
@@ -23,22 +23,12 @@ class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
+      child: TextFormField(
         controller: widget.controller,
         obscureText: _isObscure, // If true, password will be obscured
         decoration: InputDecoration(
           labelText: widget.labelText,
           hintText: widget.hintText,
-          enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            borderSide: BorderSide(color: Colors.black),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
-          fillColor: Colors.white,
-          filled: true,
           suffixIcon: IconButton(
             icon: Icon(
               _isObscure

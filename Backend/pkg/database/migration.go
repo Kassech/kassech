@@ -10,6 +10,7 @@ func Migrate(migrationType string) {
 	if DB == nil {
 		log.Fatal("Database connection is nil. Ensure Connect() is called before Migrate().")
 	}
+	DB.Exec("CREATE EXTENSION IF NOT EXISTS postgis;")
 
 	// List of models to migrate
 	modelsToMigrate := []interface{}{
@@ -61,7 +62,14 @@ func Migrate(migrationType string) {
 			log.Fatalf("Failed to run migrations: %v", err)
 		}
 		log.Println("Migrations completed successfully!")
+
 	default:
 		log.Printf("Unknown migration type: %s. Use 'auto' or 'clean'.", migrationType)
 	}
+	DB.Exec(`
+        CREATE INDEX idx_location_gist ON vehicle_gps_logs USING GIST (
+            ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)
+        )
+    `)
+
 }

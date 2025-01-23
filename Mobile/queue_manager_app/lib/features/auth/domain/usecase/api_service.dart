@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:queue_manager_app/core/util/token_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final Dio _dio = Dio(BaseOptions(
+  static final Dio dio = Dio(BaseOptions(
     baseUrl: 'http://10.0.2.2:5000/api/',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
@@ -10,14 +11,15 @@ class ApiService {
   ));
 
   // Getter method for the dio instance
-  Dio get dio_instance => _dio;
+  Dio get dio_instance => dio;
 
   // Getter method for the base URL
-  String get dio_baseUrl => _dio.options.baseUrl;
+  String get dio_baseUrl => dio.options.baseUrl;
+ 
 
   ApiService() {
     // Add interceptors
-    _dio.interceptors.add(InterceptorsWrapper(
+    dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         // Attach access token to headers
         final token = await _getAccessToken();
@@ -51,7 +53,7 @@ class ApiService {
               originalRequest.headers['Authorization'] = 'Bearer $newToken';
 
               // Retry the request with the new token
-              final response = await _dio.fetch(originalRequest);
+              final response = await dio.fetch(originalRequest);
               return handler.resolve(response);
             }
           } catch (error) {
@@ -73,7 +75,7 @@ class ApiService {
     };
 
     try {
-      final response = await _dio.post('${dio_baseUrl}login', data: formData);
+      final response = await dio.post('${dio_baseUrl}login', data: formData);
       print(response);
       return response;
     } catch (e) {
@@ -89,7 +91,7 @@ class ApiService {
 
   Future<String?> _refreshAccessToken() async {
     try {
-      final response = await _dio.post('${dio_baseUrl}refresh');
+      final response = await dio.post('${dio_baseUrl}refresh');
       final newToken = response.data['accessToken'];
       final newRefreshToken = response.data['refreshToken'];
       if (newToken == null || newRefreshToken == null) {
@@ -113,7 +115,7 @@ class ApiService {
   Future<void> sendTokensToBackend(
       String accessToken, String refreshToken) async {
     try {
-      final response = await _dio.post('${dio_baseUrl}notification',
+      final response = await dio.post('${dio_baseUrl}notification',
           data: {'token': accessToken, "device_id": "102934"});
       print('Notification response: ${response.data}');
     } catch (e) {
@@ -123,7 +125,7 @@ class ApiService {
 
   Future<void> getNotifications(String accessToken) async {
     try {
-      final response = await _dio.post('${dio_baseUrl}notifications',
+      final response = await dio.post('${dio_baseUrl}notifications',
           data: {'token': 'abcde', "device_id": "102934"});
 
       print('Notifications response: ${response.data}');
@@ -140,7 +142,7 @@ class ApiService {
     }
 
     try {
-      final response = await _dio.post('${dio_baseUrl}refresh', data: {
+      final response = await dio.post('${dio_baseUrl}refresh', data: {
         'refreshToken': refreshToken,
       });
 
@@ -202,7 +204,7 @@ class ApiService {
   // }
 Future<bool> logoutApi() async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         'https://yourapi.com/logout',
         options: Options(
           validateStatus: (status) {
@@ -270,3 +272,6 @@ Future<bool> logoutApi() async {
 
 
 // Signup page api services
+Future<void> saveToken(String token) async {
+  await storage.write(key: 'accessToken', value: token);
+}

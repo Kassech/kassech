@@ -13,7 +13,7 @@ class SigninPage extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
 
 //private instatiation of the authservice
-  final  _apiService = ApiService();
+  final _apiService = ApiService();
 
 // Extract the refresh token from cookies
   String? extractRefreshToken(String cookies) {
@@ -42,20 +42,24 @@ class SigninPage extends StatelessWidget {
         // Store the access token and refresh token
         final accessToken = response.data['accessToken'];
         final refreshToken = extractRefreshToken(cookies.toString());
-        final isVerified = response.data['user']['IsVerified'];
+        print(response.data);
+        final isVerified =
+            response.data['user']['is_verified'] as bool? ?? false;
 
-        if (!isVerified) {
-          // Handle unverified user
-          print('User is not verified');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(
-                    'Your account is not verified. Please verify your account.')),
-          );
-          return;
-        }
+        // if (!isVerified) {
+        //   // Handle unverified user
+        //   print('User is not verified');
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     const SnackBar(
+        //         content: Text(
+        //             'Your account is not verified. Please verify your account.')),
+        //   );
+        //   return;
+        // }
+
         await _apiService.saveTokens(accessToken, refreshToken.toString());
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login successful')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Login successful')));
         AppRouter.router.go('/home');
         print(accessToken);
         print(refreshToken);
@@ -108,12 +112,16 @@ class SigninPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 MyTextField(
                   labelText: "Phone Number",
+                  validator: (val) =>
+                      val.isEmpty ? 'Enter your phone number' : null,
                   controller: phoneController..text = "+251984852481",
                   hintText: "+251 ___ ___ ___",
                 ),
                 const SizedBox(height: 20),
                 MyPasswordTextField(
                   labelText: "Password",
+                  validator: (val) =>
+                      val.isEmpty ? 'Enter your password' : null,
                   controller: passwordController..text = "test123",
                   hintText: "**********",
                 ),

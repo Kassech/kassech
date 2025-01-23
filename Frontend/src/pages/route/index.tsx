@@ -10,6 +10,8 @@ import { CreateRouteForm } from './component/createForm';
 import { useGetAllRoutes } from '@/services/routeService';
 import LoadingSpinner from '@/components/loading-spinner';
 import { useGetAllStations } from '@/services/stationService';
+import { DataTable } from './component/table';
+import { columns } from './component/table/column';
 
 const paths = [
   { name: 'Home', href: '/' },
@@ -44,9 +46,7 @@ const RoutePage: React.FC = () => {
               </ResizablePanel>
               <ResizableHandle />
               <ResizablePanel defaultSize={50}>
-                <div className="flex h-full items-center justify-center p-6">
-                  <span className="font-semibold">Two</span>
-                </div>
+                <DataTable data={routes ?? []} columns={columns} />{' '}
               </ResizablePanel>
             </ResizablePanelGroup>
           </ResizablePanel>

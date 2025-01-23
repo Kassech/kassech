@@ -1,15 +1,14 @@
-import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/authButton.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/filePicker.dart';
 import 'package:queue_manager_app/features/auth/presentation/widgets/mytextfield.dart';
+import 'package:queue_manager_app/features/auth/presentation/widgets/filePicker.dart';
+import 'package:queue_manager_app/config/route/route.dart';
 import 'package:queue_manager_app/features/auth/presentation/widgets/password.dart';
-import 'package:queue_manager_app/features/queue/presentation/provider/filePickerNotifier.dart';
-import 'package:queue_manager_app/features/queue/presentation/provider/profileChangeProvider.dart';
+
+import '../../domain/models/user_params.dart';
+import '../providers/auth_provider.dart';
+import '../providers/user_data_provider.dart';
 
 class SignUpPage extends StatefulWidget {
   final int role;
@@ -24,211 +23,188 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController fathersNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  bool _validateEmail(String input) {
-    final regex = RegExp(
-        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
-    return regex.hasMatch(input);
-  }
-
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  // ..text = '+251'
-  // ..selection = const TextSelection(baseOffset: 3, extentOffset: 3);
-
-  // bool _validatePhoneNumber(String input) {
-  //   final regex = RegExp(r'^\+251\d+$');
-  //   return regex.hasMatch(input);
-  // }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    phoneController.addListener(() {
-      // if (!_validatePhoneNumber(phoneController.text)) {
-      //   phoneController.text = '+251';
-      //   phoneController.selection =
-      //       const TextSelection(baseOffset: 3, extentOffset: 3);
-      // }
-    });
-  }
-
   final TextEditingController kebeleIdController = TextEditingController();
-  final TextEditingController queueManagerIdController =
+  final TextEditingController profilePictureController =
       TextEditingController();
 
+  final formKey = GlobalKey<FormState>();
+
   Future<void> pickFile(String fileType, WidgetRef ref) async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.any);
+    FilePickerResult? result;
+    try {
+      result = await FilePicker.platform.pickFiles();
+    } catch (e) {
+      return;
+    }
+
     if (result != null) {
-      ref
-          .read(filePickerProvider.notifier)
-          .setFile(fileType, result.files.first);
+      final file = result.files.first;
+      ref.read(userDataProvider.notifier).updateUserFiles(
+            kebeleId: fileType == 'kebeleId' ? file : null,
+            profilePicture: fileType == 'profilePicture' ? file : null,
+            drivingLicenseFile: fileType == 'drivingLicense' ? file : null,
+            insuranceDocumentFile:
+                fileType == 'insuranceDocument' ? file : null,
+          );
     }
   }
 
-  final dioInst = ApiService().dio_instance;
-
-  Future<void> uploadFiles(WidgetRef ref) async {
-    final files = ref.read(filePickerProvider);
-    final kebeleId = files['kebeleId'];
-    final profilePicture = files['profilePicture'];
-    final queueManagerIdFile = files['queueManagerId'];
-    final drivingLicenseFile = files['drivingLicense'];
-    final insuranceDocumentFile = files['insuranceDocument'];
-
-    if (kebeleId == null ||
-        profilePicture == null ||
-        (widget.role == 3 && queueManagerIdFile == null)) return;
-
-    final formData = FormData.fromMap({
-      'FirstName': nameController.text,
-      'LastName': fathersNameController.text,
-      'Email': emailController.text,
-      'Password': passwordController.text,
-      ''
-          'PhoneNumber': phoneController.text,
-      'Role': widget.role,
-      'NationalIdFile':
-          await MultipartFile.fromFile(kebeleId.path!, filename: kebeleId.name),
-      'Profile': await MultipartFile.fromFile(profilePicture.path!,
-          filename: profilePicture.name),
-      if (widget.role == 2)
-        if (widget.role == 4)
-          'DrivingLicenseFile': await MultipartFile.fromFile(
-              drivingLicenseFile!.path!,
-              filename: drivingLicenseFile.name),
-      if (widget.role == 4)
-        'InsuranceDocumentFile': await MultipartFile.fromFile(
-            insuranceDocumentFile!.path!,
-            filename: insuranceDocumentFile.name),
-    });
-
-    try {
-      final response = await dioInst.post('${ApiService().dio_baseUrl}register',
-          data: formData);
-      if (response.statusCode == 200) {
-        final profilePictureUrl = response.data['profilePictureUrl'];
-        ref
-            .read(profilePictureProvider.notifier)
-            .setProfilePicture(profilePictureUrl);
-        print('Upload successful');
-      } else {
-        print('Upload failed: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Upload failed: $e');
-    }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    nameController.dispose();
+    fathersNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    phoneController.dispose();
+    kebeleIdController.dispose();
+    profilePictureController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              AppRouter.router.go('/signin');
-            },
-            icon: Icon(Icons.arrow_back)),
         backgroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Consumer(
-          builder: (context, ref, child) {
-            final files = ref.watch(filePickerProvider);
-            return ListView(
-              children: [
-                Column(
-                  children: [
-                    const Text(
-                      'Sign Up',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    MyTextField(
-                      labelText: 'Name',
-                      controller: nameController,
-                      hintText: 'Name',
-                    ),
-                    const SizedBox(height: 10),
-                    MyTextField(
-                      labelText: 'Fathers Name',
-                      controller: fathersNameController,
-                      hintText: 'Name',
-                    ),
-                    const SizedBox(height: 10),
-                    MyTextField(
-                      labelText: 'Email',
-                      controller: emailController,
-                      hintText: 'Email',
-                    ),
-                    const SizedBox(height: 10),
-                    MyPasswordTextField(
-                      labelText: 'Password',
-                      controller: passwordController,
-                      hintText: 'Password',
-                    ),
-                    const SizedBox(height: 10),
-                    MyTextField(
-                      labelText: 'Phone',
-                      controller: phoneController,
-                      hintText: 'Phone',
-                    ),
-                    const SizedBox(height: 10),
-                    FileSelectorWidget(
-                      onPressed: () => pickFile('kebeleId', ref),
-                      label: 'Upload Kebele ID',
-                    ),
-                    if (files['kebeleId'] != null)
-                      Text(
-                          'Selected Kebele ID file: ${files['kebeleId']!.name}'),
-                    FileSelectorWidget(
-                      onPressed: () => pickFile('profilePicture', ref),
-                      label: 'Upload Profile Picture',
-                    ),
-                    if (files['profilePicture'] != null)
-                      Text(
-                          'Selected Profile Picture: ${files['profilePicture']!.name}'),
-                    // if (widget.role == 3) ...[
-                    //   FileSelectorWidget(
-                    //     onPressed: () => pickFile('queueManagerId', ref),
-                    //     label: 'Upload Queue Manager ID',
-                    //   ),
-                    //   if (files['queueManagerId'] != null)
-                    //     Text(
-                    //         'Selected Queue Manager ID file: ${files['queueManagerId']!.name}'),
-                    // ],
-                    if (widget.role == 2|| widget.role == 4) ...[
-                      FileSelectorWidget(
-                        onPressed: () => pickFile('drivingLicense', ref),
-                        label: 'Upload Driving License',
-                      ),
-                      if (files['drivingLicense'] != null)
-                        Text(
-                            'Selected Driving License file: ${files['drivingLicense']!.name}'),
-                      FileSelectorWidget(
-                        onPressed: () => pickFile('insuranceDocument', ref),
-                        label: 'Upload Insurance Document',
-                      ),
-                      if (files['insuranceDocument'] != null)
-                        Text(
-                            'Selected Insurance Document file: ${files['insuranceDocument']!.name}'),
-                    ],
-                    AuthButton(
-                      label: 'SignUp',
-                      onPressed: () {
-                        '${ApiService().dio_baseUrl}register';
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            );
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            AppRouter.router.go('/signin');
           },
+        ),
+      ),
+      body: Form(
+        key: formKey, // Set the form key.
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Consumer(
+            builder: (context, ref, child) {
+              return ListView(
+                children: [
+                  Column(
+                    children: [
+                      const Text(
+                        'Sign Up',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      MyTextField(
+                        labelText: 'First Name',
+                        controller: nameController,
+                        hintText: 'First Name',
+                        validator: (val) {
+                          return val.isEmpty ? 'Enter your first name' : null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      MyTextField(
+                        labelText: 'Father\'s Name',
+                        controller: fathersNameController,
+                        hintText: 'Father\'s Name',
+                        validator: (val) {
+                          return val.isEmpty
+                              ? 'Enter your father\'s name'
+                              : null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      MyTextField(
+                        labelText: 'Email',
+                        controller: emailController,
+                        hintText: 'Email',
+                        validator: (val) {
+                          return val.isEmpty ? 'Enter your email' : null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      MyPasswordTextField(
+                        labelText: 'Password',
+                        controller: passwordController,
+                        hintText: 'Password',
+                        validator: (val) {
+                          return val.isEmpty ? 'Enter your password' : null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      MyTextField(
+                        labelText: 'Phone Number',
+                        controller: phoneController,
+                        hintText: 'Phone Number',
+                        validator: (val) {
+                          return val.isEmpty ? 'Enter your phone number' : null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      FileSelectorWidget(
+                        label: 'Kebele ID File',
+                        pickFile: () => pickFile('kebeleId', ref),
+                        filePath: ref.read(userDataProvider)?.kebeleId?.path,
+                      ),
+                      FileSelectorWidget(
+                        label: 'Profile Picture',
+                        pickFile: () => pickFile('profilePicture', ref),
+                        filePath: ref.watch(userDataProvider)?.profilePicture?.path,
+                      ),
+                      if (widget.role == 2) ...[
+                        FileSelectorWidget(
+                          label: 'Driving License File',
+                          pickFile: () => pickFile('drivingLicense', ref),
+                          filePath: ref.watch(userDataProvider)?.drivingLicenseFile?.path,
+                        ),
+                        if (widget.role == 4) ...[
+                          FileSelectorWidget(
+                            label: 'Insurance Document File',
+                            pickFile: () => pickFile('insuranceDocument', ref),
+                            filePath: ref.watch(userDataProvider)?.insuranceDocumentFile?.path,
+                          ),
+                        ]
+                      ],
+                      ElevatedButton(
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            final user = UserParams(
+                              firstName: nameController.text,
+                              lastName: fathersNameController.text,
+                              email: emailController.text,
+                              phoneNumber: phoneController.text,
+                              password: passwordController.text,
+                              role: widget.role,
+                              kebeleId: ref.read(userDataProvider)?.kebeleId,
+                              profilePicture: ref.read(userDataProvider)?.profilePicture,
+                              drivingLicenseFile: ref.read(userDataProvider)?.drivingLicenseFile,
+                              insuranceDocumentFile: ref.read(userDataProvider)?.insuranceDocumentFile,
+                            );
+                            ref.read(userDataProvider.notifier).updateUserData(user);
+                            ref.read(authProvider.notifier).signUp(user);
+                          }
+                        },
+                        child: const Text('Sign Up'),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

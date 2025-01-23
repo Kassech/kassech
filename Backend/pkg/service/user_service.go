@@ -87,7 +87,7 @@ func (us *UserService) SaveNotificationToken(userID uint, token string, device_i
 
 func (us *UserService) VerifyUser(userID uint, state bool) (*models.User, error) {
 	// Call the repository method to save the notification token
-	user, err := us.Repo.VerifyUser(userID,state)
+	user, err := us.Repo.VerifyUser(userID, state)
 	if err != nil {
 		return nil, err
 	}
@@ -110,8 +110,7 @@ func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*d
 	// Convert the model to domain
 	domainUser := mapper.ToDomainUser(user)
 	userPermissions, userRole, err := us.Repo.GetPermissionsAndRolesByUserID(user.ID)
-	fmt.Println("userRole:", userRole)
-	fmt.Println("userPermissions:", userPermissions)
+
 	if err != nil {
 		domainUser.Permissions = []string{}
 		domainUser.Roles = []string{}
@@ -122,7 +121,6 @@ func (us *UserService) Login(emailOrPhone, password string, r *http.Request) (*d
 
 	// Generate the JWT tokens
 	accessToken, refreshToken, err := GenerateToken(user.ID, userRole)
-	fmt.Println("accessToken, refreshToken, err:", accessToken, refreshToken, err)
 
 	if err != nil {
 		return nil, "", "", errors.New("failed to generate token")
@@ -234,4 +232,14 @@ func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 
 func (us *UserService) CreateDriver(driver *models.Driver) (*models.Driver, error) {
 	return us.Repo.CreateDriver(driver)
+}
+
+// GetUserById fetches a user by their unique ID
+func (us *UserService) GetUserById(userId uint) (*models.User, error) {
+	user, err := us.Repo.FindByID(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

@@ -31,7 +31,7 @@ func (rr *RouteRepository) FindByID(routeID uint) (*models.Route, error) {
 // Get all routes
 func (rr *RouteRepository) GetAll() (*[]models.Route, error) {
 	var routes []models.Route
-	if err := database.DB.Find(&routes).Error; err != nil {
+	if err := database.DB.Preload("StationA").Preload("StationB").Find(&routes).Error; err != nil {
 		return nil, err
 	}
 	return &routes, nil
