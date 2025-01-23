@@ -268,6 +268,8 @@ Future<bool> logoutApi() async {
     print('Saved access token: $accessToken');
     // print('Saved refresh token: $refreshToken');
   }
+
+  isAllowedToViewCars() {}
 }
 
 

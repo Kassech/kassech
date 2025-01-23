@@ -24,15 +24,31 @@ class ListOfCars extends StatelessWidget {
       'plateNumber': 'B094563',
     },
   ];
-  ListOfCars({super.key});
+
+  final int roleId;
+  final bool isOwner;
+
+  ListOfCars({super.key, required this.roleId, required this.isOwner});
 
   @override
   Widget build(BuildContext context) {
+    if (roleId != 4 && !isOwner) {
+      // Redirect to another page or show an appropriate message
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Access Denied'),
+        ),
+        body: Center(
+          child: Text('You do not have permission to view this page.'),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: Icon(Icons.menu),
+        leading: const Icon(Icons.menu),
         title: const Text(
           'List of Cars',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
