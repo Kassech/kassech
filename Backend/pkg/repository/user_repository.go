@@ -110,7 +110,7 @@ func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) (
 	// Build the base query
 	query := database.DB.
 		Model(&models.User{}).
-		Select("users.id, users.first_name, users.last_name, users.email, users.phone_number, array_agg(DISTINCT roles.role_name) AS roles").
+		Select("users.*, array_agg(DISTINCT roles.role_name) AS roles").
 		Joins("LEFT JOIN user_roles ON user_roles.user_id = users.id").
 		Joins("LEFT JOIN roles ON roles.id = user_roles.role_id").
 		Group("users.id")
