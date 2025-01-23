@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart';
+
+import '../services/api_service.dart';
 
 class NotificationService {
   Future<void> sendTokenAndDeviceId() async {

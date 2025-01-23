@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/authButton.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/mytextfield.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/password.dart';
+
+import '../../../core/services/api_service.dart';
+import '../widgets/authButton.dart';
+import '../widgets/mytextfield.dart';
 
 class SigninPage extends StatelessWidget {
   SigninPage({super.key});
@@ -87,7 +87,6 @@ class SigninPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -107,7 +106,7 @@ class SigninPage extends StatelessWidget {
                 ),
                 const Text(
                   'Enter your phone number, email and password',
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                  style: TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 20),
                 MyTextField(
@@ -118,12 +117,13 @@ class SigninPage extends StatelessWidget {
                   hintText: "+251 ___ ___ ___",
                 ),
                 const SizedBox(height: 20),
-                MyPasswordTextField(
+                MyTextField(
                   labelText: "Password",
                   validator: (val) =>
                       val.isEmpty ? 'Enter your password' : null,
                   controller: passwordController..text = "test123",
                   hintText: "**********",
+                  isPassword: true,
                 ),
                 const SizedBox(height: 10),
                 Padding(
@@ -150,17 +150,15 @@ class SigninPage extends StatelessWidget {
                 const Center(
                   child: Row(
                     children: [
-                      Expanded(
-                          child: Divider(thickness: 1, color: Colors.black54)),
+                      Expanded(child: Divider(thickness: 1)),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           'OR',
-                          style: TextStyle(fontSize: 16, color: Colors.black),
+                          style: TextStyle(fontSize: 16),
                         ),
                       ),
-                      Expanded(
-                          child: Divider(thickness: 1, color: Colors.black54)),
+                      Expanded(child: Divider(thickness: 1)),
                     ],
                   ),
                 ),
@@ -171,18 +169,19 @@ class SigninPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text('Don\'t have an account?',
-                        style: TextStyle(fontSize: 15, color: Colors.black54)),
+                        style: TextStyle(fontSize: 15)),
                     TextButton(
-                        onPressed: () {
-                          AppRouter.router.go('/selectRole');
-                        },
-                        child: Text(
-                          'Sign Up',
-                          style: TextStyle(
-                              color: Colors.blue[900],
-                              fontSize: 15,
-                              fontWeight: FontWeight.w900),
-                        ))
+                      onPressed: () {
+                        AppRouter.router.go('/selectRole');
+                      },
+                      child: Text(
+                        'Sign Up',
+                        style: TextStyle(
+                            color: Colors.blue[900],
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900),
+                      ),
+                    )
                   ],
                 )
               ],

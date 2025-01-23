@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/authButton.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/mytextfield.dart';
+
+import '../widgets/authButton.dart';
+import '../widgets/mytextfield.dart';
 
 class ForgotPassword extends StatelessWidget {
   ForgotPassword({super.key});

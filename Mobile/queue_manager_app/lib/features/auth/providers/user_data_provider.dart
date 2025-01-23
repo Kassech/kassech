@@ -1,7 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/models/user_params.dart';
+import '../models/user_params.dart';
 
 final userDataProvider = AutoDisposeNotifierProvider<UserDataNotifier, UserParams?>(() {
   return UserDataNotifier();

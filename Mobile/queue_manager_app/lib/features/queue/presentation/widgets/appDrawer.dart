@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/auth/domain/usecase/api_service.dart';
 import 'package:queue_manager_app/core/util/token_storage.dart';
+
+import '../../../../core/services/api_service.dart';
 
 class AppDrawer extends ConsumerWidget {
   final ApiService apiService = ApiService();
+
+  AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,14 +61,16 @@ class AppDrawer extends ConsumerWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () async {
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
               try {
-                final response = await ApiService().dio_instance.post('${ApiService().dio_baseUrl}logout');
+                final response = await ApiService()
+                    .dio_instance
+                    .post('${ApiService().dio_baseUrl}logout');
                 if (response.statusCode == 200) {
                   await storage.delete(key: 'accessToken');
                   AppRouter.router.go('/signin');
                 } else {
-                  print('Logout failed');
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(
                       content: Text('Logout failed'),
                     ),
@@ -74,7 +78,7 @@ class AppDrawer extends ConsumerWidget {
                 }
               } catch (e) {
                 print('An error occurred: $e');
-                ScaffoldMessenger.of(context).showSnackBar(
+                scaffoldMessenger.showSnackBar(
                   SnackBar(
                     content: Text('Logout failed'),
                   ),
