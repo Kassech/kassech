@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/config/provider/webSocket.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:queue_manager_app/core/theme/app_theme.dart';
 import 'package:queue_manager_app/features/notification/notification_service.dart';
 import 'package:queue_manager_app/features/queue/domain/usecase/sendlocation.dart';
 import 'firebase_options.dart';
@@ -45,6 +46,8 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
+      theme: lightThemeData,
+      darkTheme: darkThemeData,
       routerConfig: AppRouter.router,
     );
   }

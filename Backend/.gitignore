@@ -44,3 +44,5 @@ Desktop.ini
 
 # Uploads directory
 /uploads/
+Backend/temp/main
+/.embold/vscode-logs.log
