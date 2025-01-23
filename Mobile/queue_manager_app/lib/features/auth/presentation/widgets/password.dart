@@ -29,16 +29,6 @@ class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
         decoration: InputDecoration(
           labelText: widget.labelText,
           hintText: widget.hintText,
-          enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            borderSide: BorderSide(color: Colors.black),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
-          fillColor: Colors.white,
-          filled: true,
           suffixIcon: IconButton(
             icon: Icon(
               _isObscure

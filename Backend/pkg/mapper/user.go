@@ -14,6 +14,7 @@ func ToDomainUser(dbUser *models.User) *domain.User {
 		FirstName:      dbUser.FirstName,
 		LastName:       dbUser.LastName,
 		ProfilePicture: dbUser.ProfilePicture,
+		IsVerified:     dbUser.IsVerified,
 	}
 }
 func ToGormUser(domainUser *domain.User) *models.User {

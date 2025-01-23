@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -7,8 +7,10 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useState } from "react";
+} from '@/components/ui/select';
+import { useCreateRoute } from '@/services/routeService';
+import { useToast } from '@/hooks/use-toast';
+import { Label } from 'recharts';
 import {
   Card,
   CardContent,
@@ -16,24 +18,28 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { useCreateRoute } from "@/services/routeService";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/card';
+import useFormStore from '@/store/routemap';
 
 export function CreateRouteForm({ data }) {
-  const [location1, setLocation1] = useState("");
-  const [location2, setLocation2] = useState("");
-  const [loading, setLoading] = useState(false);
+  const {
+    location1,
+    location2,
+    loading,
+    setLocation1,
+    setLocation2,
+    setLoading,
+    resetForm,
+  } = useFormStore();
   const createRoute = useCreateRoute();
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const handleSubmit = () => {
     if (!location1 || !location2) {
       toast({
-        variant: "destructive",
-        title: "Invalid Submission",
-        description: "Please select both Start and End Locations.",
+        variant: 'destructive',
+        title: 'Invalid Submission',
+        description: 'Please select both Start and End Locations.',
       });
       return;
     }
@@ -45,21 +51,21 @@ export function CreateRouteForm({ data }) {
       {
         onSuccess: () => {
           toast({
-            title: "Route Created",
-            description: `Successfully created a route between ${data.find(
-              (loc) => loc.ID === parseInt(location1)
-            )?.LocationName} and ${data.find(
-              (loc) => loc.ID === parseInt(location2)
-            )?.LocationName}.`,
+            title: 'Route Created',
+            description: `Successfully created a route between ${
+              data.find((loc) => loc.ID === parseInt(location1))?.LocationName
+            } and ${
+              data.find((loc) => loc.ID === parseInt(location2))?.LocationName
+            }.`,
           });
-          setLocation1("");
-          setLocation2("");
+          resetForm(); // Reset form state after success
         },
         onError: () => {
           toast({
-            variant: "destructive",
-            title: "Route Creation Failed",
-            description: "An error occurred while creating the route. Please try again.",
+            variant: 'destructive',
+            title: 'Route Creation Failed',
+            description:
+              'An error occurred while creating the route. Please try again.',
           });
         },
         onSettled: () => {
@@ -70,11 +76,10 @@ export function CreateRouteForm({ data }) {
   };
 
   const handleCancel = () => {
-    setLocation1("");
-    setLocation2("");
+    resetForm(); // Reset form state on cancel
     toast({
-      title: "Form Cleared",
-      description: "Start and End Locations have been reset.",
+      title: 'Form Cleared',
+      description: 'Start and End Locations have been reset.',
     });
   };
 
@@ -146,7 +151,7 @@ export function CreateRouteForm({ data }) {
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Creating..." : "Create"}
+            {loading ? 'Creating...' : 'Create'}
           </Button>
         </CardFooter>
       </Card>
