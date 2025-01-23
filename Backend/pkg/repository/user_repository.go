@@ -32,7 +32,22 @@ func (ur *UserRepository) Create(user *models.User, role uint) (*models.User, er
 	// Commit the transaction
 	tx.Commit()
 
-	return user, nil
+	// Retrieve the user with roles like in ListUsers
+	var users []models.User
+	query := database.DB.
+		Model(&models.User{}).
+		Select("users.*, array_agg(DISTINCT roles.role_name) AS roles").
+		Joins("LEFT JOIN user_roles ON user_roles.user_id = users.id").
+		Joins("LEFT JOIN roles ON roles.id = user_roles.role_id").
+		Group("users.id").
+		Where("users.id = ?", user.ID)
+
+	err := query.First(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &users[0], nil
 }
 
 // CreateDriver inserts a new driver
@@ -70,7 +85,7 @@ func (ur *UserRepository) FindByEmailOrPhone(email string, phone string) (*model
 // FindByID fetches a user by their unique ID
 func (ur *UserRepository) FindByID(userID uint) (*models.User, error) {
 	var user models.User
-	err := database.DB.First(&user, userID).Error
+	err := database.DB.Preload("Roles").First(&user, userID).Error
 	if err != nil {
 		return nil, err
 	}
