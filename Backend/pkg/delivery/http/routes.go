@@ -21,6 +21,7 @@ func RegisterRoutes(r *gin.Engine) {
 	routeRepo := &repository.RouteRepository{}
 	vehicleTypeRepo := &repository.VehicleTypeRepository{}
 	vehicleRepo := &repository.VehicleRepository{}
+	LocationRepo := &repository.LocationRepository{}
 
 	// Initialize Services
 	userSvc := &service.UserService{Repo: userRepo}
@@ -33,6 +34,8 @@ func RegisterRoutes(r *gin.Engine) {
 	routeSvc := &service.RouteService{Repo: routeRepo}
 	vehicleTypeSvc := &service.VehicleTypeService{Repo: vehicleTypeRepo}
 	vehicleSvc := &service.VehicleService{Repo: vehicleRepo}
+	locationSvc := &service.LocationService{Repo: LocationRepo}
+
 	// Initialize Controllersz
 	userCtrl := &controller.UserController{Service: userSvc, SessionService: sessionService}
 	roleCtrl := &controller.RoleController{Service: roleSvc}
@@ -44,6 +47,7 @@ func RegisterRoutes(r *gin.Engine) {
 	routeCtrl := &controller.RouteController{Service: routeSvc}
 	vehicleTypeCtrl := &controller.VehicleTypeController{Service: vehicleTypeSvc}
 	vehicleCtrl := &controller.VehicleController{Service: vehicleSvc}
+	locationCtrl := &controller.LocationController{Service: locationSvc}
 
 	// Group API routes
 	api := r.Group("/api")
@@ -74,6 +78,8 @@ func RegisterRoutes(r *gin.Engine) {
 		vehicleTypeRoutes(api, vehicleTypeCtrl)
 
 		vehicleRoutes(api, vehicleCtrl)
+
+		locationRoutes(api, locationCtrl)
 
 	}
 }
@@ -158,6 +164,10 @@ func registerUserRoutes(api *gin.RouterGroup, ctrl *controller.UserController) {
 
 	api.GET("/users", ctrl.ListUsers)
 
+	api.GET("/users/:id", ctrl.GetUserById)
+
+	api.GET("/users/me", ctrl.GetCurrntUser)
+
 	api.GET("/users/verify/:id", ctrl.VerifyUser)
 
 	api.PUT("/users/:id", ctrl.UpdateUser)
@@ -221,4 +231,18 @@ func registerRolePermissionRoutes(api *gin.RouterGroup, ctrl *controller.RolePer
 	api.DELETE("/role_permissions/:id", ctrl.DeleteRolePermission)
 
 	api.DELETE("/role_permissions/role/:role_id/permission/:permission_id", ctrl.DeleteRolePermissionByRoleAndPermission)
+}
+
+func locationRoutes(api *gin.RouterGroup, ctrl *controller.LocationController) {
+	roleApi := api.Group("/location")
+	{
+
+		roleApi.POST("/", ctrl.CreateLocation)
+
+		roleApi.DELETE("/:id", ctrl.DeleteLocation)
+
+		roleApi.GET("/:id", ctrl.FindLocationByID)
+
+		roleApi.GET("/", ctrl.GetAllLocations)
+	}
 }

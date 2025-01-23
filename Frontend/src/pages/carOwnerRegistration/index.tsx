@@ -1,7 +1,7 @@
 // pages/driver/Driver.jsx
 
 import Header from '@/components/header';
-import Owner from '@/sections/owner';
+import Owner from '@/sections/Owner';
 
 export default function OwnerRegistration() {
   const paths = [
@@ -12,7 +12,7 @@ export default function OwnerRegistration() {
     <>
       <Header paths={paths} />
       <div className="w-full">
-          <Owner />
+        <Owner />
       </div>
     </>
   );

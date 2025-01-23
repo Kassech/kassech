@@ -4,16 +4,18 @@ import api from '../api/axiosInstance';
 type SearchParams = {
   search?: string;
   role?: number;
+  ID?:number;
 };
 
 // Fetch user data with react-query
-export const useFetchUserData = ({ search = '', role }: SearchParams = {}) => {
-  return useQuery(['userData', search, role], async () => {
+export const useFetchUserData = ({ search = '', role , ID}: SearchParams = {}) => {
+  return useQuery(['userData', search, role,ID], async () => {
     const params: Record<string, string | number | undefined> = {
       search: search || '',
       page: 1,
       limit: 5,
       role,
+      ID,
     };
     const response = await api.get('/users', { params });
     return response.data;
@@ -50,4 +52,11 @@ export const useDeleteUser = () => {
       },
     }
   );
+};
+
+
+export const useVerifyUser = () => {
+  return useMutation((data: { id: number; state: boolean }) => {
+    return api.get(`/users/verify/${data.id}?state=${data.state}`);
+  });
 };

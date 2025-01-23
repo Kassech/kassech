@@ -233,3 +233,13 @@ func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 func (us *UserService) CreateDriver(driver *models.Driver) (*models.Driver, error) {
 	return us.Repo.CreateDriver(driver)
 }
+
+// GetUserById fetches a user by their unique ID
+func (us *UserService) GetUserById(userId uint) (*models.User, error) {
+	user, err := us.Repo.FindByID(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

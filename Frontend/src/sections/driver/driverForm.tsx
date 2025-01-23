@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
 import { driverSchema } from '@/types/schemas';
 import ImageUploader from '@/components/image-uploader';
 import { Card } from '@/components/ui/card';
