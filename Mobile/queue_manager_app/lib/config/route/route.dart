@@ -19,6 +19,7 @@ import 'package:queue_manager_app/features/splash/splash.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
+    debugLogDiagnostics: true,
     redirect: (context, state) async {
       final isLoggedIn = await AuthenticationService().isAuthenticated();
 

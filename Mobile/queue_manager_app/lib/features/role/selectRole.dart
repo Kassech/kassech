@@ -43,64 +43,64 @@ class _SelectRolePageState extends State<SelectRolePage> {
         backgroundColor: Colors.white,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Select a Role',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.w800,
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Select a Role',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: DropdownButton<String>(
-                value: selectedRole,
-                hint: Text('Choose a role'),
-                items: roles.entries.map((entry) {
-                  return DropdownMenuItem<String>(
-                    value: entry.key,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 8.0), // Adjust padding as needed(8.0),
-                      child: Text(
-                        entry.key,
-                        style: TextStyle(fontSize: 16),
+              const SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: DropdownButton<String>(
+                  value: selectedRole,
+                  hint: Text('Choose a role'),
+                  items: roles.entries.map((entry) {
+                    return DropdownMenuItem<String>(
+                      value: entry.key,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 8.0), // Adjust padding as needed(8.0),
+                        child: Text(
+                          entry.key,
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
-                    ),
-                  );
-                }).toList(),
-                onChanged: (String? newRole) {
-                  setState(() {
-                    selectedRole = newRole;
-                    print('Selected Role: ${roles[selectedRole]}');
-              
-                  });
-                },
-                style: TextStyle(color: Colors.black),
-                // focusColor: Colors.black,
-                icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-                dropdownColor: Colors.white,
-                isExpanded: true,
+                    );
+                  }).toList(),
+                  onChanged: (String? newRole) {
+                    setState(() {
+                      selectedRole = newRole;
+                      print('Selected Role: ${roles[selectedRole]}');
+                    });
+                  },
+                  style: TextStyle(color: Colors.black),
+                  // focusColor: Colors.black,
+                  icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                  dropdownColor: Colors.white,
+                  isExpanded: true,
+                ),
               ),
-            ),
-
-            AuthButton(
-              label: 'Next',
-              onPressed: () {
-                context.go('/signup', extra: roles[selectedRole]);
-              },
-            ),
-          ])
-      ),
+              ElevatedButton(
+                onPressed: () {
+                  if (selectedRole != null) {
+                    AppRouter.router.go('/signup', extra: roles[selectedRole]);
+                  }
+                },
+                child: Text('Next'),
+              ),
+            ],
+          )),
     );
   }
 }

@@ -32,6 +32,23 @@ final lightThemeData = ThemeData(
     fillColor: AppColors.white,
     filled: true,
   ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      minimumSize:
+      WidgetStateProperty.all<Size>(const Size(double.infinity, 48)),
+      backgroundColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> state) => AppColors.lightPrimary,
+      ),
+      foregroundColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> state) => AppColors.lightOnPrimary,
+      ),
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+      ),
+    ),
+  ),
 );
 
 /// Dark theme data
@@ -64,4 +81,21 @@ final darkThemeData = ThemeData(
     fillColor: AppColors.black,
     filled: true,
   ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      minimumSize:
+      WidgetStateProperty.all<Size>(const Size(double.infinity, 48)),
+      backgroundColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> state) => AppColors.darkPrimary,
+      ),
+      foregroundColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> state) => AppColors.darkOnPrimary,
+      ),
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+      ),
+    ),
+  )
 );
