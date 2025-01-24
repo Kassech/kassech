@@ -86,6 +86,7 @@ export const columns: ColumnDef<User>[] = [
       const {
         isDialogOpen,
         selectedUser,
+        selectedUserRole,
         setDialogOpen,
         setDialogClose,
         isEditDialogOpen,
@@ -111,8 +112,7 @@ export const columns: ColumnDef<User>[] = [
         });
       };
       console.log('🚀 ~ row.original:', row.original);
-      console.log(row.original.roles);
-      const role = row.original.roles.replace(/[{}]/g, '');
+      
       return (
         <>
           <DropdownMenu>
@@ -126,7 +126,9 @@ export const columns: ColumnDef<User>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => setEditDialogOpen(row.original.ID)}
+                onClick={() =>
+                  setEditDialogOpen(row.original.ID, row.original.roles)
+                }
               >
                 Edit
               </DropdownMenuItem>
@@ -174,16 +176,16 @@ export const columns: ColumnDef<User>[] = [
                 </AlertDialogDescription>
               </AlertDialogHeader>
 
-              {role === 'Admin' ? (
+              {selectedUserRole.replace(/[{}]/g, '')=== 'Admin' ? (
                 <QueueManagerForm defaultValues={row.original} />
-              ) : role === 'Driver' ? (
+              ) : selectedUserRole.replace(/[{}]/g, '' )=== 'Driver' ? (
                 <DriverForm />
-              ) : role === 'QueueManager' ? (
+              ) : selectedUserRole.replace(/[{}]/g, '') === 'QueueManager' ? (
                 <QueueManagerForm defaultValues={row.original} />
-              ) : role === 'CarOwner' ? (
+              ) : selectedUserRole.replace(/[{}]/g, '') === 'CarOwner' ? (
                 <CarOwnerForm defaultValues={row.original} />
               ) : (
-                <p className="text-red-500">Invalid role: {role}</p>
+                <p className="text-red-500">Invalid role: {selectedUserRole}</p>
               )}
               {/* Footer with Cancel button */}
               <AlertDialogFooter>
