@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 
-import '../domain/models/user.dart';
-import '../domain/models/user_params.dart';
-import '../domain/usecase/api_service.dart';
+import '../../../core/services/api_service.dart';
+import '../models/user.dart';
+import '../models/user_params.dart';
+
 
 class AuthRepository {
   final dio = ApiService.dio;
@@ -60,4 +61,6 @@ class AuthRepository {
       rethrow;
     }
   }
+
+  /// sign in
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/auth/presentation/widgets/authButton.dart';
 
 void main() => runApp(MyApp());
 
@@ -91,6 +90,7 @@ class _SelectRolePageState extends State<SelectRolePage> {
                   isExpanded: true,
                 ),
               ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (selectedRole != null) {

@@ -1,0 +1,194 @@
+import 'package:flutter/material.dart';
+import 'package:queue_manager_app/config/route/route.dart';
+
+import '../../../core/services/api_service.dart';
+import '../widgets/authButton.dart';
+import '../widgets/mytextfield.dart';
+
+class SigninPage extends StatelessWidget {
+  SigninPage({super.key});
+
+// Controllers for reusable widgets
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+//private instatiation of the authservice
+  final _apiService = ApiService();
+
+// Extract the refresh token from cookies
+  String? extractRefreshToken(String cookies) {
+    final refreshTokenPattern = RegExp(r'refresh_token=([^;]+)');
+    final match = refreshTokenPattern.firstMatch(cookies);
+    return match?.group(1);
+  }
+
+  Future<void> _login(BuildContext context) async {
+    String? refresh_Token = '';
+
+    //login if verified
+
+    try {
+      final response = await _apiService.login(
+          phoneController.text, passwordController.text);
+
+      if (response.statusCode == 200) {
+        // Check headers for 'Set-Cookie'
+        final cookies = response.headers['set-cookie'];
+        if (cookies != null) {
+          refresh_Token = extractRefreshToken(cookies.toString());
+          print('Refresh Token: $refresh_Token');
+        }
+
+        // Store the access token and refresh token
+        final accessToken = response.data['accessToken'];
+        final refreshToken = extractRefreshToken(cookies.toString());
+        print(response.data);
+        final isVerified =
+            response.data['user']['is_verified'] as bool? ?? false;
+
+        // if (!isVerified) {
+        //   // Handle unverified user
+        //   print('User is not verified');
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     const SnackBar(
+        //         content: Text(
+        //             'Your account is not verified. Please verify your account.')),
+        //   );
+        //   return;
+        // }
+
+        await _apiService.saveTokens(accessToken, refreshToken.toString());
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Login successful')));
+        AppRouter.router.go('/home');
+        print(accessToken);
+        print(refreshToken);
+
+        // Send the access token to the backend
+        await _apiService.sendTokensToBackend(
+            accessToken, refreshToken.toString());
+        // final user = await _apiService.getUser(accessToken);
+        // if (user.routes.isNotEmpty) {
+        //   AppRouter.router.go('/home');
+        // } else {
+        //   AppRouter.router.go('/noroutes');
+        // }
+        // Get notifications
+        // await _apiService.getNotifications(accessToken);
+      } else {
+        print('Login failed, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error during login: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Login',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                const Text(
+                  'Enter your phone number, email and password',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 20),
+                MyTextField(
+                  labelText: "Phone Number",
+                  validator: (val) =>
+                      val.isEmpty ? 'Enter your phone number' : null,
+                  controller: phoneController..text = "+251984852481",
+                  hintText: "+251 ___ ___ ___",
+                ),
+                const SizedBox(height: 20),
+                MyTextField(
+                  labelText: "Password",
+                  validator: (val) =>
+                      val.isEmpty ? 'Enter your password' : null,
+                  controller: passwordController..text = "test123",
+                  hintText: "**********",
+                  isPassword: true,
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      TextButton(
+                        child: Text(
+                          "Forgot Password?",
+                          style:
+                              TextStyle(fontSize: 15, color: Colors.grey[800]),
+                        ),
+                        onPressed: () {
+                          AppRouter.router.go('/forgotpassword');
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                AuthButton(label: "Login", onPressed: () => _login(context)),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Center(
+                  child: Row(
+                    children: [
+                      Expanded(child: Divider(thickness: 1)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          'OR',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Expanded(child: Divider(thickness: 1)),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Don\'t have an account?',
+                        style: TextStyle(fontSize: 15)),
+                    TextButton(
+                      onPressed: () {
+                        AppRouter.router.go('/selectRole');
+                      },
+                      child: Text(
+                        'Sign Up',
+                        style: TextStyle(
+                            color: Colors.blue[900],
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
