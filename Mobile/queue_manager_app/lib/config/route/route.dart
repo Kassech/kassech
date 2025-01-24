@@ -1,4 +1,5 @@
-// app_router.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/features/owner/pages/carLocation/car_location.dart';
 import 'package:queue_manager_app/features/owner/pages/delegate/delegation.dart';
@@ -11,32 +12,31 @@ import 'package:queue_manager_app/features/queue/pages/qmdetails.dart';
 import 'package:queue_manager_app/features/role/selectRole.dart';
 import 'package:queue_manager_app/features/splash/splash.dart';
 
+import '../../features/auth/models/user.dart';
 import '../../features/auth/pages/errorpage.dart';
 import '../../features/auth/pages/forgotpassword.dart';
 import '../../features/auth/pages/signinpage.dart';
 import '../../features/auth/pages/signuppage.dart';
 import '../../features/auth/pages/waitpage.dart';
+import '../../features/auth/providers/auth_provider.dart';
 
-class AppRouter {
-  static final GoRouter router = GoRouter(
+final goRouterProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
+  final notifier = GoRouterRefreshNotifier(authState);
+
+  return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: true,
+    refreshListenable: notifier,
     redirect: (context, state) async {
-      // final isLoggedIn = await AuthenticationService().isAuthenticated();
-      final isLoggedIn = true;
+      final user = authState.value;
 
-      final protectedRoutes = [
-        '/home',
-        '/profile',
-        '/home/qmdetails',
-        '/noroutes'
-      ];
-      final isGoingToProtectedRoute = protectedRoutes.contains(state.path);
-      state.path?.startsWith('/home');
+      if (user == null && state.uri.toString() != '/login') {
+        return '/login';
+      }
 
-      if (isGoingToProtectedRoute && !isLoggedIn) {
-        // Redirect to sign-in if unauthenticated
-        return '/signin';
+      if (user != null && state.uri.toString() == '/login') {
+        return '/home';
       }
 
       return null;
@@ -117,4 +117,17 @@ class AppRouter {
       )
     ],
   );
+});
+
+class GoRouterRefreshNotifier extends ChangeNotifier {
+  GoRouterRefreshNotifier(AsyncValue<User?> authState) {
+    authState.when(
+      data: (user) => notifyListeners(),
+      error: (_, __) => notifyListeners(),
+      loading: () => notifyListeners(),
+    );
+  }
 }
+
+
+

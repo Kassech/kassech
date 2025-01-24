@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:go_router/go_router.dart';
 
 class ErrorPage extends StatelessWidget {
   const ErrorPage({super.key});
@@ -10,7 +10,7 @@ class ErrorPage extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () { AppRouter.router.go('/signin'); },
+          onPressed: () { context.go('/signin'); },
         ),
        ),
       body: Center(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:go_router/go_router.dart';
 
 import '../widgets/authButton.dart';
 import '../widgets/mytextfield.dart';
@@ -15,7 +15,7 @@ class ForgotPassword extends StatelessWidget {
         backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () {
-              AppRouter.router.go('/signin');
+              context.go('/signin');
             },
             icon: const Icon(Icons.arrow_back)),
       ),
@@ -45,7 +45,7 @@ class ForgotPassword extends StatelessWidget {
           AuthButton(
               label: 'Send Code',
               onPressed: () {
-                AppRouter.router.go('/');
+                context.go('/');
               }),
         ],
       ),

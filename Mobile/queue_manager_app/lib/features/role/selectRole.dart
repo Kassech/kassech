@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/config/route/route.dart';
 
 void main() => runApp(MyApp());
 
@@ -36,7 +35,7 @@ class _SelectRolePageState extends State<SelectRolePage> {
         title: Text('Select Role'),
         leading: IconButton(
             onPressed: () {
-              AppRouter.router.go('/signin');
+              context.go('/signin');
             },
             icon: Icon(Icons.arrow_back)),
         backgroundColor: Colors.white,
@@ -94,7 +93,7 @@ class _SelectRolePageState extends State<SelectRolePage> {
               ElevatedButton(
                 onPressed: () {
                   if (selectedRole != null) {
-                    AppRouter.router.go('/signup', extra: roles[selectedRole]);
+                    context.go('/signup', extra: roles[selectedRole]);
                   }
                 },
                 child: Text('Next'),

@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:queue_manager_app/config/const/local_storage_constants.dart';
+import 'package:queue_manager_app/core/services/local_storage_service.dart';
 
 import '../models/user.dart';
 import '../models/user_params.dart';
@@ -16,16 +20,62 @@ class AuthNotifier extends AsyncNotifier<User?> {
 
   @override
   Future<User?> build() async {
-    return null;
+    return await _checkAuth();
   }
 
   Future<void> signUp(UserParams user) async {
     state = const AsyncLoading();
     try {
       final response = await _authRepository.signUp(user);
-      state = AsyncData(response?['user']);
+      state = AsyncData(response);
     } catch (e, stackTrace) {
       state = AsyncError(e.toString(), stackTrace);
+    }
+  }
+
+  Future<void> login({
+    String? phoneNumber,
+    String? email,
+    required String password,
+}) async {
+    state = const AsyncLoading();
+    try {
+      final response = await _authRepository.login(
+        phoneNumber: phoneNumber,
+        email: email,
+        password: password,
+      );
+      state = AsyncData(response);
+    } catch (e, stackTrace) {
+      state = AsyncError(e.toString(), stackTrace);
+    }
+  }
+
+  Future<void> logout() async {
+    state = const AsyncLoading();
+    try {
+      await _authRepository.logout();
+      state = const AsyncData(null);
+    } catch (e, stackTrace) {
+      state = AsyncError(e.toString(), stackTrace);
+    }
+  }
+
+  Future<User?> _checkAuth() async {
+    state = const AsyncLoading();
+    try {
+      final userJson = await LocalStorageService().getString(LocalStorageConstants.userKey);
+      if (userJson != null) {
+        final user = User.fromJson(jsonDecode(userJson));
+        state = AsyncData(user);
+        return user;
+      }
+
+      state = const AsyncData(null);
+      return null;
+    } catch (e, stackTrace) {
+      state = AsyncError(e, stackTrace);
+      return null;
     }
   }
 }

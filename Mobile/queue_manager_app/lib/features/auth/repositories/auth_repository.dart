@@ -1,13 +1,17 @@
 import 'package:dio/dio.dart';
 
+import '../../../config/const/api_constants.dart';
+import '../../../config/const/local_storage_constants.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/services/local_storage_service.dart';
 import '../models/user.dart';
 import '../models/user_params.dart';
 
-
 class AuthRepository {
   final dio = ApiService.dio;
-  Future<Map<String, dynamic>?> signUp(UserParams user) async {
+  final _storage = LocalStorageService();
+
+  Future<User?> signUp(UserParams user) async {
     try {
       final formData = FormData.fromMap({
         'FirstName': user.firstName,
@@ -41,7 +45,7 @@ class AuthRepository {
       });
 
       final response = await dio.post(
-        '${ApiService().dio_baseUrl}register',
+        ApiConstants.register,
         data: formData,
         options: Options(
           headers: {
@@ -50,11 +54,15 @@ class AuthRepository {
         ),
       );
 
-      return {
-        'token': response.data['token'],
-        'user': User.fromJson(response.data['user'] as Map<String, dynamic>),
+      if (response.data['accessToken'] != null) {
+        await _storage.saveToken(response.data['accessToken']);
+      }
 
-      };
+      if (response.data['user'] != null) {
+        await _storage.saveString(LocalStorageConstants.userKey, response.data['user'].toString());
+      }
+
+      return User.fromJson(response.data['user'] as Map<String, dynamic>);
     } on DioException catch (e) {
       rethrow;
     } catch (e) {
@@ -63,4 +71,38 @@ class AuthRepository {
   }
 
   /// sign in
+  Future<User?> login(
+      {String? phoneNumber, String? email, required String password}) async {
+    try {
+      final response = await dio.post(
+        ApiConstants.login,
+        data: {
+          'email_or_phone': phoneNumber ?? email,
+          'password': password,
+        },
+      );
+
+      if (response.data['accessToken'] != null) {
+        await _storage.saveToken(response.data['accessToken']);
+      }
+
+      if (response.data['user'] != null) {
+        await _storage.saveString(LocalStorageConstants.userKey, response.data['user'].toString());
+      }
+
+      return User.fromJson(response.data['user'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _storage.clear();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

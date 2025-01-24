@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/services/api_service.dart';
 import '../widgets/authButton.dart';
@@ -60,9 +60,7 @@ class SigninPage extends StatelessWidget {
         await _apiService.saveTokens(accessToken, refreshToken.toString());
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Login successful')));
-        AppRouter.router.go('/home');
-        print(accessToken);
-        print(refreshToken);
+        context.go('/home');
 
         // Send the access token to the backend
         await _apiService.sendTokensToBackend(
@@ -137,7 +135,7 @@ class SigninPage extends StatelessWidget {
                               TextStyle(fontSize: 15, color: Colors.grey[800]),
                         ),
                         onPressed: () {
-                          AppRouter.router.go('/forgotpassword');
+                          context.go('/forgotpassword');
                         },
                       ),
                     ],
@@ -172,7 +170,7 @@ class SigninPage extends StatelessWidget {
                         style: TextStyle(fontSize: 15)),
                     TextButton(
                       onPressed: () {
-                        AppRouter.router.go('/selectRole');
+                        context.go('/selectRole');
                       },
                       child: Text(
                         'Sign Up',

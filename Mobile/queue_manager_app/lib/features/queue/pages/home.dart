@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
 import 'package:queue_manager_app/features/queue/widgets/bottomNavBar.dart';
 import 'package:queue_manager_app/features/queue/widgets/notification_modal.dart';
@@ -9,7 +9,7 @@ class HomeQueueManager extends StatefulWidget {
   const HomeQueueManager({super.key});
 
   @override
-  _HomeQueueManagerState createState() => _HomeQueueManagerState();
+  State<HomeQueueManager> createState() => _HomeQueueManagerState();
 }
 
 class _HomeQueueManagerState extends State<HomeQueueManager> {
@@ -62,16 +62,16 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
     });
     switch (index) {
       case 0:
-        AppRouter.router.go('/home');
+        context.go('/home');
         break;
       case 1:
-        AppRouter.router.go('/map');
+        context.go('/map');
         break;
       case 2:
-        AppRouter.router.go('/profile');
+        context.go('/profile');
         break;
       default:
-        AppRouter.router.go('/home');
+        context.go('/home');
     }
   }
 
@@ -84,7 +84,7 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () {
-              AppRouter.router.go('/notifications');
+              context.go('/notifications');
             },
           ),
         ],
@@ -164,7 +164,7 @@ class _QueueCardState extends State<QueueCard> {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        AppRouter.router.go('/home/qmdetails');
+        context.go('/home/qmdetails');
       },
       child: Card(
         color: Colors.black,

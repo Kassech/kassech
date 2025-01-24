@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/features/queue/widgets/profileLists.dart';
 
 import '../../auth/widgets/authButton.dart';
@@ -18,7 +18,7 @@ class ProfilePage extends ConsumerWidget {
         backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () {
-              AppRouter.router.go('/home');
+              context.go('/home');
             },
             icon: const Icon(Icons.arrow_back)),
         title: const Text('Profile'),
@@ -53,7 +53,7 @@ class ProfilePage extends ConsumerWidget {
                       AuthButton(
                         label: 'Logout',
                         onPressed: () {
-                          AppRouter.router.go('/signin');
+                          context.go('/signin');
                         },
                       ),
                     ],

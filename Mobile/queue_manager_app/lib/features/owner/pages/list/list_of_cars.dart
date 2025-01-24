@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:go_router/go_router.dart';
 
 class ListOfCars extends StatelessWidget {
   final List<Map<String, String>> listOfCars = [
@@ -62,7 +62,7 @@ class ListOfCars extends StatelessWidget {
             return GestureDetector(
               onTap: () {
                 // Handle card tap
-                AppRouter.router.go('/carlocation');
+                context.go('/carlocation');
               },
               child: Card(
                 margin: const EdgeInsets.only(bottom: 16.0),

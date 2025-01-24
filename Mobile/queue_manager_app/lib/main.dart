@@ -7,52 +7,38 @@ import 'package:queue_manager_app/core/theme/app_theme.dart';
 import 'package:queue_manager_app/features/notification/notification_service.dart';
 import 'package:queue_manager_app/features/queue/domain/usecase/sendlocation.dart';
 import 'core/services/api_service.dart';
+import 'core/services/local_storage_service.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  WidgetsFlutterBinding.ensureInitialized();
-  ApiService();
 
-  // Initialize location tracking on app start.
+  await NotificationService().initialize();
+  await LocalStorageService().init();
+  ApiService();
   initializeLocation();
   runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends ConsumerStatefulWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends ConsumerState<MyApp> {
-  final NotificationService _notificationService = NotificationService();
-
- 
-  @override
-  void initState() {
-    super.initState();
-    // Initialize the WebSocket connection
-    ref.read(webSocketProvider);
-    // Initialize location services
-    initializeLocation();
-    // Initialize notification service
-    _notificationService.initialize();
-  }
 
 
   @override  
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final goRouter = ref.watch(goRouterProvider);
+
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: lightThemeData,
       darkTheme: darkThemeData,
-      routerConfig: AppRouter.router,
+      routerDelegate: goRouter.routerDelegate,
+      routeInformationParser: goRouter.routeInformationParser,
+      routeInformationProvider: goRouter.routeInformationProvider,
+      routerConfig: goRouter,
     );
   }
 }

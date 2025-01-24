@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:queue_manager_app/config/route/route.dart';
 
 class WaitPage extends StatelessWidget {
   const WaitPage({super.key});
@@ -13,7 +13,7 @@ class WaitPage extends StatelessWidget {
         title: const Text('Select Role'),
         leading: IconButton(
           onPressed: () {
-            AppRouter.router.go('/signin');
+            context.go('/signin');
           },
           icon: const Icon(Icons.arrow_back),
         ),

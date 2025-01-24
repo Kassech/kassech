@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/core/util/token_storage.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/services/api_service.dart';
 
@@ -47,7 +46,7 @@ class AppDrawer extends ConsumerWidget {
             leading: const Icon(Icons.person),
             title: const Text('Profile'),
             onTap: () {
-              AppRouter.router.go('/profile'); // Close the drawer
+              context.go('/profile'); // Close the drawer
             },
           ),
           // ListTile(
@@ -58,34 +57,9 @@ class AppDrawer extends ConsumerWidget {
           //   },
           // ),
           ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
-            onTap: () async {
-              final scaffoldMessenger = ScaffoldMessenger.of(context);
-              try {
-                final response = await ApiService()
-                    .dio_instance
-                    .post('${ApiService().dio_baseUrl}logout');
-                if (response.statusCode == 200) {
-                  await storage.delete(key: 'accessToken');
-                  AppRouter.router.go('/signin');
-                } else {
-                  scaffoldMessenger.showSnackBar(
-                    SnackBar(
-                      content: Text('Logout failed'),
-                    ),
-                  );
-                }
-              } catch (e) {
-                print('An error occurred: $e');
-                scaffoldMessenger.showSnackBar(
-                  SnackBar(
-                    content: Text('Logout failed'),
-                  ),
-                );
-              }
-            },
-          ),
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {}),
         ],
       ),
     );
