@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/config/route/route.dart';
 import 'package:queue_manager_app/core/util/token_storage.dart';
 
-import '../../../../core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 class AppDrawer extends ConsumerWidget {
   final ApiService apiService = ApiService();

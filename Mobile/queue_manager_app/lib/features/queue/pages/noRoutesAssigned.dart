@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:queue_manager_app/features/queue/presentation/widgets/appDrawer.dart';
+import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
 
 var someCondition = true;
 

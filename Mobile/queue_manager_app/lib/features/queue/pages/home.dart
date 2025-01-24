@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/queue/presentation/widgets/appDrawer.dart';
-import 'package:queue_manager_app/features/queue/presentation/widgets/bottomNavBar.dart';
-import 'package:queue_manager_app/features/queue/presentation/widgets/notification_modal.dart';
+import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
+import 'package:queue_manager_app/features/queue/widgets/bottomNavBar.dart';
+import 'package:queue_manager_app/features/queue/widgets/notification_modal.dart';
 
 class HomeQueueManager extends StatefulWidget {
   const HomeQueueManager({super.key});

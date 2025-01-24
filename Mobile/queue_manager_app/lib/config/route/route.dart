@@ -1,13 +1,13 @@
 // app_router.dart
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/features/Owner/carLocation/car_location.dart';
-import 'package:queue_manager_app/features/Owner/delegate/delegation.dart';
-import 'package:queue_manager_app/features/Owner/list/list_of_cars.dart';
-import 'package:queue_manager_app/features/queue/presentation/pages/home.dart';
-import 'package:queue_manager_app/features/queue/presentation/pages/noRoutesAssigned.dart';
-import 'package:queue_manager_app/features/queue/presentation/pages/notificaton_page.dart';
-import 'package:queue_manager_app/features/queue/presentation/pages/profile.dart';
-import 'package:queue_manager_app/features/queue/presentation/pages/qmdetails.dart';
+import 'package:queue_manager_app/features/owner/pages/carLocation/car_location.dart';
+import 'package:queue_manager_app/features/owner/pages/delegate/delegation.dart';
+import 'package:queue_manager_app/features/owner/pages/list/list_of_cars.dart';
+import 'package:queue_manager_app/features/queue/pages/home.dart';
+import 'package:queue_manager_app/features/queue/pages/noRoutesAssigned.dart';
+import 'package:queue_manager_app/features/queue/pages/notificaton_page.dart';
+import 'package:queue_manager_app/features/queue/pages/profile.dart';
+import 'package:queue_manager_app/features/queue/pages/qmdetails.dart';
 import 'package:queue_manager_app/features/role/selectRole.dart';
 import 'package:queue_manager_app/features/splash/splash.dart';
 

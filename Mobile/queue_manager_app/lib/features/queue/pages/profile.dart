@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/config/route/route.dart';
-import 'package:queue_manager_app/features/queue/presentation/widgets/profileLists.dart';
+import 'package:queue_manager_app/features/queue/widgets/profileLists.dart';
 
-import '../../../auth/widgets/authButton.dart';
+import '../../auth/widgets/authButton.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:queue_manager_app/core/theme/app_colors.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -22,7 +23,7 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: Center(
         child: Lottie.asset(
           'assets/splash2.json', // Corrected asset path
