@@ -34,9 +34,10 @@ export default function QueueManagerForm({
       PhoneNumber: defaultValues?.PhoneNumber || '',
       national_id: defaultValues?.national_id || null,
       Profile: defaultValues?.Profile || null,
-      Role: defaultValues?.Role ?? QUEUE_MANAGER_ROLE, 
+      Role: defaultValues?.Role ?? QUEUE_MANAGER_ROLE.toString(), 
     },
   });
+  console.log('profile type',typeof(defaultValues?.Profile))
   const { mutateAsync } = useCreateUser(); 
   const onSubmit = async (values: z.infer<typeof queueManagerSchema>) => {
     console.log('Form values:', values); 
@@ -155,18 +156,23 @@ export default function QueueManagerForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>National Id</FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    onChange={(e) =>
-                      form.setValue('national_id', e.target.files?.[0] || null)
-                    }
-                  />
-                </FormControl>
+                <ImageUploader
+                  className="rounded-md"
+                  initialPreview={form.getValues(field.name)}
+                  onImageUpload={(file) => form.setValue(field.name, file)}
+                  maxFileSize={5000000}
+                  acceptedFormats={{
+                    'image/png': [],
+                    'image/jpg': [],
+                    'image/jpeg': [],
+                    'application/pdf': [],
+                  }}
+                />
                 <FormMessage />
               </FormItem>
             )}
           />
+
 
           <FormItem className="col-span-full">
             <FormControl>

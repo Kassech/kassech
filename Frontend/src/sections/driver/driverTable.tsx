@@ -1,4 +1,4 @@
-import { useFetchUsers, useUserStore } from '@/store/userStore';
+import {  useUserStore } from '@/store/userStore';
 
 export default function DriverTable() {
   //   const { data, isLoading, error } = useFetchUsers();

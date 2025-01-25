@@ -27,9 +27,10 @@ import { useDeleteUser } from '@/services/userService';
 
 import CarOwnerForm from '@/sections/Owner/carOwnerForm';
 import QueueManagerForm from '@/sections/QueueManager/queueManagerForm';
-import DriverForm from '@/pages/DriverForm';
 import VerificationToggle from './verificationToggle';
 import { toast } from 'sonner';
+import DriverPage from '@/pages/driver';
+import AdminForm from '@/sections/Admin';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -173,21 +174,22 @@ export const columns: ColumnDef<User>[] = [
                 <AlertDialogTitle>Edit User</AlertDialogTitle>
                 <AlertDialogDescription>
                   Update the details of the user below.
+                  {selectedUserRole.replace(/[{}]/g, '') === 'Admin' ? (
+                    <AdminForm defaultValues={row.original} />
+                  ) : selectedUserRole.replace(/[{}]/g, '') === 'Driver' ? (
+                    <DriverPage defaultValues={row.original} />
+                  ) : selectedUserRole.replace(/[{}]/g, '') ===
+                    'QueueManager' ? (
+                    <QueueManagerForm defaultValues={row.original} />
+                  ) : selectedUserRole.replace(/[{}]/g, '') === 'Owner' ? (
+                    <CarOwnerForm defaultValues={row.original} />
+                  ) : (
+                    <p className="text-red-500">
+                      Invalid role: {selectedUserRole}
+                    </p>
+                  )}
                 </AlertDialogDescription>
               </AlertDialogHeader>
-
-              {selectedUserRole.replace(/[{}]/g, '')=== 'Admin' ? (
-                <QueueManagerForm defaultValues={row.original} />
-              ) : selectedUserRole.replace(/[{}]/g, '' )=== 'Driver' ? (
-                <DriverForm />
-              ) : selectedUserRole.replace(/[{}]/g, '') === 'QueueManager' ? (
-                <QueueManagerForm defaultValues={row.original} />
-              ) : selectedUserRole.replace(/[{}]/g, '') === 'CarOwner' ? (
-                <CarOwnerForm defaultValues={row.original} />
-              ) : (
-                <p className="text-red-500">Invalid role: {selectedUserRole}</p>
-              )}
-              {/* Footer with Cancel button */}
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
               </AlertDialogFooter>
