@@ -30,7 +30,6 @@ class _SelectRolePageState extends State<SelectRolePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Select Role'),
         leading: IconButton(
@@ -38,7 +37,6 @@ class _SelectRolePageState extends State<SelectRolePage> {
               context.go('/signin');
             },
             icon: Icon(Icons.arrow_back)),
-        backgroundColor: Colors.white,
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -54,40 +52,24 @@ class _SelectRolePageState extends State<SelectRolePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: DropdownButton<String>(
-                  value: selectedRole,
-                  hint: Text('Choose a role'),
-                  items: roles.entries.map((entry) {
-                    return DropdownMenuItem<String>(
-                      value: entry.key,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0), // Adjust padding as needed(8.0),
-                        child: Text(
-                          entry.key,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? newRole) {
-                    setState(() {
-                      selectedRole = newRole;
-                      print('Selected Role: ${roles[selectedRole]}');
-                    });
-                  },
-                  style: TextStyle(color: Colors.black),
-                  // focusColor: Colors.black,
-                  icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-                  dropdownColor: Colors.white,
-                  isExpanded: true,
-                ),
+              DropdownButtonFormField<String>(
+                value: selectedRole,
+                hint: Text('Choose a role'),
+                items: roles.entries.map((entry) {
+                  return DropdownMenuItem<String>(
+                    value: entry.key,
+                    child: Text(
+                      entry.key,
+                      // style: TextTheme.of(context).bodyMedium,
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newRole) {
+                  setState(() {
+                    selectedRole = newRole;
+                  });
+                },
+                isExpanded: true,
               ),
               const SizedBox(height: 20),
               ElevatedButton(

@@ -50,7 +50,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
       );
       state = AsyncData(response);
     }  on DioException catch (e) {
-      state = AsyncError(e.response?.data['message'] ?? e.message, e.stackTrace);
+      state = AsyncError(e.response ?? 'something went wrong' , e.stackTrace);
     } catch (e, stackTrace) {
       state = AsyncError(e.toString(), stackTrace);
     }

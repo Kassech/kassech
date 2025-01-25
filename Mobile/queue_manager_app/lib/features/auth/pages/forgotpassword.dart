@@ -10,13 +10,7 @@ class ForgotPassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              context.go('/signin');
-            },
-            icon: const Icon(Icons.arrow_back)),
-      ),
+      appBar: AppBar(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

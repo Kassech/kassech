@@ -2,7 +2,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/config/route/route.dart';
 
 import '../models/user_params.dart';
 import '../providers/auth_provider.dart';
@@ -69,7 +68,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     final authProviders = ref.watch(authProvider);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

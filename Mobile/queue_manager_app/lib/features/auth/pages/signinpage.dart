@@ -67,7 +67,7 @@ class SigninPage extends ConsumerWidget {
                               TextStyle(fontSize: 15, color: Colors.grey[800]),
                         ),
                         onPressed: () {
-                          context.go('/forgotpassword');
+                          context.push('/forgotpassword');
                         },
                       ),
                     ],

@@ -8,7 +8,6 @@ class WaitPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Select Role'),
         leading: IconButton(
@@ -17,7 +16,6 @@ class WaitPage extends StatelessWidget {
           },
           icon: const Icon(Icons.arrow_back),
         ),
-        backgroundColor: Colors.white,
       ),
       body:  Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),

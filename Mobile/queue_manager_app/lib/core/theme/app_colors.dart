@@ -18,7 +18,7 @@ class AppColors {
   static const darkPrimary = Colors.white;
   static const darkSecondary = Colors.black;
   static const darkOnPrimary = Colors.black;
-  static const darkOnSecondary = Colors.black;
+  static const darkOnSecondary = Colors.white;
   static const darkScaffoldBackground = Colors.black;
 
 

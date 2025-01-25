@@ -6,7 +6,8 @@ import 'app_colors.dart';
 final lightThemeData = ThemeData(
   primaryColor: AppColors.lightPrimary,
   scaffoldBackgroundColor: AppColors.lightScaffoldBackground,
-  colorScheme: const ColorScheme.light(
+  colorScheme: ColorScheme.light(
+    brightness: Brightness.light,
     primary: AppColors.lightPrimary,
     onPrimary: AppColors.lightOnPrimary,
     secondary: AppColors.lightSecondary,
@@ -56,6 +57,7 @@ final darkThemeData = ThemeData(
   primaryColor: AppColors.darkPrimary,
   scaffoldBackgroundColor: AppColors.darkScaffoldBackground,
   colorScheme: const ColorScheme.dark(
+    brightness: Brightness.dark,
     primary: AppColors.darkPrimary,
     onPrimary: AppColors.darkOnPrimary,
     secondary: AppColors.darkSecondary,
@@ -97,5 +99,5 @@ final darkThemeData = ThemeData(
         ),
       ),
     ),
-  )
+  ),
 );
