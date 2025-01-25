@@ -40,6 +40,14 @@ func (ps *PathService) FindPathByID(pathID uint) (*models.Path, error) {
 	return path, nil
 }
 
+func (ps *PathService) FindPathsByStationID(stationID uint) ([]models.Path, error) {
+	paths, err := ps.Repo.FindPathsByStationID(stationID)
+	if err != nil {
+		return nil, err
+	}
+	return paths, nil
+}
+
 func (ps *PathService) GetAllPaths(page, perPage int, search string) (*[]models.Path, int64, error) {
 	paths, total, err := ps.Repo.GetAll(page, perPage, search)
 	if err != nil {

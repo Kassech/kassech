@@ -22,7 +22,7 @@ const UserList: React.FC = () => {
       <Header paths={paths} />
       <div className="p-6">
         <h1 className="text-xl font-semibold mb-4">User Management</h1>
-        <DataTable columns={columns} data={users.users ?? []} />
+        <DataTable columns={columns} data={users.data ?? []} />
       </div>
     </>
   );

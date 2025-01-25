@@ -159,7 +159,7 @@ func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) (
 	// Retrieve the users with roles and pagination
 	err = query.Offset((page - 1) * limit).Limit(limit).Scan(&users).Error
 	if err != nil {
-		return nil, 0, err
+		return []models.User{}, 0, err
 	}
 
 	return users, total, nil
@@ -232,4 +232,11 @@ func (ur *UserRepository) GetPermissionsAndRolesByUserID(userID uint) ([]string,
 	}
 
 	return permissionList, roleList, nil
+}
+
+func (ur *UserRepository) UpdateUserStatus(userID uint, online bool) error {
+	return database.DB.Model(&models.User{}).
+		Where("id = ?", userID).
+		Update("is_online", online).
+		Error
 }

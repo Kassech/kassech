@@ -36,7 +36,7 @@ import {
 } from '@/store/useRoleStore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronDownCircle, ChevronRight } from 'lucide-react';
+import { ChevronDownCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Header from '@/components/header';
 
@@ -59,7 +59,7 @@ export default function RolePermission() {
   const { mutate: editRole } = useUpdateRole();
   const { mutate: addRole } = useCreateRole();
   const { mutate: addPermissionToRole } = useCreateRolePermission();
-   const { mutate: deleteRolePermission } = useDeleteRolePermission();
+  const { mutate: deleteRolePermission } = useDeleteRolePermission();
 
   const {
     currentRole,
@@ -194,13 +194,15 @@ export default function RolePermission() {
 
     if (isPermissionAssigned) {
       // Remove permission from role
-      setRolePermissions(rolePermissions.filter((rp) => rp.ID !== permission.ID));
+      setRolePermissions(
+        rolePermissions.filter((rp) => rp.ID !== permission.ID)
+      );
       setHighlightedPermissions((prev) =>
         prev.filter((id) => id !== permission.ID)
       );
 
       deleteRolePermission(
-        { Roleid:roleId, Permissionid: permission.ID },
+        { Roleid: roleId, Permissionid: permission.ID },
         {
           onSuccess: (data) => {
             console.log('API response data:', data);

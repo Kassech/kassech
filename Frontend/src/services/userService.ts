@@ -30,7 +30,7 @@ export const useGetUserById = (id: number | null) => {
       return response.data;
     },
     {
-      enabled: id !== null && id !== undefined, 
+      enabled: id !== null && id !== undefined,
     }
   );
 };

@@ -28,6 +28,7 @@ import PathPage from './pages/path';
 
 import DriverVehicleMapping from './pages/Driver-VehicleMapping';
 import VehicleTracking from './pages/VehicleTracking';
+import QueueManagerPaths from './pages/QueueManagerPathsRegistration';
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
               element={<DriverVehicleMapping />}
             />
             <Route path="/vehicleTracking" element={<VehicleTracking />} />
+            <Route path="/QueueManagerPaths" element={<QueueManagerPaths />} />
           </Route>
 
           {/* Catch-all route for 404 */}

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/database"
-	"kassech/backend/pkg/delivery/socket"
 	"kassech/backend/pkg/service"
+	"kassech/backend/pkg/websocket"
 	"log"
 	"os"
 	"time"
@@ -18,7 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func init() { // Load environment variables
+func init() {
 	config.LoadEnv()
 	service.InitJWTSecret()
 	service.InitFirebaseClient()
@@ -54,11 +54,15 @@ func main() {
 	}))
 
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
-	// Register routes
-	socket.RegisterRoutes(r)
+
+	// Initialize repository
+
+	// Register WebSocket routes
+	websocket.RegisterRoutes(r, service.JwtSecret) // Make sure JwtSecret is exported in config
+
+	// Register HTTP routes
 	r.Static("/uploads", "./uploads")
 	routes.RegisterRoutes(r)
-	// r.Use(middleware.AuthMiddleware())
 
 	// Start the server
 	serverAddress := fmt.Sprintf(":%s", port)

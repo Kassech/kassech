@@ -24,6 +24,23 @@ func (pr *PathRepository) FindByID(pathID uint) (*models.Path, error) {
 	return &path, nil
 }
 
+// Find a path by Station ID
+func (pr *PathRepository) FindPathsByStationID(stationID uint) ([]models.Path, error) {
+	var paths []models.Path
+	err := database.DB.
+		Preload("Route.StationA").
+		Preload("Route.StationB").
+		Joins("JOIN routes ON paths.route_id = routes.id").
+		Where("routes.location_a = ?", stationID).
+		Find(&paths).
+		Error
+
+	if err != nil {
+		return nil, err
+	}
+	return paths, nil
+}
+
 // Get all paths
 func (pr *PathRepository) GetAll(page, perPage int, search string) ([]models.Path, int64, error) {
 	var paths []models.Path

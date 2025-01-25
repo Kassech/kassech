@@ -23,6 +23,8 @@ func RegisterRoutes(r *gin.Engine) {
 	vehicleRepo := &repository.VehicleRepository{}
 	LocationRepo := &repository.LocationRepository{}
 	PathRepo := &repository.PathRepository{}
+	QueueManagerPathRepo := &repository.QueueManagerRouteRepository{}
+
 	// Initialize Services
 	userSvc := &service.UserService{Repo: userRepo}
 	roleSvc := &service.RoleService{Repo: roleRepo}
@@ -36,6 +38,8 @@ func RegisterRoutes(r *gin.Engine) {
 	vehicleSvc := &service.VehicleService{Repo: vehicleRepo}
 	locationSvc := &service.LocationService{Repo: LocationRepo}
 	pathSvc := &service.PathService{Repo: PathRepo}
+	queueManagerPathSvc := &service.QueueManagerRouteService{Repo: QueueManagerPathRepo}
+
 	// Initialize Controllersz
 	userCtrl := &controller.UserController{Service: userSvc, SessionService: sessionService}
 	roleCtrl := &controller.RoleController{Service: roleSvc}
@@ -49,6 +53,8 @@ func RegisterRoutes(r *gin.Engine) {
 	vehicleCtrl := &controller.VehicleController{Service: vehicleSvc}
 	locationCtrl := &controller.LocationController{Service: locationSvc}
 	pathCtrl := &controller.PathController{Service: pathSvc}
+	queueManagerPathCtrl := &controller.QueueManagerRouteController{Service: queueManagerPathSvc}
+
 	// Group API routes
 	api := r.Group("/api")
 	{
@@ -75,6 +81,8 @@ func RegisterRoutes(r *gin.Engine) {
 		vehicleRoutes(api, vehicleCtrl) // Register vehicle-related routes
 
 		locationRoutes(api, locationCtrl) // Register location-related routes
+
+		queueManagerRouteRoutes(api, queueManagerPathCtrl) // Register queue manager path-related routes
 
 	}
 }
@@ -121,10 +129,12 @@ func routeRoutes(api *gin.RouterGroup, ctrl *controller.RouteController) {
 func pathRoutes(api *gin.RouterGroup, ctrl *controller.PathController) {
 	pathApi := api.Group("/path")
 	{
-		pathApi.GET("/", ctrl.GetAllPaths)      // Get all paths
-		pathApi.POST("/", ctrl.CreatePath)      // Create a path
-		pathApi.GET("/:id", ctrl.FindPathByID)  // Get path by ID
-		pathApi.DELETE("/:id", ctrl.DeletePath) // Delete a path by ID
+		pathApi.GET("/", ctrl.GetAllPaths)                     // Get all paths
+		pathApi.POST("/", ctrl.CreatePath)                     // Create a path
+		pathApi.GET("/station/:id", ctrl.FindPathsByStationID) // Get path by ID
+		pathApi.GET("/:id", ctrl.FindPathByID)                 // Get path by ID
+		pathApi.DELETE("/:id", ctrl.DeletePath)                // Delete a path by ID
+
 	}
 }
 func vehicleRoutes(api *gin.RouterGroup, ctrl *controller.VehicleController) {
@@ -248,5 +258,14 @@ func locationRoutes(api *gin.RouterGroup, ctrl *controller.LocationController) {
 		roleApi.GET("/:id", ctrl.FindLocationByID)
 
 		roleApi.GET("/", ctrl.GetAllLocations)
+	}
+}
+func queueManagerRouteRoutes(router *gin.RouterGroup, ctrl *controller.QueueManagerRouteController) {
+	routes := router.Group("/queue-manager-routes")
+	{
+		routes.POST("/", ctrl.CreateRoute)
+		routes.GET("/", ctrl.GetAllRoutes)
+		routes.GET("/:id", ctrl.GetRoute)
+		routes.DELETE("/:id", ctrl.DeleteRoute)
 	}
 }

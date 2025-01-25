@@ -41,14 +41,12 @@ const PathPage: React.FC = () => {
           className="w-full rounded-lg border"
         >
           <ResizablePanel defaultSize={50}>
-            <ResizablePanelGroup direction="vertical">
-              <ResizablePanel defaultSize={60}>
-                <CreatePathForm routes={routes} />
-              </ResizablePanel>
-              <ResizablePanel defaultSize={40}>
+            <ResizablePanel defaultSize={60}>
+              <CreatePathForm routes={routes} />
+              <div className="overflow-y-auto max-h-[400px] border rounded-lg">
                 <DataTable data={paths?.data ?? []} columns={columns} />
-              </ResizablePanel>
-            </ResizablePanelGroup>
+              </div>
+            </ResizablePanel>
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={50}>

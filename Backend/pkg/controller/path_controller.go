@@ -64,6 +64,23 @@ func (pc *PathController) FindPathByID(c *gin.Context) {
 	c.JSON(http.StatusOK, path)
 }
 
+// FindPathByID handles HTTP requests to get a path by ID
+func (pc *PathController) FindPathsByStationID(c *gin.Context) {
+	pathID := c.Param("id")
+	pathIDUint, err := utils.StringToUint(pathID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Station ID"})
+		return
+	}
+	path, err := pc.Service.FindPathsByStationID(pathIDUint)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, path)
+}
+
 // GetAllPaths handles HTTP requests to get all paths
 func (pc *PathController) GetAllPaths(c *gin.Context) {
 	page, err := utils.GetPageFromQuery(c)

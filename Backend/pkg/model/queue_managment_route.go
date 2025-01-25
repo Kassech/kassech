@@ -1,10 +1,13 @@
+// models/queue_manager_route.go
 package models
 
 import "gorm.io/gorm"
 
 type QueueManagerRoute struct {
 	gorm.Model
-	QueueManagerID uint   `gorm:"not null"` // Foreign key to QueueManager
-	RouteID        uint   `gorm:"not null"` // Foreign key to Route
-	Status         string `gorm:"size:20;not null;default:'active'"`
+	UserID    uint    `gorm:"not null"`
+	StationID uint    `gorm:"not null"`
+	Paths     []Path  `gorm:"many2many:queue_manager_route_paths;"`
+	User      User    `gorm:"foreignKey:UserID"`
+	Station   Station `gorm:"foreignKey:StationID"`
 }

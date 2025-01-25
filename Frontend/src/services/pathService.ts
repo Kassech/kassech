@@ -81,3 +81,12 @@ export const useDeletePath = () => {
     }
   );
 };
+
+
+// Fetch all path by station ID
+export const useGetPathsByStationID = (stationId: number) => {
+  return useQuery<Path[]>(['path', stationId], async () => {
+    const response = await api.get(`/path/station/${stationId}`);
+    return response.data;
+  });
+};

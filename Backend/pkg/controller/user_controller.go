@@ -399,7 +399,7 @@ func (uc *UserController) ListUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"users":       users,
+		"data":        users,
 		"total_count": total,
 		"page":        page,
 		"limit":       limit,

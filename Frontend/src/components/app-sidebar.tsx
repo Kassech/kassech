@@ -75,6 +75,10 @@ const data = {
           url: '/paths',
         },
         {
+          title: 'QueueManagerPaths',
+          url: '/QueueManagerPaths',
+        },
+        {
           title: 'Role And Permission',
           url: '/rolepermission',
         },
