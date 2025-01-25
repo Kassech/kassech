@@ -167,7 +167,7 @@ export default function VehicleForm() {
                   onValueChange={(value) => form.setValue('carType', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a fruit" />
+                    <SelectValue placeholder="Select vehicle type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -183,7 +183,7 @@ export default function VehicleForm() {
               </FormItem>
             )}
           />
-          <div className="pt-8">
+          <div className="md:pt-8">
             <OwnerSearch onOwnerSelect={handleOwnerSelect} />
           </div>
 
