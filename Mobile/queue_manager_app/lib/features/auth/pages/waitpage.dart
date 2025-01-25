@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+
+import 'signinpage.dart';
 
 class WaitPage extends StatelessWidget {
   const WaitPage({super.key});
 
+  static const String routeName = '/waitPage';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Select Role'),
         leading: IconButton(
           onPressed: () {
-            AppRouter.router.go('/signin');
+            context.go(SignInPage.routeName);
           },
           icon: const Icon(Icons.arrow_back),
         ),
-        backgroundColor: Colors.white,
       ),
       body:  Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),

@@ -1,18 +1,20 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:go_router/go_router.dart';
 
 import '../models/user_params.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_data_provider.dart';
 import '../widgets/filePicker.dart';
 import '../widgets/mytextfield.dart';
+import 'signinpage.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   final int role;
-
   const SignUpPage({required this.role, super.key});
+
+  static const String routeName = '/signupPage';
 
   @override
   ConsumerState<SignUpPage> createState() => _SignUpPageState();
@@ -65,14 +67,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authProviders = ref.watch(authProvider);
+    final authState = ref.watch(authProvider);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            AppRouter.router.go('/signin');
+            context.go(SignInPage.routeName);
           },
         ),
       ),
@@ -196,26 +197,75 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                         ),
                         ]
                       ],
-                      ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            final user = UserParams(
-                              firstName: nameController.text,
-                              lastName: fathersNameController.text,
-                              email: emailController.text,
-                              phoneNumber: phoneController.text,
-                              password: passwordController.text,
-                              role: widget.role,
-                              kebeleId: ref.read(userDataProvider)?.kebeleId,
-                              profilePicture: ref.read(userDataProvider)?.profilePicture,
-                              drivingLicenseFile: ref.read(userDataProvider)?.drivingLicenseFile,
-                              insuranceDocumentFile: ref.read(userDataProvider)?.insuranceDocumentFile,
-                            );
-                            ref.read(userDataProvider.notifier).updateUserData(user);
-                            ref.read(authProvider.notifier).signUp(user);
-                          }
+                      authState.when(
+                        data: (user) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                final user = UserParams(
+                                  firstName: nameController.text,
+                                  lastName: fathersNameController.text,
+                                  email: emailController.text,
+                                  phoneNumber: phoneController.text,
+                                  password: passwordController.text,
+                                  role: widget.role,
+                                  kebeleId: ref.read(userDataProvider)?.kebeleId,
+                                  profilePicture: ref.read(userDataProvider)?.profilePicture,
+                                  drivingLicenseFile: ref.read(userDataProvider)?.drivingLicenseFile,
+                                  insuranceDocumentFile: ref.read(userDataProvider)?.insuranceDocumentFile,
+                                );
+                                ref.read(userDataProvider.notifier).updateUserData(user);
+                                ref.read(authProvider.notifier).signUp(user);
+                              }
+                            },
+                            child: const Text('Sign Up'),
+                          );
                         },
-                        child: const Text('Sign Up'),
+                        loading: () {
+                          return const CircularProgressIndicator();
+                        },
+                        error: (error, stackTrace) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Error'),
+                                  content: Text(error.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('OK'),
+                                    )
+                                  ],
+                                );
+                              },
+                            );
+                          });
+                          return ElevatedButton(
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                final user = UserParams(
+                                  firstName: nameController.text,
+                                  lastName: fathersNameController.text,
+                                  email: emailController.text,
+                                  phoneNumber: phoneController.text,
+                                  password: passwordController.text,
+                                  role: widget.role,
+                                  kebeleId: ref.read(userDataProvider)?.kebeleId,
+                                  profilePicture: ref.read(userDataProvider)?.profilePicture,
+                                  drivingLicenseFile: ref.read(userDataProvider)?.drivingLicenseFile,
+                                  insuranceDocumentFile: ref.read(userDataProvider)?.insuranceDocumentFile,
+                                );
+                                ref.read(userDataProvider.notifier).updateUserData(user);
+                                ref.read(authProvider.notifier).signUp(user);
+                              }
+                            },
+                            child: const Text('Sign Up'),
+                          );
+                        },
                       ),
                     ],
                   ),

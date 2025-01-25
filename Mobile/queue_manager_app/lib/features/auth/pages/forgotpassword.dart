@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:go_router/go_router.dart';
 
-import '../widgets/authButton.dart';
 import '../widgets/mytextfield.dart';
 
 class ForgotPassword extends StatelessWidget {
   ForgotPassword({super.key});
+
+  static const String routeName = '/forgotPasswordPage';
+
   final TextEditingController phoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-            onPressed: () {
-              AppRouter.router.go('/signin');
-            },
-            icon: const Icon(Icons.arrow_back)),
-      ),
-      backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+      appBar: AppBar(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -37,16 +31,19 @@ class ForgotPassword extends StatelessWidget {
           MyTextField(
               labelText: 'Enter your phone number',
               controller: phoneController,
-              validator: (val) => val.isEmpty ? 'Enter your phone number' : null,
+              validator: (val) =>
+                  val.isEmpty ? 'Enter your phone number' : null,
               hintText: "+251 ___ ___ ___"),
           const SizedBox(
             height: 20,
           ),
-          AuthButton(
-              label: 'Send Code',
-              onPressed: () {
-                AppRouter.router.go('/');
-              }),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: ElevatedButton(
+              onPressed: () {},
+              child: const Text('Send Code'),
+            ),
+          )
         ],
       ),
     );

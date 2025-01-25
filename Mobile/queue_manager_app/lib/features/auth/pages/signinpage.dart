@@ -1,91 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:queue_manager_app/config/route/route.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
 
-import '../../../core/services/api_service.dart';
-import '../widgets/authButton.dart';
 import '../widgets/mytextfield.dart';
+import 'forgotpassword.dart';
+import 'selectRole.dart';
 
-class SigninPage extends StatelessWidget {
-  SigninPage({super.key});
+class SignInPage extends ConsumerWidget {
+  SignInPage({super.key});
 
-// Controllers for reusable widgets
+  static const String routeName = '/signInPage';
+
   final TextEditingController phoneController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
 
-//private instatiation of the authservice
-  final _apiService = ApiService();
-
-// Extract the refresh token from cookies
-  String? extractRefreshToken(String cookies) {
-    final refreshTokenPattern = RegExp(r'refresh_token=([^;]+)');
-    final match = refreshTokenPattern.firstMatch(cookies);
-    return match?.group(1);
-  }
-
-  Future<void> _login(BuildContext context) async {
-    String? refresh_Token = '';
-
-    //login if verified
-
-    try {
-      final response = await _apiService.login(
-          phoneController.text, passwordController.text);
-
-      if (response.statusCode == 200) {
-        // Check headers for 'Set-Cookie'
-        final cookies = response.headers['set-cookie'];
-        if (cookies != null) {
-          refresh_Token = extractRefreshToken(cookies.toString());
-          print('Refresh Token: $refresh_Token');
-        }
-
-        // Store the access token and refresh token
-        final accessToken = response.data['accessToken'];
-        final refreshToken = extractRefreshToken(cookies.toString());
-        print(response.data);
-        final isVerified =
-            response.data['user']['is_verified'] as bool? ?? false;
-
-        // if (!isVerified) {
-        //   // Handle unverified user
-        //   print('User is not verified');
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     const SnackBar(
-        //         content: Text(
-        //             'Your account is not verified. Please verify your account.')),
-        //   );
-        //   return;
-        // }
-
-        await _apiService.saveTokens(accessToken, refreshToken.toString());
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Login successful')));
-        AppRouter.router.go('/home');
-        print(accessToken);
-        print(refreshToken);
-
-        // Send the access token to the backend
-        await _apiService.sendTokensToBackend(
-            accessToken, refreshToken.toString());
-        // final user = await _apiService.getUser(accessToken);
-        // if (user.routes.isNotEmpty) {
-        //   AppRouter.router.go('/home');
-        // } else {
-        //   AppRouter.router.go('/noroutes');
-        // }
-        // Get notifications
-        // await _apiService.getNotifications(accessToken);
-      } else {
-        print('Login failed, status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error during login: $e');
-      rethrow;
-    }
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.read(authProvider);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -137,13 +70,76 @@ class SigninPage extends StatelessWidget {
                               TextStyle(fontSize: 15, color: Colors.grey[800]),
                         ),
                         onPressed: () {
-                          AppRouter.router.go('/forgotpassword');
+                          context.push(ForgotPassword.routeName);
                         },
                       ),
                     ],
                   ),
                 ),
-                AuthButton(label: "Login", onPressed: () => _login(context)),
+                // Padding(
+                //   padding:
+                //       const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       ref.read(authProvider.notifier).login(
+                //           phoneNumber: phoneController.text,
+                //           password: passwordController.text);
+                //     },
+                //     child: const Text('Login'),
+                //   ),
+                // ),
+                authState.when(
+                  // skipError: true,
+                  data: (user) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20.0, top: 20.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          ref.read(authProvider.notifier).login(
+                              phoneNumber: phoneController.text,
+                              password: passwordController.text);
+                        },
+                        child: const Text('Login'),
+                      ),
+                    );
+                  },
+                  loading: () => const CircularProgressIndicator(),
+                  error: (error, stack) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      /// Show error dialog
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content: Text(error.toString()),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    });
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20.0, top: 20.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          ref.read(authProvider.notifier).login(
+                              phoneNumber: phoneController.text,
+                              password: passwordController.text);
+                        },
+                        child: const Text('Login'),
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -172,7 +168,7 @@ class SigninPage extends StatelessWidget {
                         style: TextStyle(fontSize: 15)),
                     TextButton(
                       onPressed: () {
-                        AppRouter.router.go('/selectRole');
+                        context.go(SelectRolePage.routeName);
                       },
                       child: Text(
                         'Sign Up',

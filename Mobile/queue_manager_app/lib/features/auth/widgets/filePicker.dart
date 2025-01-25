@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 class FileSelectorWidget extends StatelessWidget {
   final String label;
   final String? filePath;
@@ -33,7 +35,9 @@ class FileSelectorWidget extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(vertical: 18, horizontal: 22),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black87),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -46,9 +50,9 @@ class FileSelectorWidget extends StatelessWidget {
                                 ? '${filePath!.split('/').last.substring(0, 10)}...'
                                 : filePath!.split('/').last,
                         style:
-                            const TextStyle(fontSize: 16, color: Colors.black),
+                            const TextStyle(fontSize: 16,),
                       ),
-                      const Icon(Icons.attach_file, color: Colors.grey),
+                      const Icon(Icons.attach_file),
                     ],
                   ),
                 ),
@@ -58,7 +62,7 @@ class FileSelectorWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 25),
                   child: Text(
                     'Selected File: ${filePath!.split('/').last}',
-                    style: const TextStyle(fontSize: 12, color: Colors.green),
+                    style: TextStyle(fontSize: 12, color: AppColors.successColor),
                   ),
                 ),
             ],
