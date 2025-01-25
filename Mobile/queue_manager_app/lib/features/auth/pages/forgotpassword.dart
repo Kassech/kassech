@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../widgets/authButton.dart';
 import '../widgets/mytextfield.dart';
 
 class ForgotPassword extends StatelessWidget {
@@ -12,14 +11,12 @@ class ForgotPassword extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () {
               context.go('/signin');
             },
             icon: const Icon(Icons.arrow_back)),
       ),
-      backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -42,11 +39,15 @@ class ForgotPassword extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          AuthButton(
-              label: 'Send Code',
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: ElevatedButton(
               onPressed: () {
                 context.go('/');
-              }),
+              },
+              child: const Text('Send Code'),
+            ),
+          )
         ],
       ),
     );

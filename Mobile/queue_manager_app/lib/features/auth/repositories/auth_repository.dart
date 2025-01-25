@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import '../../../config/const/api_constants.dart';
@@ -59,11 +61,11 @@ class AuthRepository {
       }
 
       if (response.data['user'] != null) {
-        await _storage.saveString(LocalStorageConstants.userKey, response.data['user'].toString());
+        await _storage.saveString(LocalStorageConstants.userKey, jsonEncode(response.data['user']));
       }
 
       return User.fromJson(response.data['user'] as Map<String, dynamic>);
-    } on DioException catch (e) {
+    } on DioException catch (_) {
       rethrow;
     } catch (e) {
       rethrow;
@@ -80,6 +82,11 @@ class AuthRepository {
           'email_or_phone': phoneNumber ?? email,
           'password': password,
         },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
       );
 
       if (response.data['accessToken'] != null) {
@@ -87,11 +94,11 @@ class AuthRepository {
       }
 
       if (response.data['user'] != null) {
-        await _storage.saveString(LocalStorageConstants.userKey, response.data['user'].toString());
+        await _storage.saveString(LocalStorageConstants.userKey, jsonEncode(response.data['user']));
       }
 
       return User.fromJson(response.data['user'] as Map<String, dynamic>);
-    } on DioException catch (e) {
+    } on DioException catch (_) {
       rethrow;
     } catch (e) {
       rethrow;
@@ -101,6 +108,8 @@ class AuthRepository {
   Future<void> logout() async {
     try {
       await _storage.clear();
+    } on DioException catch (_) {
+      rethrow;
     } catch (e) {
       rethrow;
     }

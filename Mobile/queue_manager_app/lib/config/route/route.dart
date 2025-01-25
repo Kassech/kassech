@@ -28,17 +28,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     debugLogDiagnostics: true,
     refreshListenable: notifier,
-    redirect: (context, state) async {
+    redirect: (context, state) {
       final user = authState.value;
 
-      if (user == null && state.uri.toString() != '/login') {
-        return '/login';
-      }
+      print('user is $user');
+      const publicRoutes = ['/signin', '/signup', '/forgotpassword', '/selectRole'];
 
-      if (user != null && state.uri.toString() == '/login') {
+      if (user == null && !publicRoutes.contains(state.matchedLocation)) {
+        return '/signin';
+      } else if (user != null && state.matchedLocation == '/signin') {
         return '/home';
       }
-
       return null;
     },
     errorBuilder: (context, state) => const ErrorPage(),

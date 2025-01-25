@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/config/const/local_storage_constants.dart';
 import 'package:queue_manager_app/core/services/local_storage_service.dart';
@@ -28,7 +29,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
     try {
       final response = await _authRepository.signUp(user);
       state = AsyncData(response);
-    } catch (e, stackTrace) {
+    } on DioException catch (e) {
+      state = AsyncError(e.response?.data['message'] ?? e.message, e.stackTrace);
+    }  catch (e, stackTrace) {
       state = AsyncError(e.toString(), stackTrace);
     }
   }
@@ -37,7 +40,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
     String? phoneNumber,
     String? email,
     required String password,
-}) async {
+  }) async {
     state = const AsyncLoading();
     try {
       final response = await _authRepository.login(
@@ -46,6 +49,8 @@ class AuthNotifier extends AsyncNotifier<User?> {
         password: password,
       );
       state = AsyncData(response);
+    }  on DioException catch (e) {
+      state = AsyncError(e.response?.data['message'] ?? e.message, e.stackTrace);
     } catch (e, stackTrace) {
       state = AsyncError(e.toString(), stackTrace);
     }
@@ -56,6 +61,8 @@ class AuthNotifier extends AsyncNotifier<User?> {
     try {
       await _authRepository.logout();
       state = const AsyncData(null);
+    } on DioException catch (e) {
+      state = AsyncError(e.response?.data['message'] ?? e.message, e.stackTrace);
     } catch (e, stackTrace) {
       state = AsyncError(e.toString(), stackTrace);
     }
@@ -64,7 +71,8 @@ class AuthNotifier extends AsyncNotifier<User?> {
   Future<User?> _checkAuth() async {
     state = const AsyncLoading();
     try {
-      final userJson = await LocalStorageService().getString(LocalStorageConstants.userKey);
+      final userJson =
+          await LocalStorageService().getString(LocalStorageConstants.userKey);
       if (userJson != null) {
         final user = User.fromJson(jsonDecode(userJson));
         state = AsyncData(user);
@@ -79,4 +87,3 @@ class AuthNotifier extends AsyncNotifier<User?> {
     }
   }
 }
-

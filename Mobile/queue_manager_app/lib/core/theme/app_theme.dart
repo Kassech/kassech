@@ -35,7 +35,7 @@ final lightThemeData = ThemeData(
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       minimumSize:
-      WidgetStateProperty.all<Size>(const Size(double.infinity, 48)),
+      WidgetStateProperty.all<Size>(const Size(double.infinity, 58)),
       backgroundColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> state) => AppColors.lightPrimary,
       ),
@@ -84,7 +84,7 @@ final darkThemeData = ThemeData(
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       minimumSize:
-      WidgetStateProperty.all<Size>(const Size(double.infinity, 48)),
+      WidgetStateProperty.all<Size>(const Size(double.infinity, 58)),
       backgroundColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> state) => AppColors.darkPrimary,
       ),

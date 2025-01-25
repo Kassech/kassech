@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
 import 'package:queue_manager_app/features/queue/widgets/profileLists.dart';
-
-import '../../auth/widgets/authButton.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -50,12 +49,12 @@ class ProfilePage extends ConsumerWidget {
                       ProfileField(label: 'Email', value: data['email'] ?? 'N/A'),
                       ProfileField(label: 'Vehicle Type', value: data['vehicleType'] ?? 'N/A'),
                       ProfileField(label: 'License Plate', value: data['licensePlate'] ?? 'N/A'),
-                      AuthButton(
-                        label: 'Logout',
+                      ElevatedButton(
                         onPressed: () {
-                          context.go('/signin');
+                          ref.read(authProvider.notifier).logout();
                         },
-                      ),
+                        child: const Text('Logout'),
+                      )
                     ],
                   ),
                 ),
