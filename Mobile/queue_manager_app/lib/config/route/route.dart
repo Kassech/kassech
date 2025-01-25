@@ -20,12 +20,15 @@ import '../../features/queue/pages/profile.dart';
 import '../../features/queue/pages/qmdetails.dart';
 import '../../features/splash/splash.dart';
 
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
   final notifier = GoRouterRefreshNotifier(authState);
 
   return GoRouter(
     initialLocation: Splash.routeName,
+    navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: true,
     refreshListenable: notifier,
     redirect: (context, state) {

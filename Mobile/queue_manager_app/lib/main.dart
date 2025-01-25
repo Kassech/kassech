@@ -35,9 +35,6 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: lightThemeData,
       darkTheme: darkThemeData,
-      // routeInformationParser: goRouter.routeInformationParser,
-      // routerDelegate: goRouter.routerDelegate,
-      // routeInformationProvider: goRouter.routeInformationProvider,
       routerConfig: goRouter,
     );
   }
