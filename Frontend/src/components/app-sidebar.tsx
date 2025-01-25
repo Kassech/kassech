@@ -71,6 +71,10 @@ const data = {
           url: '/route',
         },
         {
+          title: 'Paths',
+          url: '/paths',
+        },
+        {
           title: 'Role And Permission',
           url: '/rolepermission',
         },

@@ -65,7 +65,8 @@ export const useDeleteRoute = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (id: number) => {
+    async (id: string) => {
+      console.log("🚀 ~ id:", id)
       const response = await api.delete(`/routes/${id}`);
       return response.data;
     },

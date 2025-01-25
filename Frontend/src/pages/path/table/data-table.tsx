@@ -1,25 +1,15 @@
-import * as React from 'react';
 import {
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
+  ColumnDef,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
+  SortingState,
   useReactTable,
+  getSortedRowModel,
+  getFilteredRowModel,
+  ColumnFiltersState,
 } from '@tanstack/react-table';
-import { ChevronDown } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -28,51 +18,61 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { DataTablePagination } from './data-table-pagination';
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-interface DataTableProps {
-  data: Route[];
-  columns: any[];
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
-export function DataTable({ data, columns }: DataTableProps) {
-  console.log('🚀 ~ DataTable ~ data, columns:', data, columns);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0, // Start at the first page
+    pageSize: 5, // Default page size is 5
+  });
 
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
-      rowSelection,
+      pagination,
     },
   });
 
   return (
-    <div className="w-full">
+    <div className="h-full p-3 rounded-md border">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter locationAs..."
+          placeholder="Filter by LocationName..."
           value={
-            (table.getColumn('Location A')?.getFilterValue() as string) ?? ''
+            (table.getColumn('LocationName')?.getFilterValue() as string) ?? ''
           }
           onChange={(event) =>
-            table.getColumn('Location A')?.setFilterValue(event.target.value)
+            table.getColumn('LocationName')?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -103,32 +103,9 @@ export function DataTable({ data, columns }: DataTableProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-      <div className="rounded-md border">
-        <Table className="m-4">
+      <DataTablePagination table={table} />
+      <div className="h-full overflow-y-auto p-2 m-2">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

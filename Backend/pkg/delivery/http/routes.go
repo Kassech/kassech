@@ -22,7 +22,7 @@ func RegisterRoutes(r *gin.Engine) {
 	vehicleTypeRepo := &repository.VehicleTypeRepository{}
 	vehicleRepo := &repository.VehicleRepository{}
 	LocationRepo := &repository.LocationRepository{}
-
+	PathRepo := &repository.PathRepository{}
 	// Initialize Services
 	userSvc := &service.UserService{Repo: userRepo}
 	roleSvc := &service.RoleService{Repo: roleRepo}
@@ -35,7 +35,7 @@ func RegisterRoutes(r *gin.Engine) {
 	vehicleTypeSvc := &service.VehicleTypeService{Repo: vehicleTypeRepo}
 	vehicleSvc := &service.VehicleService{Repo: vehicleRepo}
 	locationSvc := &service.LocationService{Repo: LocationRepo}
-
+	pathSvc := &service.PathService{Repo: PathRepo}
 	// Initialize Controllersz
 	userCtrl := &controller.UserController{Service: userSvc, SessionService: sessionService}
 	roleCtrl := &controller.RoleController{Service: roleSvc}
@@ -48,38 +48,33 @@ func RegisterRoutes(r *gin.Engine) {
 	vehicleTypeCtrl := &controller.VehicleTypeController{Service: vehicleTypeSvc}
 	vehicleCtrl := &controller.VehicleController{Service: vehicleSvc}
 	locationCtrl := &controller.LocationController{Service: locationSvc}
-
+	pathCtrl := &controller.PathController{Service: pathSvc}
 	// Group API routes
 	api := r.Group("/api")
 	{
-		// User-related routes
-		registerUserRoutes(api, userCtrl)
+		registerUserRoutes(api, userCtrl) // Register user-related routes
 
-		// Role-related routes
-		registerRoleRoutes(api, roleCtrl)
+		registerRoleRoutes(api, roleCtrl) // Register role-related routes
 
-		// Permission-related routes
-		RegisterUserRoleRoutes(api, userRoleCtrl)
+		RegisterUserRoleRoutes(api, userRoleCtrl) // Register user roles-related routes
 
-		RegisterUserSessionRoutes(api, sessionController)
+		RegisterUserSessionRoutes(api, sessionController) // Register user sessions-related routes
 
-		// Permission-related routes
-		registerPermissionRoutes(api, permissionCtrl)
+		registerPermissionRoutes(api, permissionCtrl) // Register permission-related routes
 
-		// Role Permission-related routes
-		registerRolePermissionRoutes(api, rolePermissionCtrl)
+		registerRolePermissionRoutes(api, rolePermissionCtrl) // Register role permission-related routes
 
-		// station routes
-		stationRoutes(api, stationCtrl)
+		stationRoutes(api, stationCtrl) // Register station-related routes
 
-		// route routes
-		routeRoutes(api, routeCtrl)
+		routeRoutes(api, routeCtrl) // Register route-related routes
 
-		vehicleTypeRoutes(api, vehicleTypeCtrl)
+		pathRoutes(api, pathCtrl) // Register path-related routes
 
-		vehicleRoutes(api, vehicleCtrl)
+		vehicleTypeRoutes(api, vehicleTypeCtrl) // Register vehicle type-related routes
 
-		locationRoutes(api, locationCtrl)
+		vehicleRoutes(api, vehicleCtrl) // Register vehicle-related routes
+
+		locationRoutes(api, locationCtrl) // Register location-related routes
 
 	}
 }
@@ -123,6 +118,15 @@ func routeRoutes(api *gin.RouterGroup, ctrl *controller.RouteController) {
 	}
 }
 
+func pathRoutes(api *gin.RouterGroup, ctrl *controller.PathController) {
+	pathApi := api.Group("/path")
+	{
+		pathApi.GET("/", ctrl.GetAllPaths)      // Get all paths
+		pathApi.POST("/", ctrl.CreatePath)      // Create a path
+		pathApi.GET("/:id", ctrl.FindPathByID)  // Get path by ID
+		pathApi.DELETE("/:id", ctrl.DeletePath) // Delete a path by ID
+	}
+}
 func vehicleRoutes(api *gin.RouterGroup, ctrl *controller.VehicleController) {
 	vehicleApi := api.Group("/vehicles")
 	{

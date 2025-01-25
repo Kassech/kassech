@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import Header from '@/components/header';
-import DriverForm from '@/sections/Driver/driverForm';
-import DriverAttachmentForm from '@/sections/Driver/driverAttacchmentForm';
+// import DriverForm from '@/sections/Driver/driverForm';
+// import DriverAttachmentForm from '@/sections/Driver/driverAttacchmentForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import DriverForm from '@/sections/driver/driverForm';
+import DriverAttachmentForm from '@/sections/driver/driverAttacchmentForm';
 
 export default function DriverPage() {
   const [activeTab, setActiveTab] = useState('person'); // State to control active tab
@@ -43,7 +45,7 @@ export default function DriverPage() {
             <DriverForm switchTab={switchTab} />
           </TabsContent>
           <TabsContent value="attachments">
-            <DriverAttachmentForm switchTab={switchTab}  />
+            <DriverAttachmentForm switchTab={switchTab} />
           </TabsContent>
         </Tabs>
       </div>

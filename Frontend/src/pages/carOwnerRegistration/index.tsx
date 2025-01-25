@@ -1,7 +1,7 @@
 // pages/driver/Driver.jsx
 
 import Header from '@/components/header';
-import Owner from '@/sections/Owner';
+import CarOwnerForm from '@/sections/owner/carOwnerForm';
 
 export default function OwnerRegistration() {
   const paths = [
@@ -12,7 +12,7 @@ export default function OwnerRegistration() {
     <>
       <Header paths={paths} />
       <div className="w-full">
-        <Owner />
+        <CarOwnerForm />
       </div>
     </>
   );

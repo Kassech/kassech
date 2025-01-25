@@ -25,11 +25,11 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useDeleteUser } from '@/services/userService';
 
-import CarOwnerForm from '@/sections/Owner/carOwnerForm';
 import QueueManagerForm from '@/sections/QueueManager/queueManagerForm';
 import DriverForm from '@/pages/DriverForm';
 import VerificationToggle from './verificationToggle';
 import { toast } from 'sonner';
+import CarOwnerForm from '@/sections/owner/carOwnerForm';
 
 export const columns: ColumnDef<User>[] = [
   {

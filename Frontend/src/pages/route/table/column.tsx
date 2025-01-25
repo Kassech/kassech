@@ -18,6 +18,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useDeleteRoute } from '@/services/routeService';
 import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 
@@ -48,8 +49,9 @@ export const columns: ColumnDef<Route>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const route = row.original;
-      console.log('🚀 ~ route:', route);
+      console.log('🚀 ~ route:', route.id);
 
+      const deleteRoute = useDeleteRoute();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -74,7 +76,13 @@ export const columns: ColumnDef<Route>[] = [
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction>Continue</AlertDialogAction>
+                  <AlertDialogAction
+                    onClick={() => {
+                      deleteRoute.mutate(route.ID);
+                    }}
+                  >
+                    Continue
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -86,5 +94,6 @@ export const columns: ColumnDef<Route>[] = [
 ];
 
 const handleDeleteRoute = (id: string) => {
+  console.log('🚀 ~ handleDeleteRoute ~ id:', id);
   // logic to remove route
 };

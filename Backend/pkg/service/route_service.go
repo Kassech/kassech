@@ -11,7 +11,7 @@ type RouteService struct {
 
 func (rs *RouteService) UpdateRoute(route *models.Route, routeID uint) (*models.Route, error) {
 	// Perform the update operation
-	updatedRoute, err := rs.Repo.Update(route, routeID) 
+	updatedRoute, err := rs.Repo.Update(route, routeID)
 	if err != nil {
 		return nil, err
 	}
