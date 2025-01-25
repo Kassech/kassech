@@ -20,8 +20,10 @@ import { useCreateUser } from '@/services/userService';
 
 export default function DriverAttachmentForm({
   switchTab,
+  defaultValues=null,
 }: {
   switchTab: (tab: string) => void;
+  defaultValues?: Partial<z.infer<typeof driverAttachmentSchema>> | null;
 }) {
   const { formData, setField } = useDriverStore();
   const { mutateAsync } = useCreateUser(); // Use the custom mutation hook to create a driver
@@ -33,10 +35,14 @@ export default function DriverAttachmentForm({
     mode: 'onBlur',
     defaultValues: {
       ...formData,
-      driving_license: formData.drivingLicense || null,
-      national_id: formData.nationalId || null,
-      insurance_document: formData.insuranceDocument || null,
-      other_file: formData.others || null,
+      driving_license:
+        defaultValues?.driving_license || formData?.driving_license || null,
+      national_id: defaultValues?.national_id || formData?.national_id || null,
+      insurance_document:
+        defaultValues?.insurance_document ||
+        formData?.insurance_document ||
+        null,
+      other_file: defaultValues?.other_file || formData?.other_file || null,
     },
   });
 
@@ -76,7 +82,7 @@ export default function DriverAttachmentForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="grid grid-cols-2 gap-4 md:grid-cols-2"
+          className="grid grid-cols-2 gap-4 md:grid-cols-2 space-x-5"
         >
           {[
             { label: 'Driving License', name: 'driving_license' as const },
@@ -92,6 +98,7 @@ export default function DriverAttachmentForm({
                   <FormItem>
                     <FormLabel>{field.label}</FormLabel>
                     <ImageUploader
+                    className="rounded-md"
                       initialPreview={form.getValues(field.name)}
                       onImageUpload={(file) => form.setValue(field.name, file)}
                       maxFileSize={5000000}

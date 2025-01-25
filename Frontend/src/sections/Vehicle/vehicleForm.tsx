@@ -140,75 +140,17 @@ export default function VehicleForm() {
               </FormItem>
             )}
           />
-<FormField
-  control={form.control}
-  name="color"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Color</FormLabel>
-      <FormControl>
-        <Input
-          type="text"
-          {...field}
-          placeholder="Enter color name (e.g., red, blue, black)"
-        />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
-
           <FormField
             control={form.control}
-            name="bollo"
+            name="color"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Bollo</FormLabel>
+                <FormLabel>Color</FormLabel>
                 <FormControl>
                   <Input
-                    type="file"
-                    onChange={(e) =>
-                      form.setValue('bollo', e.target.files?.[0] || null)
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="insurance"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Insurance</FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    onChange={(e) =>
-                      form.setValue('insurance', e.target.files?.[0] || null)
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="libre"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Libre</FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    onChange={(e) =>
-                      form.setValue('libre', e.target.files?.[0] || null)
-                    }
+                    type="text"
+                    {...field}
+                    placeholder="Enter color name (e.g., red, blue, black)"
                   />
                 </FormControl>
                 <FormMessage />
@@ -225,7 +167,7 @@ export default function VehicleForm() {
                   onValueChange={(value) => form.setValue('carType', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a fruit" />
+                    <SelectValue placeholder="Select vehicle type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -241,9 +183,77 @@ export default function VehicleForm() {
               </FormItem>
             )}
           />
-          <div>
+          <div className="md:pt-8">
             <OwnerSearch onOwnerSelect={handleOwnerSelect} />
           </div>
+
+          <FormField
+            control={form.control}
+            name="bollo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bollo</FormLabel>
+                <ImageUploader
+                  className="rounded-md"
+                  initialPreview={form.getValues(field.name)}
+                  onImageUpload={(file) => form.setValue(field.name, file)}
+                  maxFileSize={5000000}
+                  acceptedFormats={{
+                    'image/png': [],
+                    'image/jpg': [],
+                    'image/jpeg': [],
+                    'application/pdf': [],
+                  }}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="insurance"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Insurance</FormLabel>
+                <ImageUploader
+                  className="rounded-md"
+                  initialPreview={form.getValues(field.name)}
+                  onImageUpload={(file) => form.setValue(field.name, file)}
+                  maxFileSize={5000000}
+                  acceptedFormats={{
+                    'image/png': [],
+                    'image/jpg': [],
+                    'image/jpeg': [],
+                    'application/pdf': [],
+                  }}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="libre"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Libre</FormLabel>
+                <ImageUploader
+                  className="rounded-md"
+                  initialPreview={form.getValues(field.name)}
+                  onImageUpload={(file) => form.setValue(field.name, file)}
+                  maxFileSize={5000000}
+                  acceptedFormats={{
+                    'image/png': [],
+                    'image/jpg': [],
+                    'image/jpeg': [],
+                    'application/pdf': [],
+                  }}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormItem className="col-span-full">
             <FormControl>

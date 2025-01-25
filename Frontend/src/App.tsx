@@ -27,6 +27,7 @@ import RoutePage from './pages/route';
 import PathPage from './pages/path';
 
 import DriverVehicleMapping from './pages/Driver-VehicleMapping';
+import VehicleTracking from './pages/VehicleTracking';
 
 function App() {
   return (
@@ -65,6 +66,7 @@ function App() {
               path="/driverVehicleMap"
               element={<DriverVehicleMapping />}
             />
+            <Route path="/vehicleTracking" element={<VehicleTracking />} />
           </Route>
 
           {/* Catch-all route for 404 */}

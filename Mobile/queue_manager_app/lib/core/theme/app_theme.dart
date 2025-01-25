@@ -6,7 +6,8 @@ import 'app_colors.dart';
 final lightThemeData = ThemeData(
   primaryColor: AppColors.lightPrimary,
   scaffoldBackgroundColor: AppColors.lightScaffoldBackground,
-  colorScheme: const ColorScheme.light(
+  colorScheme: ColorScheme.light(
+    brightness: Brightness.light,
     primary: AppColors.lightPrimary,
     onPrimary: AppColors.lightOnPrimary,
     secondary: AppColors.lightSecondary,
@@ -35,7 +36,7 @@ final lightThemeData = ThemeData(
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       minimumSize:
-      WidgetStateProperty.all<Size>(const Size(double.infinity, 48)),
+      WidgetStateProperty.all<Size>(const Size(double.infinity, 58)),
       backgroundColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> state) => AppColors.lightPrimary,
       ),
@@ -56,6 +57,7 @@ final darkThemeData = ThemeData(
   primaryColor: AppColors.darkPrimary,
   scaffoldBackgroundColor: AppColors.darkScaffoldBackground,
   colorScheme: const ColorScheme.dark(
+    brightness: Brightness.dark,
     primary: AppColors.darkPrimary,
     onPrimary: AppColors.darkOnPrimary,
     secondary: AppColors.darkSecondary,
@@ -84,7 +86,7 @@ final darkThemeData = ThemeData(
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       minimumSize:
-      WidgetStateProperty.all<Size>(const Size(double.infinity, 48)),
+      WidgetStateProperty.all<Size>(const Size(double.infinity, 58)),
       backgroundColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> state) => AppColors.darkPrimary,
       ),
@@ -97,5 +99,5 @@ final darkThemeData = ThemeData(
         ),
       ),
     ),
-  )
+  ),
 );

@@ -20,8 +20,10 @@ import { useDriverStore } from '@/store/driverStore';
 
 export default function DriverForm({
   switchTab,
+  defaultValues = null,
 }: {
   switchTab: (tab: string) => void;
+    defaultValues?: Partial<z.infer<typeof driverSchema>> | null;
 }) {
   const { formData, setField } = useDriverStore();
   console.log('🚀 ~ DriverForm ~ formData:', formData);
@@ -30,8 +32,12 @@ export default function DriverForm({
     resolver: zodResolver(driverSchema),
     mode: 'onBlur',
     defaultValues: {
-      ...formData,
-      Role: DRIVER_ROLE,
+      FirstName: defaultValues?.FirstName || formData?.FirstName || '',
+      LastName: defaultValues?.LastName || formData?.LastName || '',
+      Email: defaultValues?.Email || formData?.Email || '',
+      PhoneNumber: defaultValues?.PhoneNumber || formData?.PhoneNumber || '',
+      Profile: defaultValues?.Profile || formData?.Profile || null,
+      Role: defaultValues?.Role ?? formData?.Role ?? DRIVER_ROLE.toString(),
     },
   });
 
@@ -119,23 +125,6 @@ export default function DriverForm({
             )}
           />
 
-          {/* <FormField
-            control={form.control}
-            name="Password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    {...field}
-                    placeholder="Enter your password"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
 
           <FormItem>
             <FormLabel>Go To Next Step</FormLabel>

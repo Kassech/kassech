@@ -64,7 +64,7 @@ export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
               <div className="p-2 text-gray-500">Loading...</div>
             ) : isError ? (
               <div className="p-2 text-red-500">Error fetching users.</div>
-            ) : data?.users.length === 0 ? (
+            ) : !data?.users || data.users.length === 0 ? (
               <div className="p-2 text-gray-500">No owner found.</div>
             ) : (
               <ul>

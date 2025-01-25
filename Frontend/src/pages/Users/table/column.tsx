@@ -26,10 +26,10 @@ import {
 import { useDeleteUser } from '@/services/userService';
 
 import QueueManagerForm from '@/sections/QueueManager/queueManagerForm';
-import DriverForm from '@/pages/DriverForm';
 import VerificationToggle from './verificationToggle';
 import { toast } from 'sonner';
-import CarOwnerForm from '@/sections/owner/carOwnerForm';
+import DriverPage from '@/pages/driver';
+import AdminForm from '@/sections/Admin';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -86,6 +86,7 @@ export const columns: ColumnDef<User>[] = [
       const {
         isDialogOpen,
         selectedUser,
+        selectedUserRole,
         setDialogOpen,
         setDialogClose,
         isEditDialogOpen,
@@ -111,8 +112,7 @@ export const columns: ColumnDef<User>[] = [
         });
       };
       console.log('🚀 ~ row.original:', row.original);
-      console.log(row.original.roles);
-      const role = row.original.roles.replace(/[{}]/g, '');
+
       return (
         <>
           <DropdownMenu>
@@ -126,7 +126,9 @@ export const columns: ColumnDef<User>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => setEditDialogOpen(row.original.ID)}
+                onClick={() =>
+                  setEditDialogOpen(row.original.ID, row.original.roles)
+                }
               >
                 Edit
               </DropdownMenuItem>
@@ -171,21 +173,22 @@ export const columns: ColumnDef<User>[] = [
                 <AlertDialogTitle>Edit User</AlertDialogTitle>
                 <AlertDialogDescription>
                   Update the details of the user below.
+                  {selectedUserRole.replace(/[{}]/g, '') === 'Admin' ? (
+                    <AdminForm defaultValues={row.original} />
+                  ) : selectedUserRole.replace(/[{}]/g, '') === 'Driver' ? (
+                    <DriverPage defaultValues={row.original} />
+                  ) : selectedUserRole.replace(/[{}]/g, '') ===
+                    'QueueManager' ? (
+                    <QueueManagerForm defaultValues={row.original} />
+                  ) : selectedUserRole.replace(/[{}]/g, '') === 'Owner' ? (
+                    <CarOwnerForm defaultValues={row.original} />
+                  ) : (
+                    <p className="text-red-500">
+                      Invalid role: {selectedUserRole}
+                    </p>
+                  )}
                 </AlertDialogDescription>
               </AlertDialogHeader>
-
-              {role === 'Admin' ? (
-                <QueueManagerForm defaultValues={row.original} />
-              ) : role === 'Driver' ? (
-                <DriverForm />
-              ) : role === 'QueueManager' ? (
-                <QueueManagerForm defaultValues={row.original} />
-              ) : role === 'CarOwner' ? (
-                <CarOwnerForm defaultValues={row.original} />
-              ) : (
-                <p className="text-red-500">Invalid role: {role}</p>
-              )}
-              {/* Footer with Cancel button */}
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
               </AlertDialogFooter>

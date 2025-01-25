@@ -7,7 +7,7 @@ export const userSchema = z.object({
         .string()
         .regex(/^\+251\d{9}$/, { message: "Invalid phone number format. It should start with +251 followed by 9 digits" }),
     Password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
-    Role: z.number().min(1, { message: "Role is required and must be a positive number" }),
+    Role: z.string().min(1, { message: "Role is required and must be a positive number" }),
     Profile: z
         .instanceof(File).nullable()
         .refine((file) => file && file.size !== 0, { message: "Please upload an image file. The file cannot be empty" }),
@@ -19,19 +19,37 @@ export const queueManagerSchema = userSchema.omit({ Password: true }).extend({
   national_id: z
     .instanceof(File).nullable()
     .refine((file) => file && file.size > 0, {
-      message: 'Kebele id document is required',
+      message: 'National id document is required',
     })
     .refine((file) => file && file.size <= 5 * 1024 * 1024, {
-      message: 'Kebele id document must be less than 5MB',
+      message: 'National id document must be less than 5MB',
     }),
 });
 
 export const driverAttachmentSchema = z.object({
-    driving_license: z.instanceof(File).optional(),
-    national_id: z.instanceof(File).optional(),
-    insurance_document: z.instanceof(File).optional(),
-    other_file: z.instanceof(File).optional(),
-  });
+  driving_license: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file === null || (file && file.size > 0), {
+      message: 'driving_license is required',
+    })
+    .optional(),
+  national_id: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file === null || (file && file.size > 0), {
+      message: 'national_id is required',
+    })
+    .optional(),
+  insurance_document: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file === null || (file && file.size > 0), {
+      message: 'insurance_document is required',
+    })
+    .optional(),
+  other_file: z.instanceof(File).nullable().optional(),
+});
 
 
 export const vehicleSchema = z.object({

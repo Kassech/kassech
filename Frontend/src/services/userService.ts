@@ -22,6 +22,19 @@ export const useFetchUserData = ({ search = '', role , ID}: SearchParams = {}) =
   });
 };
 
+export const useGetUserById = (id: number | null) => {
+  return useQuery(
+    ['user', id],
+    async () => {
+      const response = await api.get(`/users/${id}`);
+      return response.data;
+    },
+    {
+      enabled: id !== null && id !== undefined, 
+    }
+  );
+};
+
 // Update user data with react-query
 export const useUpdateUserData = () => {
   return useMutation(async (userData: unknown) => {
