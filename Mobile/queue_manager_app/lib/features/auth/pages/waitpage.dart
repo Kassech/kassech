@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import 'signinpage.dart';
+
 class WaitPage extends StatelessWidget {
   const WaitPage({super.key});
+
+  static const String routeName = '/waitPage';
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +16,7 @@ class WaitPage extends StatelessWidget {
         title: const Text('Select Role'),
         leading: IconButton(
           onPressed: () {
-            context.go('/signin');
+            context.go(SignInPage.routeName);
           },
           icon: const Icon(Icons.arrow_back),
         ),

@@ -4,6 +4,8 @@ import 'package:flutter_map/flutter_map.dart';
 class CarLocation extends StatefulWidget {
   const CarLocation({super.key});
 
+  static const String routeName = '/carLocationPage';
+
   @override
   State<CarLocation> createState() => _CarLocationState();
 }

@@ -6,9 +6,15 @@ import 'package:queue_manager_app/config/route/route.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
+import 'home.dart';
+
 class NotificationPage extends StatefulWidget {
+  const NotificationPage({super.key});
+
+  static const String routeName = '/notificationPage';
+
   @override
-  _NotificationPageState createState() => _NotificationPageState();
+  State<NotificationPage> createState() => _NotificationPageState();
 }
 
 class _NotificationPageState extends State<NotificationPage> {
@@ -74,7 +80,7 @@ class _NotificationPageState extends State<NotificationPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/home');
+            context.go(HomeQueueManager.routeName);
           },
         ),
         title: Text('Notifications'),

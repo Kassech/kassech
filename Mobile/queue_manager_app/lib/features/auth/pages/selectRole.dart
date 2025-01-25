@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SelectRolePage(),
-    );
-  }
-}
+import 'signinpage.dart';
+import 'signuppage.dart';
 
 class SelectRolePage extends StatefulWidget {
+  const SelectRolePage({super.key});
+
+  static const String routeName = '/selectRolePage';
+
   @override
-  _SelectRolePageState createState() => _SelectRolePageState();
+  State<SelectRolePage> createState() => _SelectRolePageState();
 }
 
 class _SelectRolePageState extends State<SelectRolePage> {
@@ -34,7 +30,7 @@ class _SelectRolePageState extends State<SelectRolePage> {
         title: Text('Select Role'),
         leading: IconButton(
             onPressed: () {
-              context.go('/signin');
+              context.go(SignInPage.routeName);
             },
             icon: Icon(Icons.arrow_back)),
       ),
@@ -75,7 +71,7 @@ class _SelectRolePageState extends State<SelectRolePage> {
               ElevatedButton(
                 onPressed: () {
                   if (selectedRole != null) {
-                    context.go('/signup', extra: roles[selectedRole]);
+                    context.go(SignUpPage.routeName, extra: roles[selectedRole]);
                   }
                 },
                 child: Text('Next'),

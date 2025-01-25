@@ -4,15 +4,18 @@ import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
 
 import '../widgets/mytextfield.dart';
+import 'forgotpassword.dart';
+import 'selectRole.dart';
 
-class SigninPage extends ConsumerWidget {
-  SigninPage({super.key});
+class SignInPage extends ConsumerWidget {
+  SignInPage({super.key});
+
+  static const String routeName = '/signInPage';
 
   final TextEditingController phoneController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
 
-// //private instatiation of the authservice
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.read(authProvider);
@@ -67,7 +70,7 @@ class SigninPage extends ConsumerWidget {
                               TextStyle(fontSize: 15, color: Colors.grey[800]),
                         ),
                         onPressed: () {
-                          context.push('/forgotpassword');
+                          context.push(ForgotPassword.routeName);
                         },
                       ),
                     ],
@@ -165,7 +168,7 @@ class SigninPage extends ConsumerWidget {
                         style: TextStyle(fontSize: 15)),
                     TextButton(
                       onPressed: () {
-                        context.go('/selectRole');
+                        context.go(SelectRolePage.routeName);
                       },
                       child: Text(
                         'Sign Up',

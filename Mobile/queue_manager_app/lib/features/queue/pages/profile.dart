@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
+import 'package:queue_manager_app/features/queue/pages/home.dart';
 import 'package:queue_manager_app/features/queue/widgets/profileLists.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
+
+  static const String routeName = '/profilePage';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +20,7 @@ class ProfilePage extends ConsumerWidget {
         backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () {
-              context.go('/home');
+              context.go(HomeQueueManager.routeName);
             },
             icon: const Icon(Icons.arrow_back)),
         title: const Text('Profile'),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
 class DelegationPage extends StatefulWidget {
+  const DelegationPage({super.key});
+
+  static const String routeName = '/delegationPage';
+
   @override
-  _DelegationPageState createState() => _DelegationPageState();
+  State<DelegationPage> createState() => _DelegationPageState();
 }
 
 class _DelegationPageState extends State<DelegationPage> {
@@ -29,7 +32,6 @@ class _DelegationPageState extends State<DelegationPage> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error fetching drivers: $e');
       setState(() {
         _isLoading = false;
       });

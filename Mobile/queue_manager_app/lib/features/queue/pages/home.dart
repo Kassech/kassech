@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/features/queue/pages/profile.dart';
+import 'package:queue_manager_app/features/queue/pages/qmdetails.dart';
 import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
 import 'package:queue_manager_app/features/queue/widgets/bottomNavBar.dart';
 import 'package:queue_manager_app/features/queue/widgets/notification_modal.dart';
 
+import 'notificaton_page.dart';
+
 class HomeQueueManager extends StatefulWidget {
   const HomeQueueManager({super.key});
+
+  static const String routeName = '/homePage';
 
   @override
   State<HomeQueueManager> createState() => _HomeQueueManagerState();
@@ -62,16 +68,16 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
     });
     switch (index) {
       case 0:
-        context.go('/home');
+        context.go(HomeQueueManager.routeName);
         break;
       case 1:
         context.go('/map');
         break;
       case 2:
-        context.go('/profile');
+        context.go(ProfilePage.routeName);
         break;
       default:
-        context.go('/home');
+        context.go(HomeQueueManager.routeName);
     }
   }
 
@@ -84,7 +90,7 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () {
-              context.go('/notifications');
+              context.go(NotificationPage.routeName);
             },
           ),
         ],
@@ -164,7 +170,7 @@ class _QueueCardState extends State<QueueCard> {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        context.go('/home/qmdetails');
+        context.go(QueueManagerDetails.routeName);
       },
       child: Card(
         color: Colors.black,

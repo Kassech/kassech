@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../carLocation/car_location.dart';
+
 class ListOfCars extends StatelessWidget {
   final List<Map<String, String>> listOfCars = [
     {
@@ -29,6 +31,8 @@ class ListOfCars extends StatelessWidget {
   final bool isOwner;
 
   ListOfCars({super.key, required this.roleId, required this.isOwner});
+
+  static const String routeName = '/listOfCarsPage';
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +66,7 @@ class ListOfCars extends StatelessWidget {
             return GestureDetector(
               onTap: () {
                 // Handle card tap
-                context.go('/carlocation');
+                context.go(CarLocation.routeName);
               },
               child: Card(
                 margin: const EdgeInsets.only(bottom: 16.0),

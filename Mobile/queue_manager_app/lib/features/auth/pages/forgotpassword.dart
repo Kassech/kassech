@@ -5,6 +5,9 @@ import '../widgets/mytextfield.dart';
 
 class ForgotPassword extends StatelessWidget {
   ForgotPassword({super.key});
+
+  static const String routeName = '/forgotPasswordPage';
+
   final TextEditingController phoneController = TextEditingController();
 
   @override
@@ -28,7 +31,8 @@ class ForgotPassword extends StatelessWidget {
           MyTextField(
               labelText: 'Enter your phone number',
               controller: phoneController,
-              validator: (val) => val.isEmpty ? 'Enter your phone number' : null,
+              validator: (val) =>
+                  val.isEmpty ? 'Enter your phone number' : null,
               hintText: "+251 ___ ___ ___"),
           const SizedBox(
             height: 20,
@@ -36,9 +40,7 @@ class ForgotPassword extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: ElevatedButton(
-              onPressed: () {
-                context.go('/');
-              },
+              onPressed: () {},
               child: const Text('Send Code'),
             ),
           )
