@@ -12,6 +12,7 @@ interface ImageUploaderProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   acceptedFormats?: Record<string, any>; // Default: PNG, JPG, JPEG
   initialPreview?: File | string | null; // Initial preview image (File or base64 string)
+  className?: string;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -19,6 +20,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   maxFileSize = 1000000,
   acceptedFormats = { 'image/png': [], 'image/jpg': [], 'image/jpeg': [] },
   initialPreview = null,
+  className = 'rounded-full',
 }) => {
   const [preview, setPreview] = React.useState<string | ArrayBuffer | null>(
     null
@@ -62,13 +64,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     <div className="flex flex-col items-center justify-center">
       <Avatar
         {...getRootProps()}
-        className="h-40 w-40 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-full"
+        className={`h-40 w-40 flex items-center justify-center border-2 border-dashed border-gray-300 ${className}`}
       >
         {preview && (
           <AvatarImage
             src={preview as string}
             alt="Uploaded image"
-            className="h-full w-full object-cover rounded-full"
+            className={`h-full w-full object-cover ${className}`}
           />
         )}
         <ImagePlus className={`h-10 w-10 ${preview ? 'hidden' : 'block'}`} />
