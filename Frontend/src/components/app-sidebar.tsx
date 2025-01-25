@@ -81,25 +81,13 @@ const data = {
       ],
     },
     {
-      title: 'View Report',
+      title: 'Real Time Monitoring',
       url: '#',
       icon: BookOpen,
       items: [
         {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
+          title: 'Track Vehicle',
+          url: '/vehicleTracking',
         },
       ],
     },
