@@ -6,6 +6,7 @@ class AppColors {
   static const black = Colors.black;
   static const lightGray = Color(0xFFE0E0E0);
   static const darkGray = Color(0xFF5A5858);
+  static const blue = Color(0xFF0D47A1);
 
   /// Light theme colors
   static const lightPrimary = Colors.black;
