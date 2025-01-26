@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'signinpage.dart';
 
 class ErrorPage extends StatelessWidget {
-  const ErrorPage({super.key});
+  const ErrorPage(error, {super.key});
 
   static const String routeName = '/errorPage';
 
