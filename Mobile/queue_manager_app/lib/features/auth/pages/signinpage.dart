@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/core/theme/app_colors.dart';
 import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
 
 import '../widgets/mytextfield.dart';
-import 'forgotpassword.dart';
 import 'selectRole.dart';
 
 class SignInPage extends ConsumerWidget {
@@ -59,35 +59,6 @@ class SignInPage extends ConsumerWidget {
                   isPassword: true,
                 ),
                 const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    children: [
-                      TextButton(
-                        child: Text(
-                          "Forgot Password?",
-                          style:
-                              TextStyle(fontSize: 15, color: Colors.grey[800]),
-                        ),
-                        onPressed: () {
-                          context.push(ForgotPassword.routeName);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                // Padding(
-                //   padding:
-                //       const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       ref.read(authProvider.notifier).login(
-                //           phoneNumber: phoneController.text,
-                //           password: passwordController.text);
-                //     },
-                //     child: const Text('Login'),
-                //   ),
-                // ),
                 authState.when(
                   // skipError: true,
                   data: (user) {
@@ -173,7 +144,7 @@ class SignInPage extends ConsumerWidget {
                       child: Text(
                         'Sign Up',
                         style: TextStyle(
-                            color: Colors.blue[900],
+                            color: AppColors.blue,
                             fontSize: 15,
                             fontWeight: FontWeight.w900),
                       ),

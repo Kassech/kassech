@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../features/auth/models/user.dart';
 import '../../features/auth/pages/errorpage.dart';
-import '../../features/auth/pages/forgotpassword.dart';
 import '../../features/auth/pages/selectRole.dart';
 import '../../features/auth/pages/signinpage.dart';
 import '../../features/auth/pages/signuppage.dart';
@@ -37,7 +35,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       const publicRoutes = [
         SignInPage.routeName,
         SignUpPage.routeName,
-        ForgotPassword.routeName,
         SelectRolePage.routeName,
       ];
 
@@ -49,7 +46,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       }
       return null;
     },
-    errorBuilder: (context, state) => const ErrorPage(),
+    errorBuilder: (context, state) => ErrorPage(state.error),
     routes: [
       GoRoute(
         path: Splash.routeName,
@@ -68,11 +65,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             final roleId = state.extra as int;
             return SignUpPage(role: roleId);
           }),
-      GoRoute(
-        path: ForgotPassword.routeName,
-        name: ForgotPassword.routeName,
-        builder: (context, state) => ForgotPassword(),
-      ),
+      
       GoRoute(
         path: HomeQueueManager.routeName,
         name: HomeQueueManager.routeName,
@@ -81,7 +74,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: ErrorPage.routeName,
         name: ErrorPage.routeName,
-        builder: (context, state) => const ErrorPage(),
+        builder: (context, state) => ErrorPage(state.error)
       ),
       GoRoute(
         path: DelegationPage.routeName,
