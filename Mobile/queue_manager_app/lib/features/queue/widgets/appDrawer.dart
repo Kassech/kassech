@@ -49,13 +49,6 @@ class AppDrawer extends ConsumerWidget {
               context.go('/profile'); // Close the drawer
             },
           ),
-          // ListTile(
-          //   leading: const Icon(Icons.settings),
-          //   title: const Text('Settings'),
-          //   onTap: () {
-          //     Navigator.pop(context); // Close the drawer
-          //   },
-          // ),
           ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
