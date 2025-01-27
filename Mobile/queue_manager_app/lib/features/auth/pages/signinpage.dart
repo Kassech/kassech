@@ -1,24 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/core/theme/app_colors.dart';
-import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/util/ui_utils.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/mytextfield.dart';
 import 'selectRole.dart';
 
-class SignInPage extends ConsumerWidget {
-  SignInPage({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   static const String routeName = '/signInPage';
 
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
   final TextEditingController phoneController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.read(authProvider);
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -54,60 +67,45 @@ class SignInPage extends ConsumerWidget {
                   labelText: "Password",
                   validator: (val) =>
                       val.isEmpty ? 'Enter your password' : null,
-                  controller: passwordController..text = "test123",
+                  controller: passwordController..text = "test12",
                   hintText: "**********",
                   isPassword: true,
                 ),
                 const SizedBox(height: 10),
-                authState.when(
-                  // skipError: true,
-                  data: (user) {
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20.0, right: 20.0, top: 20.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          ref.read(authProvider.notifier).login(
-                              phoneNumber: phoneController.text,
-                              password: passwordController.text);
-                        },
-                        child: const Text('Login'),
-                      ),
-                    );
-                  },
-                  loading: () => const CircularProgressIndicator(),
-                  error: (error, stack) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      /// Show error dialog
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Error'),
-                            content: Text(error.toString()),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('OK'),
-                              )
-                            ],
-                          );
-                        },
-                      );
+                Consumer(
+                  builder: (context, ref, child) {
+                    ref.listen(authProvider, (previous, next) {
+                      if (next != previous) {
+                        next.maybeWhen(
+                          error: (error, stack) {
+                            UiUtils.showSnackBar(
+                              message: error.toString(),
+                              isError: true,
+                            );
+                          },
+                          orElse: () {},
+                        );
+                      }
                     });
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20.0, right: 20.0, top: 20.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          ref.read(authProvider.notifier).login(
-                              phoneNumber: phoneController.text,
-                              password: passwordController.text);
-                        },
-                        child: const Text('Login'),
-                      ),
+                    final authState = ref.read(authProvider);
+                    return authState.when(
+                      skipError: true,
+                      data: (user) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              left: 20.0, right: 20.0, top: 20.0),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await ref.read(authProvider.notifier).login(
+                                  phoneNumber: phoneController.text,
+                                  password: passwordController.text);
+                            },
+                            child: const Text('Login'),
+                          ),
+                        );
+                      },
+                      loading: () => const CircularProgressIndicator(),
+                      error: (error, stack) => SizedBox.shrink(),
                     );
                   },
                 ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:queue_manager_app/config/const/api_constants.dart';
 
 import '../services/api_service.dart';
 
@@ -11,15 +12,13 @@ class NotificationService {
     final String? token = await FirebaseMessaging.instance.getToken();
     final String? deviceId = await _getDeviceId();
 
-    final apiService = ApiService();
-
-    final String url = '${apiService.dio_baseUrl}notification';
+    final String url = ApiConstants.notification;
     print('URL: $url');
     print('Token: $token');
     print('Device ID: $deviceId');
 
     try {
-      final response = await apiService.dio_instance.post(
+      final response = await ApiService.dio.post(
         url,
         data: {
           'token': token,

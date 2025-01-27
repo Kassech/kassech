@@ -20,28 +20,40 @@ import '../../features/splash/splash.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
+GoRouter? _previousRouter;
+
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
-  final notifier = GoRouterRefreshNotifier(authState);
+  final refreshListenable = GoRouterRefreshNotifier(authState);
 
-  return GoRouter(
-    initialLocation: Splash.routeName,
+  final router =  GoRouter(
+    initialLocation: _previousRouter?.state?.fullPath ?? Splash.routeName,
     navigatorKey: rootNavigatorKey,
+    refreshListenable: refreshListenable,
     debugLogDiagnostics: true,
-    refreshListenable: notifier,
     redirect: (context, state) {
       final user = authState.value;
 
       const publicRoutes = [
+        Splash.routeName,
         SignInPage.routeName,
         SignUpPage.routeName,
         SelectRolePage.routeName,
       ];
 
-      if (user == null && !publicRoutes.contains(state.matchedLocation)) {
+      print('Redirecting to ${state.matchedLocation}');
+
+      if (user == null) {
+        if (publicRoutes.contains(state.matchedLocation)) {
+          return null;
+        }
+        if(state.matchedLocation == SignInPage.routeName){
+          return null;
+        }
+        print('Redirecting to ${SignInPage.routeName}');
         return SignInPage.routeName;
-      } else if (user != null &&
-          state.matchedLocation == SignInPage.routeName) {
+      } else if ((state.matchedLocation == SignInPage.routeName ||
+          state.matchedLocation == SignUpPage.routeName)) {
         return HomeQueueManager.routeName;
       }
       return null;
@@ -62,20 +74,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           path: SignUpPage.routeName,
           name: SignUpPage.routeName,
           builder: (context, state) {
-            final roleId = state.extra as int;
-            return SignUpPage(role: roleId);
+            final roleId = state.extra as int?;
+            return SignUpPage(role: roleId ?? 0);
           }),
-      
+
       GoRoute(
         path: HomeQueueManager.routeName,
         name: HomeQueueManager.routeName,
         builder: (context, state) => const HomeQueueManager(),
       ),
       GoRoute(
-        path: ErrorPage.routeName,
-        name: ErrorPage.routeName,
-        builder: (context, state) => ErrorPage(state.error)
-      ),
+          path: ErrorPage.routeName,
+          name: ErrorPage.routeName,
+          builder: (context, state) => ErrorPage(state.error)),
       GoRoute(
         path: DelegationPage.routeName,
         name: DelegationPage.routeName,
@@ -107,7 +118,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const WaitPage(),
       ),
 
-      //Owner Routes
+//Owner Routes
       GoRoute(
         path: CarLocation.routeName,
         name: CarLocation.routeName,
@@ -131,6 +142,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  _previousRouter = router;
+  ref.onDispose(router.dispose);
+  return router;
 });
 
 class GoRouterRefreshNotifier extends ChangeNotifier {

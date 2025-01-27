@@ -9,12 +9,12 @@ import '../models/user.dart';
 import '../models/user_params.dart';
 import '../repositories/auth_repository.dart';
 
-final authProvider = AsyncNotifierProvider<AuthNotifier, User?>(() {
+final authProvider = AutoDisposeAsyncNotifierProvider<AuthNotifier, User?>(() {
   final authRepository = AuthRepository();
   return AuthNotifier(authRepository);
 });
 
-class AuthNotifier extends AsyncNotifier<User?> {
+class AuthNotifier extends AutoDisposeAsyncNotifier<User?> {
   final AuthRepository _authRepository;
 
   AuthNotifier(this._authRepository);
@@ -30,9 +30,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
       final response = await _authRepository.signUp(user);
       state = AsyncData(response);
     } on DioException catch (e) {
-      state = AsyncError(e.response?.data['message'] ?? e.message, e.stackTrace);
+      state = AsyncError(e.error ?? 'Something went wrong', e.stackTrace);
     }  catch (e, stackTrace) {
-      state = AsyncError(e.toString(), stackTrace);
+      state = AsyncError('Something went wrong', stackTrace);
     }
   }
 
@@ -50,9 +50,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
       );
       state = AsyncData(response);
     }  on DioException catch (e) {
-      state = AsyncError(e.response ?? 'something went wrong' , e.stackTrace);
+      state = AsyncError(e.error ?? 'something went wrong' , e.stackTrace);
     } catch (e, stackTrace) {
-      state = AsyncError(e.toString(), stackTrace);
+      state = AsyncError('Something went wrong', stackTrace);
     }
   }
 
@@ -69,7 +69,6 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }
 
   Future<User?> _checkAuth() async {
-    state = const AsyncLoading();
     try {
       final userJson =
           await LocalStorageService().getString(LocalStorageConstants.userKey);

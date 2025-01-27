@@ -18,10 +18,13 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    final router = GoRouter.of(context);
+    final ctx = context;
     Future.delayed(
       const Duration(seconds: 3),
-      () => router.go(SignInPage.routeName),
+      () {
+        print('Splash');
+        ctx.go(SignInPage.routeName);
+      }
     );
   }
 
