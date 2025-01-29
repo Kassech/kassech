@@ -57,7 +57,7 @@ func (h *PassengerHandler) HandleConnection(w http.ResponseWriter, r *http.Reque
 
 func (h *PassengerHandler) cleanupConnection(userID uint, conn *websocket.Conn) {
 	conn.Close()
-	h.connManager.RemoveConnection(userID)
+	h.connManager.RemoveConnection(userID,conn)
 }
 
 func (h *PassengerHandler) listenForMessages(userID uint, conn *websocket.Conn) {

@@ -60,7 +60,7 @@ func (h *StatusHandler) HandleConnection(w http.ResponseWriter, r *http.Request)
 
 func (h *StatusHandler) cleanupConnection(userID uint, conn *websocket.Conn) {
 	conn.Close()
-	h.connManager.RemoveConnection(userID)
+	h.connManager.RemoveConnection(userID, conn)
 	h.statusService.SetOffline(userID)
 }
 
