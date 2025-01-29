@@ -1,7 +1,7 @@
 package server
 
 import (
-	"log"
+	"fmt"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -33,10 +33,12 @@ func (cm *ConnectionManager) RemoveConnection(userID uint) {
 func (cm *ConnectionManager) Broadcast(message []byte) {
 	cm.mu.RLock()
 	defer cm.mu.RUnlock()
-
+	fmt.Println("Current connections:", cm.connections)
 	for userID, conn := range cm.connections {
+		fmt.Printf("[DEBUG] Failed to send message to user %d:", userID)
+
 		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
-			log.Printf("Failed to send message to user %d: %v", userID, err)
+			fmt.Printf("[DEBUG] Failed to send message to user %d: %v\n", userID, err)
 			// Optionally, remove the connection if it's no longer valid
 			cm.RemoveConnection(userID)
 		}

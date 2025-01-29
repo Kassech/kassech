@@ -16,6 +16,7 @@ type Vehicle struct {
 	Insurance     string `gorm:"type:text"`
 	Libre         string `gorm:"type:text"`
 	OwnerID       uint   `gorm:"not null"`
+	Status        string `gorm:"size:20;not null;default:'active'"`
 	Owner         User   `gorm:"foreignKey:OwnerID;references:ID"`
 }
 

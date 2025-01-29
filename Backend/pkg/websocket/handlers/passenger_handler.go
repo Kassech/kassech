@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -117,6 +118,6 @@ func (h *PassengerHandler) broadcastPassengerCount(pathID uint) {
 		log.Printf("Error marshalling message: %v", err)
 		return
 	}
-
+	fmt.Println("	fmt", "fmt")
 	h.connManager.Broadcast(messageBytes)
 }
