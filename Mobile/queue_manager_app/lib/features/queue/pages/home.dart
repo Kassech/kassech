@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/config/const/api_constants.dart';
 import 'package:queue_manager_app/features/queue/pages/profile.dart';
 import 'package:queue_manager_app/features/queue/pages/qmdetails.dart';
 import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
@@ -200,17 +201,26 @@ class _QueueCardState extends State<QueueCard> {
                   ),
                 ],
               ),
-
               // Increment and Decrement Buttons
               Row(
                 children: [
                   IconButton(
                     icon: const Icon(Icons.remove, color: Colors.red),
-                    onPressed: decrementQueue,
+                    onPressed: () {
+                      decrementQueue();
+                      // Use websocket constant here
+                      final websocketUrl = ApiConstants.webSocketUrlPassenger;
+                      // Logic to send decrement event via websocket
+                    },
                   ),
                   IconButton(
                     icon: const Icon(Icons.add, color: Colors.green),
-                    onPressed: incrementQueue,
+                    onPressed: () {
+                      incrementQueue();
+                      // Use websocket constant here
+                      final websocketUrl = ApiConstants.webSocketUrlPassenger;
+                      // Logic to send increment event via websocket
+                    },
                   ),
                 ],
               ),
