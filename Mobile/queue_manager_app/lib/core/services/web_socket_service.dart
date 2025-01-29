@@ -1,41 +1,32 @@
-import 'package:web_socket_channel/io.dart';
+import 'dart:async';
+import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
-import '../../config/const/api_constants.dart';
-import 'local_storage_service.dart';
+import 'package:web_socket_channel/status.dart' as status;
 
 class WebSocketService {
-  // Singleton instance
-  static final WebSocketService _instance = WebSocketService._internal();
+  final Uri uri;
+  late WebSocketChannel _channel;
+  StreamSubscription<dynamic>? _subscription;
 
-  WebSocketService._internal();
+  WebSocketService(this.uri) {
+    _connect();
+  }
 
-  // Factory constructor for accessing the singleton
-  factory WebSocketService() => _instance;
+  void _connect() {
+    _channel = WebSocketChannel.connect(uri);
+  }
 
-  static late WebSocketChannel channel;
-  final _storage = LocalStorageService();
+  void sendMessage(Map<String, dynamic> message) {
+    if (_channel.closeCode != null) _connect();
+    _channel.sink.add(jsonEncode(message));
+  }
 
-  void connect({String? url}) async {
-    try {
-      final token = await _storage.getToken();
-      final path = url ?? ApiConstants.status;
-      print('Connecting to WebSocket at $path');
-      channel = IOWebSocketChannel.connect(
-        Uri.parse('$path?token=$token'),
-      );
-    } catch (e) {
-      print('Error connecting to WebSocket: $e');
+  Stream<dynamic> get messages => _channel.stream;
+
+  Future<void> dispose() async {
+    await _subscription?.cancel();
+    if (_channel.closeCode == null) {
+      _channel.sink.close(status.goingAway);
     }
-  }
-
-  // Send a message to the WebSocket
-  void sendMessage(String message) {
-    channel.sink.add(message);
-  }
-
-  // Disconnect from the WebSocket
-  void disconnect() {
-    channel.sink.close();
   }
 }

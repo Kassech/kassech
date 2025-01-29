@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:queue_manager_app/config/const/api_constants.dart';
 import 'package:queue_manager_app/core/theme/app_colors.dart';
 
 import '../../core/services/web_socket_service.dart';
@@ -25,8 +26,9 @@ class _SplashState extends State<Splash> {
       Future.delayed(const Duration(seconds: 3)).then((value) {
         router.go(SignInPage.routeName);
       });
-      final socketService = WebSocketService();
-      socketService.connect();
+      final path =  ApiConstants.status;
+
+      final service = WebSocketService(path as Uri);
     });
   }
 

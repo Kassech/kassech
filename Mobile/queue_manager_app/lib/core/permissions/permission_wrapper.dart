@@ -19,7 +19,7 @@ class PermissionWrapper extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider).value;
     final permissions = user?.permissions ?? [];
-    return permissions.contains(requiredPermission)
+    return !permissions.contains(requiredPermission)
         ? child
         : fallback ?? const SizedBox.shrink();
   }
