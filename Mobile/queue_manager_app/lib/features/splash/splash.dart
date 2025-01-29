@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:queue_manager_app/core/theme/app_colors.dart';
 
+import '../../core/services/web_socket_service.dart';
 import '../auth/pages/signinpage.dart';
 
 class Splash extends StatefulWidget {
@@ -18,11 +19,15 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    final router = GoRouter.of(context);
-    Future.delayed(
-      const Duration(seconds: 3),
-      () => router.go(SignInPage.routeName),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final router = GoRouter.of(context);
+
+      Future.delayed(const Duration(seconds: 3)).then((value) {
+        router.go(SignInPage.routeName);
+      });
+      final socketService = WebSocketService();
+      socketService.connect();
+    });
   }
 
   @override

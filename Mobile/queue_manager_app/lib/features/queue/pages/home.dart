@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/features/queue/pages/profile.dart';
 import 'package:queue_manager_app/features/queue/pages/qmdetails.dart';
 import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
-import 'package:queue_manager_app/features/queue/widgets/bottomNavBar.dart';
 import 'package:queue_manager_app/features/queue/widgets/notification_modal.dart';
 
+import '../../../core/permissions/app_permissions.dart';
+import '../../../core/permissions/permission_wrapper.dart';
+import '../models/route_model.dart';
+import '../provider/passangers_provider.dart';
+import '../provider/routes_provider.dart';
 import 'notificaton_page.dart';
 
 class HomeQueueManager extends StatefulWidget {
@@ -19,16 +23,6 @@ class HomeQueueManager extends StatefulWidget {
 }
 
 class _HomeQueueManagerState extends State<HomeQueueManager> {
-   final List<String> navTitles = ['Queue', 'Map', 'Profile'];
-  final List<String> navRoutes = ['/home', '/home/qmdetails', '/profile'];
-
-  final List<Map<String, dynamic>> queues = [
-    {'routeName': 'Route 1', 'routeId': 'R001', 'queueCount': 5},
-    {'routeName': 'Route 2', 'routeId': 'R002', 'queueCount': 3},
-    {'routeName': 'Route 3', 'routeId': 'R003', 'queueCount': 10},
-  ];
-  bool _isDrawerOpen = false;
-  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -56,168 +50,192 @@ class _HomeQueueManagerState extends State<HomeQueueManager> {
     );
   }
 
-  void _toggleDrawer() {
-    setState(() {
-      _isDrawerOpen = !_isDrawerOpen;
-    });
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    switch (index) {
-      case 0:
-        context.go(HomeQueueManager.routeName);
-        break;
-      case 1:
-        context.go('/map');
-        break;
-      case 2:
-        context.go(ProfilePage.routeName);
-        break;
-      default:
-        context.go(HomeQueueManager.routeName);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Queue Manager'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              context.go(NotificationPage.routeName);
-            },
+        appBar: AppBar(
+          title: const Text('Routes'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications),
+              onPressed: () {
+                context.go(NotificationPage.routeName);
+              },
+            ),
+          ],
+        ),
+        drawer: AppDrawer(),
+        body: PermissionWrapper(
+          requiredPermission: AppPermissions.viewAssignedRoutes,
+          fallback: const Center(
+            child: Text('You do not have permission to view this page'),
           ),
-        ],
-      ),
-      drawer: AppDrawer(),
-      body: Stack(
-        children: [
-          ListView.builder(
-            itemCount: queues.length,
-            itemBuilder: (context, index) {
-              return QueueCard(
-                routeName: queues[index]['routeName'],
-                routeId: queues[index]['routeId'],
-                initialCount: queues[index]['queueCount'],
+          child: Consumer(
+            builder: (context, ref, child) {
+              final routes = ref.watch(routesProvider);
+              return routes.when(
+                data: (route) {
+                  if (route == null) {
+                    return const Center(
+                      child: Text('No routes found'),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: route.length,
+                    itemBuilder: (context, index) {
+                      return QueueCard(
+                        route: route[index],
+                      );
+                    },
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stackTrace) => Center(
+                  child: Text('Error: $error'),
+                ),
               );
             },
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: BottomNavBar(
-              onItemTapped: _onItemTapped,
-              selectedIndex: _selectedIndex,
-              navTitles: navTitles,
-              navRoutes: navRoutes,
-            ),
-          ),
-        ],
-      ),
-    );
+        )
+        // body: Stack(
+        //   children: [
+        //     ListView.builder(
+        //       itemCount: queues.length,
+        //       itemBuilder: (context, index) {
+        //         return QueueCard(
+        //           routeName: queues[index]['routeName'],
+        //           routeId: queues[index]['routeId'],
+        //           initialCount: queues[index]['queueCount'],
+        //         );
+        //       },
+        //     ),
+        //     Positioned(
+        //       bottom: 0,
+        //       left: 0,
+        //       right: 0,
+        //       child: BottomNavBar(
+        //         onItemTapped: _onItemTapped,
+        //         selectedIndex: _selectedIndex,
+        //         navTitles: navTitles,
+        //         navRoutes: navRoutes,
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        );
   }
 }
 
-class QueueCard extends StatefulWidget {
-  final String routeName;
-  final String routeId;
-  final int initialCount;
+class QueueCard extends StatelessWidget {
+  final RouteModel route;
 
   const QueueCard({
     super.key,
-    required this.routeName,
-    required this.routeId,
-    required this.initialCount,
+    required this.route,
   });
 
   @override
-  _QueueCardState createState() => _QueueCardState();
-}
-
-class _QueueCardState extends State<QueueCard> {
-  late int queueCount;
-
-  @override
-  void initState() {
-    super.initState();
-    queueCount = widget.initialCount;
-  }
-
-  void incrementQueue() {
-    setState(() {
-      queueCount++;
-    });
-    // You can call a backend API here to update the queue count
-  }
-
-  void decrementQueue() {
-    if (queueCount > 0) {
-      setState(() {
-        queueCount--;
-      });
-      // You can call a backend API here to update the queue count
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        context.go(QueueManagerDetails.routeName);
-      },
-      child: Card(
-        color: Colors.black,
-        // margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Route Information
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Consumer(
+      builder: (context, ref, child) {
+        final passengerQueue = ref.watch(passengerStreamProvider(route.id));
+        return GestureDetector(
+          onTap: () {
+            context.go(QueueManagerDetails.routeName);
+          },
+          child: Card(
+            // margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.routeName,
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  // Route Information
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width * 0.5,
+                        child: Text(
+                          route.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.clip,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Route ID: ${route.id}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 4),
+                      StreamBuilder(
+                        stream: ref
+                            .watch(passengerStreamProvider(route.id).notifier)
+                            .passengerCountStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              'Passenger Count: ${snapshot.data}',
+                              style: const TextStyle(fontSize: 14),
+                            );
+                          }
+                          return const Text(
+                            'Loading...',
+                            style: TextStyle(fontSize: 14),
+                          );
+                        },
+                      ),
+                      passengerQueue.when(
+                        skipLoadingOnReload: true,
+                        skipLoadingOnRefresh: true,
+                        data: (data) {
+                          return Text(
+                            'Passenger Count: $data',
+                            style: const TextStyle(fontSize: 14),
+                          );
+                        },
+                        loading: () => Text(
+                          'Loading...',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        error: (error, stackTrace) {
+                          return Text(
+                            'Error: $error',
+                            style: const TextStyle(fontSize: 14),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Route ID: ${widget.routeId}',
-                    style: const TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Queue: $queueCount',
-                    style: const TextStyle(color: Colors.orange, fontSize: 16),
-                  ),
-                ],
-              ),
 
-              // Increment and Decrement Buttons
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove, color: Colors.red),
-                    onPressed: decrementQueue,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add, color: Colors.green),
-                    onPressed: incrementQueue,
+                  // Increment and Decrement Buttons
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: () {
+                          ref
+                              .read(passengerStreamProvider(route.id).notifier)
+                              .decrementPassengerCount(route.id);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          ref
+                              .read(passengerStreamProvider(route.id).notifier)
+                              .incrementPassengerCount(route.id);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

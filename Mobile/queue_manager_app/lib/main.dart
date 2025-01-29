@@ -5,9 +5,10 @@ import 'package:queue_manager_app/config/route/route.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:queue_manager_app/core/theme/app_theme.dart';
 import 'package:queue_manager_app/features/notification/notification_service.dart';
-import 'package:queue_manager_app/features/queue/domain/usecase/sendlocation.dart';
+import 'package:queue_manager_app/features/queue/sendlocation.dart';
 import 'core/services/api_service.dart';
 import 'core/services/local_storage_service.dart';
+import 'core/util/ui_utils.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -33,9 +34,12 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: UiUtils.scaffoldMessengerKey,
       theme: lightThemeData,
       darkTheme: darkThemeData,
-      routerConfig: goRouter,
+      routerDelegate: goRouter.routerDelegate,
+      routeInformationProvider: goRouter.routeInformationProvider,
+      routeInformationParser: goRouter.routeInformationParser,
     );
   }
 }

@@ -4,13 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:queue_manager_app/core/util/geo_locator.dart';
 
-import '../../../../core/services/api_service.dart';
+import '../../core/services/api_service.dart';
 
 Future<void> _sendLocationToBackend(Position position) async {
   const String backendUrl = '';
-  final apiService = ApiService();
+  final dio = ApiService.dio;
   try {
-    final response = await apiService.dio_instance.post(
+    final response = await dio.post(
       backendUrl,
       options: Options(headers: {'Content-Type': 'application/json'}),
       data: jsonEncode({
