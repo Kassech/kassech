@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:queue_manager_app/core/util/geo_locator.dart';
 
-import '../../../../core/services/api_service.dart';
+import '../../core/services/api_service.dart';
 
 Future<void> _sendLocationToBackend(Position position) async {
   const String backendUrl = '';

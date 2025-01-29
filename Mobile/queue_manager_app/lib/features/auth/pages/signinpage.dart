@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/util/ui_utils.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/mytextfield.dart';
-import 'selectRole.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -32,6 +29,7 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -67,7 +65,7 @@ class _SignInPageState extends State<SignInPage> {
                   labelText: "Password",
                   validator: (val) =>
                       val.isEmpty ? 'Enter your password' : null,
-                  controller: passwordController..text = "test12",
+                  controller: passwordController..text = "test123",
                   hintText: "**********",
                   isPassword: true,
                 ),
@@ -75,17 +73,15 @@ class _SignInPageState extends State<SignInPage> {
                 Consumer(
                   builder: (context, ref, child) {
                     ref.listen(authProvider, (previous, next) {
-                      if (next != previous) {
-                        next.maybeWhen(
-                          error: (error, stack) {
-                            UiUtils.showSnackBar(
-                              message: error.toString(),
-                              isError: true,
-                            );
-                          },
-                          orElse: () {},
-                        );
-                      }
+                      next.maybeWhen(
+                        error: (error, stack) {
+                          UiUtils.showSnackBar(
+                            message: error.toString(),
+                            isError: true,
+                          );
+                        },
+                        orElse: () {},
+                      );
                     });
                     final authState = ref.read(authProvider);
                     return authState.when(
@@ -109,46 +105,46 @@ class _SignInPageState extends State<SignInPage> {
                     );
                   },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Center(
-                  child: Row(
-                    children: [
-                      Expanded(child: Divider(thickness: 1)),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          'OR',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Expanded(child: Divider(thickness: 1)),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Don\'t have an account?',
-                        style: TextStyle(fontSize: 15)),
-                    TextButton(
-                      onPressed: () {
-                        context.go(SelectRolePage.routeName);
-                      },
-                      child: Text(
-                        'Sign Up',
-                        style: TextStyle(
-                            color: AppColors.blue,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900),
-                      ),
-                    )
-                  ],
-                )
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // const Center(
+                //   child: Row(
+                //     children: [
+                //       Expanded(child: Divider(thickness: 1)),
+                //       Padding(
+                //         padding: EdgeInsets.symmetric(horizontal: 8.0),
+                //         child: Text(
+                //           'OR',
+                //           style: TextStyle(fontSize: 16),
+                //         ),
+                //       ),
+                //       Expanded(child: Divider(thickness: 1)),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 50,
+                // ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     const Text('Don\'t have an account?',
+                //         style: TextStyle(fontSize: 15)),
+                //     TextButton(
+                //       onPressed: () {
+                //         context.go(SelectRolePage.routeName);
+                //       },
+                //       child: Text(
+                //         'Sign Up',
+                //         style: TextStyle(
+                //             color: AppColors.blue,
+                //             fontSize: 15,
+                //             fontWeight: FontWeight.w900),
+                //       ),
+                //     )
+                //   ],
+                // )
               ],
             ),
           ),
