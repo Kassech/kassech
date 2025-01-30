@@ -4,12 +4,22 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:queue_manager_app/config/route/route.dart';
+import 'package:queue_manager_app/features/queue/provider/path_provider.dart';
 
 import '../../config/const/api_constants.dart';
+import '../../features/auth/pages/signinpage.dart';
+import '../../features/auth/providers/auth_provider.dart';
 import 'local_storage_service.dart';
 
+final ProviderContainer container = ProviderContainer();
+
 class ApiService {
+
   static final Dio dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.apiBaseUrl,
@@ -24,10 +34,11 @@ class ApiService {
 
   static late PersistCookieJar _cookieJar;
 
-  ApiService() {
+  final WidgetRef ref;
+
+  ApiService(this.ref) {
     initializeDio();
   }
-
   /// Clear all cookies
   static Future<void> clearCookies() async {
     await _cookieJar.deleteAll();
@@ -56,6 +67,8 @@ class ApiService {
         if (error.response?.statusCode == 403) {
           /// Handle 403 error
 
+          final user = ref.read(authProvider.notifier);
+          user.logout();
           return handler.reject(error);
         }
 

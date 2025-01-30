@@ -1,15 +1,15 @@
 class ApiConstants {
   /// Base url of the API
-  static const String apiBaseUrl = 'http://192.168.134.138:5000/api';
-  static const String socketBaseUrl = 'ws://192.168.134.138:5000/ws';
+  static const String apiBaseUrl = 'http://192.168.0.136:5000/api';
+  static const String socketBaseUrl = 'ws://192.168.0.136:5000/ws';
 
   /// Auth API endpoints
   static const String login = '$apiBaseUrl/login';
   static const String register = '$apiBaseUrl/register';
   static const String refreshToken = '$apiBaseUrl/refresh-token';
 
-  /// Route API endpoints
-  static const String routes = '$apiBaseUrl/routes';
+  /// Path API endpoints
+  static const String path = '$apiBaseUrl/path';
 
   /// Notification API endpoint
   static const String notification = '$apiBaseUrl/notification';

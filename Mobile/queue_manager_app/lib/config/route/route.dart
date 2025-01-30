@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../features/auth/models/user.dart';
 import '../../features/auth/pages/errorpage.dart';
 import '../../features/auth/pages/selectRole.dart';
@@ -54,7 +55,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return SignInPage.routeName;
       } else if ((state.matchedLocation == SignInPage.routeName ||
           state.matchedLocation == SignUpPage.routeName)) {
-        return HomeQueueManager.routeName;
+        return HomePage.routeName;
       }
       return null;
     },
@@ -79,9 +80,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           }),
 
       GoRoute(
-        path: HomeQueueManager.routeName,
-        name: HomeQueueManager.routeName,
-        builder: (context, state) => const HomeQueueManager(),
+        path: HomePage.routeName,
+        name: HomePage.routeName,
+        builder: (context, state) => const HomePage(),
       ),
       GoRoute(
           path: ErrorPage.routeName,

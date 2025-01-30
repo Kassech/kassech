@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:queue_manager_app/config/const/api_constants.dart';
 import 'package:queue_manager_app/core/theme/app_colors.dart';
+import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
 
 import '../../core/services/web_socket_service.dart';
 import '../auth/pages/signinpage.dart';
+import '../queue/pages/home.dart';
 
-class Splash extends StatefulWidget {
+class Splash extends ConsumerStatefulWidget {
   const Splash({super.key});
 
   static const String routeName = '/splash';
 
   @override
-  State<Splash> createState() => _SplashState();
+  ConsumerState<Splash> createState() => _SplashState();
 }
 
-class _SplashState extends State<Splash> {
+class _SplashState extends ConsumerState<Splash> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final router = GoRouter.of(context);
-
       Future.delayed(const Duration(seconds: 3)).then((value) {
         router.go(SignInPage.routeName);
       });
       final path =  ApiConstants.status;
 
-      final service = WebSocketService(path as Uri);
+      // final service = WebSocketService(path as Uri);
     });
   }
 

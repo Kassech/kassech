@@ -20,7 +20,7 @@ class ProfilePage extends ConsumerWidget {
         backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () {
-              context.go(HomeQueueManager.routeName);
+              context.go(HomePage.routeName);
             },
             icon: const Icon(Icons.arrow_back)),
         title: const Text('Profile'),

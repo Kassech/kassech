@@ -27,7 +27,7 @@ class LocalStorageService {
   }
 
   /// Retrieve a string value
-  Future<String?> getString(String key) async {
+  String? getString(String key) {
     if (key == LocalStorageConstants.accessTokenKey && _cachedToken != null) {
       return _cachedToken;
     }
@@ -41,7 +41,7 @@ class LocalStorageService {
   }
 
   /// Get the auth token
-  Future<String?> getToken() async {
+  String? getToken() {
     return getString(LocalStorageConstants.accessTokenKey);
   }
 

@@ -1,26 +1,29 @@
 import 'package:dio/dio.dart';
+import 'package:queue_manager_app/config/const/api_constants.dart';
 
 import '../../../core/services/api_service.dart';
 import '../../../core/services/local_storage_service.dart';
+import '../models/path_model.dart';
 import '../models/route_model.dart';
 
-class RoutesRepository {
+class PathRepository {
   final dio = ApiService.dio;
   final _storage = LocalStorageService();
 
-  Future<List<RouteModel>> fetchRoutes() async {
+  Future<List<PathModel>> fetchPaths() async {
     try {
       final response = await dio.get(
-        '/routes',
+        ApiConstants.path,
         options: Options(
           headers: {
-            'Authorization': 'Bearer ${await _storage.getToken()}',
+            'Authorization': 'Bearer ${_storage.getToken()}',
           },
         ),
       );
 
-      return (response.data as List)
-          .map((route) => RouteModel.fromJson(route))
+      print(response.data);
+      return (response.data['data'] as List)
+          .map((path) => PathModel.fromJson(path))
           .toList();
     } on DioException catch (_) {
       rethrow;
@@ -29,18 +32,18 @@ class RoutesRepository {
     }
   }
 
-  Future<RouteModel> fetchRouteById(int id) async {
+  Future<PathModel> fetchPathById(int id) async {
     try {
       final response = await dio.get(
-        '/routes/$id',
+        '${ApiConstants.path}/$id',
         options: Options(
           headers: {
-            'Authorization': 'Bearer ${await _storage.getToken()}',
+            'Authorization': 'Bearer ${_storage.getToken()}',
           },
         ),
       );
 
-      return RouteModel.fromJson(response.data);
+      return PathModel.fromJson(response.data);
     } on DioException catch (_) {
       rethrow;
     } catch (e) {
