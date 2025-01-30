@@ -50,6 +50,20 @@ final lightThemeData = ThemeData(
       ),
     ),
   ),
+  navigationBarTheme: NavigationBarThemeData(
+    backgroundColor: AppColors.lightNavBarBackground,
+    indicatorColor: AppColors.lightSecondary,
+    surfaceTintColor: Colors.transparent,
+    shadowColor: Colors.red,
+    elevation: 6,
+    iconTheme: WidgetStateProperty.resolveWith((states) {
+      return IconThemeData(
+        color: states.contains(WidgetState.selected)
+            ? AppColors.lightOnPrimary
+            : AppColors.lightOnSecondary,
+      );
+    }),
+  ),
 );
 
 /// Dark theme data
@@ -99,5 +113,19 @@ final darkThemeData = ThemeData(
         ),
       ),
     ),
+  ),
+  navigationBarTheme: NavigationBarThemeData(
+    backgroundColor: AppColors.darkNavBarBackground,
+    indicatorColor: AppColors.darkSecondary,
+    shadowColor: AppColors.darkGray,
+    surfaceTintColor: Colors.transparent,
+    elevation: 6,
+    iconTheme: WidgetStateProperty.resolveWith((states) {
+      return IconThemeData(
+        color: states.contains(WidgetState.selected)
+            ? AppColors.darkOnPrimary
+            : AppColors.darkOnSecondary,
+      );
+    }),
   ),
 );

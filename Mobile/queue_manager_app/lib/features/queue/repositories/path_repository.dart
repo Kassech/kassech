@@ -4,7 +4,6 @@ import 'package:queue_manager_app/config/const/api_constants.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/local_storage_service.dart';
 import '../models/path_model.dart';
-import '../models/route_model.dart';
 
 class PathRepository {
   final dio = ApiService.dio;
@@ -21,7 +20,6 @@ class PathRepository {
         ),
       );
 
-      print(response.data);
       return (response.data['data'] as List)
           .map((path) => PathModel.fromJson(path))
           .toList();

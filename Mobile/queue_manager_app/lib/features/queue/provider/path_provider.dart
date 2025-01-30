@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/path_model.dart';
-import '../repositories/routes_repository.dart';
+import '../repositories/path_repository.dart';
 
 final pathProvider =
     AsyncNotifierProvider<PathNotifier, List<PathModel>?>(() {
@@ -19,10 +19,10 @@ class PathNotifier extends AsyncNotifier<List<PathModel>?> {
 
   @override
   Future<List<PathModel>?> build() async {
-    return await fetchPaths();
+    return null;
   }
 
-  Future<List<PathModel>?> fetchPaths() async {
+  FutureOr<List<PathModel>?> fetchPaths() async {
     try {
       state = const AsyncLoading();
       final response = await _repository.fetchPaths();

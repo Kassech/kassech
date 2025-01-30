@@ -18,9 +18,8 @@ class LocalStorageService {
 
   /// Save a string value
   Future<void> saveString(String key, String value) async {
-    final result =  await _prefs?.setString(key, value);
+    await _prefs?.setString(key, value);
 
-    print('Saved $key: $value');
     if (key == LocalStorageConstants.accessTokenKey) {
       _cachedToken = value;
     }

@@ -9,24 +9,27 @@ import 'package:queue_manager_app/features/queue/widgets/notification_modal.dart
 
 import '../../../core/permissions/app_permissions.dart';
 import '../../../core/permissions/permission_wrapper.dart';
+import '../../../shared/widgets/error_container.dart';
 import '../models/path_model.dart';
-import '../models/route_model.dart';
 import '../provider/path_provider.dart';
 import 'notificaton_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   static const String routeName = '/homePage';
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(pathProvider.notifier).fetchPaths();
+    });
     _initializeFirebaseMessaging();
   }
 
@@ -72,26 +75,36 @@ class _HomePageState extends State<HomePage> {
           ),
           child: Consumer(
             builder: (context, ref, child) {
-              final routes = ref.watch(pathProvider);
-              return routes.when(
-                data: (route) {
-                  if (route == null) {
-                    return const Center(
-                      child: Text('No routes found'),
+              final paths = ref.watch(pathProvider);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  ref.read(pathProvider.notifier).fetchPaths();
+                },
+                child: paths.when(
+                  data: (path) {
+                    if (path == null) {
+                      return const Center(
+                        child: Text('No routes found'),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: path.length,
+                      itemBuilder: (context, index) {
+                        return QueueCard(
+                          path: path[index],
+                        );
+                      },
+                    );
+                  },
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (error, stackTrace) {
+                    return ErrorContainer(
+                      errorMessageText: error.toString(),
+                      onTapRetry: () {
+                        ref.read(pathProvider.notifier).fetchPaths();
+                      },
                     );
                   }
-                  return ListView.builder(
-                    itemCount: route.length,
-                    itemBuilder: (context, index) {
-                      return QueueCard(
-                        path: route[index],
-                      );
-                    },
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stackTrace) => Center(
-                  child: Text('Error: $error'),
                 ),
               );
             },

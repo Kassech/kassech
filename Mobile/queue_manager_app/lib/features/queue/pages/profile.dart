@@ -12,61 +12,45 @@ class ProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<Map<String, String>> profileData = ref.watch(profileDataProvider);
+    final user = ref.watch(authProvider).value;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      extendBody: true,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-            onPressed: () {
-              context.go(HomePage.routeName);
-            },
-            icon: const Icon(Icons.arrow_back)),
         title: const Text('Profile'),
       ),
-      body: SafeArea(
-        child: Center(
-          child: profileData.when(
-            data: (data) => Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        children: [
+          const SizedBox(height: 20),
+          CircleAvatar(
+            radius: 70,
+            child: Image.network(
+              user?.profilePictureUrl ?? 'https://via.placeholder.com/150',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            child: Column(
               children: [
-                const SizedBox(height: 20),
-                CircleAvatar(
-                  backgroundColor: Colors.black,
-                  radius: 70,
-                  child: Image.network(
-                    data['profilePictureUrl'] ?? 'https://via.placeholder.com/150',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: Column(
-                    children: [
-                      ProfileField(label: 'Name', value: data['name'] ?? 'N/A'),
-                      ProfileField(label: 'Phone', value: data['phone'] ?? 'N/A'),
-                      ProfileField(label: 'Email', value: data['email'] ?? 'N/A'),
-                      ProfileField(label: 'Vehicle Type', value: data['vehicleType'] ?? 'N/A'),
-                      ProfileField(label: 'License Plate', value: data['licensePlate'] ?? 'N/A'),
-                      ElevatedButton(
-                        onPressed: () {
-                          ref.read(authProvider.notifier).logout();
-                        },
-                        child: const Text('Logout'),
-                      )
-                    ],
-                  ),
-                ),
+                ProfileField(label: 'Name', value: '${user?.firstName} ${user?.lastName}'),
+                ProfileField(label: 'Phone', value: user?.phoneNumber ?? 'N/A'),
+                ProfileField(label: 'Email', value: user?.email ?? 'N/A'),
+                // ProfileField(label: 'Vehicle Type', value: user?.firstName ?? 'N/A'),
+                // ProfileField(label: 'License Plate', value: user?.firstName ?? 'N/A'),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(authProvider.notifier).logout();
+                  },
+                  child: const Text('Logout'),
+                )
               ],
             ),
-            loading: () => const CircularProgressIndicator(),
-            error: (error, stack) => Text('Error: $error'),
           ),
-        ),
+        ],
       ),
     );
   }
