@@ -89,15 +89,23 @@ class AuthRepository {
         ),
       );
 
-      if (response.data['accessToken'] != null) {
-        await _storage.saveToken(response.data['accessToken']);
-      }
 
-      if (response.data['user'] != null) {
-        await _storage.saveString(LocalStorageConstants.userKey, jsonEncode(response.data['user']));
-      }
+      final user = User.fromJson(response.data['user'] as Map<String, dynamic>);
+      if ( user.roles.contains('Owner') || user.roles.contains('Driver') || user.roles.contains('QueueManager')) {
+        if (response.data['accessToken'] != null) {
+          await _storage.saveToken(response.data['accessToken']);
+        }
 
-      return User.fromJson(response.data['user'] as Map<String, dynamic>);
+        if (response.data['user'] != null) {
+          await _storage.saveString(LocalStorageConstants.userKey, jsonEncode(response.data['user']));
+        }
+        return user;
+      }
+        throw DioException(
+          requestOptions: RequestOptions(path: ApiConstants.login),
+          error: 'User not authorized',
+        );
+
     } on DioException catch (_) {
       rethrow;
     } catch (e) {
