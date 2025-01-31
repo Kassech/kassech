@@ -17,9 +17,8 @@ class ProfileField extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.black),
+          border: Border.all(color: ColorScheme.of(context).onSecondary),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 8.0),
         child: Column(
@@ -37,7 +36,6 @@ class ProfileField extends StatelessWidget {
               value.isNotEmpty ? value : 'N/A',
               style: TextStyle(
                 fontSize: 16,
-                color: value.isEmpty ? Colors.grey : Colors.black,
               ),
             ),
           ],

@@ -52,13 +52,18 @@ dependencies:
   shared_preferences: ^2.3.5
   flutter_riverpod: ^2.6.1
   web_socket_channel: ^3.0.1
-  riverpod: ^2.6.1
   image_picker: ^1.1.2
   loading_animation_widget: ^1.3.0
   awesome_notifications: ^0.10.0
   awesome_notifications_fcm: ^0.10.0 # This version is managed by core plugin
   firebase_crashlytics: ^4.3.0
   flutter_local_notifications: ^18.0.1
+  dartz: ^0.10.1
+  path_provider: ^2.1.5
+  cookie_jar: ^4.0.8
+  dio_cookie_manager: ^3.1.1
+  flutter_animate: ^4.5.2
+  flutter_svg: ^2.0.17
   
 
 dev_dependencies:

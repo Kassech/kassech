@@ -14,6 +14,7 @@ class AppColors {
   static const lightOnPrimary = Colors.white;
   static const lightOnSecondary = Colors.black;
   static const lightScaffoldBackground = Colors.white;
+  static const lightNavBarBackground = lightGray;
 
   /// Dark theme colors
   static const darkPrimary = Colors.white;
@@ -21,6 +22,7 @@ class AppColors {
   static const darkOnPrimary = Colors.black;
   static const darkOnSecondary = Colors.white;
   static const darkScaffoldBackground = Colors.black;
+  static const darkNavBarBackground = darkGray;
 
 
   static const successColor = Color(0xFF00C853);

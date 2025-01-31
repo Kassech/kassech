@@ -24,6 +24,7 @@ func RegisterRoutes(r *gin.Engine) {
 	LocationRepo := &repository.LocationRepository{}
 	PathRepo := &repository.PathRepository{}
 	QueueManagerPathRepo := &repository.QueueManagerRouteRepository{}
+	AnalysisRepo := &repository.AnalysisRepository{}
 
 	// Initialize Services
 	userSvc := &service.UserService{Repo: userRepo}
@@ -39,6 +40,7 @@ func RegisterRoutes(r *gin.Engine) {
 	locationSvc := &service.LocationService{Repo: LocationRepo}
 	pathSvc := &service.PathService{Repo: PathRepo}
 	queueManagerPathSvc := &service.QueueManagerRouteService{Repo: QueueManagerPathRepo}
+	analysesSvc := &service.AnalysisService{Repo: AnalysisRepo}
 
 	// Initialize Controllersz
 	userCtrl := &controller.UserController{Service: userSvc, SessionService: sessionService}
@@ -54,10 +56,13 @@ func RegisterRoutes(r *gin.Engine) {
 	locationCtrl := &controller.LocationController{Service: locationSvc}
 	pathCtrl := &controller.PathController{Service: pathSvc}
 	queueManagerPathCtrl := &controller.QueueManagerRouteController{Service: queueManagerPathSvc}
+	analysisCtrl := &controller.AnalysisController{Service: analysesSvc}
 
 	// Group API routes
 	api := r.Group("/api")
 	{
+		analysisRoutes(api, analysisCtrl) // Register user-related routes
+
 		registerUserRoutes(api, userCtrl) // Register user-related routes
 
 		registerRoleRoutes(api, roleCtrl) // Register role-related routes
@@ -219,6 +224,79 @@ func registerRoleRoutes(api *gin.RouterGroup, ctrl *controller.RoleController) {
 	}
 }
 
+func analysisRoutes(api *gin.RouterGroup, ctrl *controller.AnalysisController) {
+	analysisApi := api.Group("/analysis")
+	{
+		// Total number of users
+		analysisApi.GET("/total-users", ctrl.GetTotalUsers)
+
+		// Total number of active users
+		analysisApi.GET("/active-users", ctrl.GetActiveUsers)
+
+		// Total number of drivers
+		analysisApi.GET("/total-drivers", ctrl.GetTotalDrivers)
+
+		// Total number of vehicles
+		analysisApi.GET("/total-vehicles", ctrl.GetTotalVehicles)
+
+		// Total number of active vehicles
+		analysisApi.GET("/active-vehicles", ctrl.GetActiveVehicles)
+
+		// Total travel logs
+		analysisApi.GET("/total-travel-logs", ctrl.GetTotalTravelLogs)
+
+		// Total number of routes
+		analysisApi.GET("/total-routes", ctrl.GetTotalRoutes)
+
+		// Total number of stations
+		analysisApi.GET("/total-stations", ctrl.GetTotalStations)
+
+		// Total number of login logs
+		analysisApi.GET("/login-logs", ctrl.GetLoginLogs)
+
+		// Total number of vehicle types
+		// analysisApi.GET("/vehicle-types", ctrl.GetVehicleTypes)
+
+		// // Total number of assignments
+		// analysisApi.GET("/total-assignments", ctrl.GetTotalAssignments)
+
+		// // Total number of notifications sent
+		// analysisApi.GET("/total-notifications", ctrl.GetTotalNotifications)
+
+		// // Total number of passenger travel records
+		// analysisApi.GET("/passenger-travel-records", ctrl.GetPassengerTravelRecords)
+
+		// // Average travel distance
+		// analysisApi.GET("/average-travel-distance", ctrl.GetAverageTravelDistance)
+
+		// // Total online users
+		// analysisApi.GET("/online-users", ctrl.GetOnlineUsers)
+
+		// // Total queue managers
+		// analysisApi.GET("/total-queue-managers", ctrl.GetTotalQueueManagers)
+
+		// // Total vehicles assigned to drivers
+		// analysisApi.GET("/assigned-vehicles", ctrl.GetAssignedVehicles)
+
+		// // Total number of unassigned vehicles
+		// analysisApi.GET("/unassigned-vehicles", ctrl.GetUnassignedVehicles)
+
+		// // Total number of notifications per user
+		// analysisApi.GET("/user-notifications/:userID", ctrl.GetUserNotifications)
+
+		// // Total vehicle GPS logs
+		// analysisApi.GET("/vehicle-gps-logs", ctrl.GetVehicleGPSLogs)
+
+		// // Total manual assignments
+		// analysisApi.GET("/manual-assignments", ctrl.GetManualAssignments)
+
+		// // Total auto assignments
+		// analysisApi.GET("/auto-assignments", ctrl.GetAutoAssignments)
+
+		// Most frequently traveled route
+		// analysisApi.GET("/frequent-route", ctrl.GetFrequentRoute)
+	}
+}
 func registerPermissionRoutes(api *gin.RouterGroup, ctrl *controller.PermissionController) {
 	api.POST("/permissions", ctrl.CreatePermission)
 

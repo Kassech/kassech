@@ -28,17 +28,15 @@ class UiUtils {
     return result;
   }
 
-  static void showSnackBar(
-    BuildContext context,
-    String message, {
+  static void showSnackBar({
+    required String message,
     String? label,
     VoidCallback? onPressed,
     bool isError = false,
     Color? color,
   }) {
     final snackBar = SnackBar(
-      margin: EdgeInsets.symmetric(
-          horizontal: 20, vertical: MediaQuery.sizeOf(context).height * 0.05),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       dismissDirection: DismissDirection.horizontal,
       backgroundColor:
           color ?? (isError ? AppColors.errorColor : AppColors.successColor),

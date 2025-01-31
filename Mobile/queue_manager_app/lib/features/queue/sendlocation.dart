@@ -4,17 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:queue_manager_app/core/util/geo_locator.dart';
 
-import '../../../../core/services/api_service.dart';
+import '../../core/services/api_service.dart';
 
 Future<void> _sendLocationToBackend(Position position) async {
-  final apiService = ApiService();
-  // const String endpoint = 'location'; // Add your endpoint here
-  // final String backendUrl =
-  //     '${apiService.dio_baseUrl}$endpoint'; // Use baseUrl from ApiService
-
+  const String backendUrl = '';
+  final dio = ApiService.dio;
   try {
-    final response = await apiService.dio_instance.post(
-      '${apiService.dio_baseUrl}location',
+    final response = await dio.post(
+      backendUrl,
       options: Options(headers: {'Content-Type': 'application/json'}),
       data: jsonEncode({
         'latitude': position.latitude,
@@ -31,6 +28,7 @@ Future<void> _sendLocationToBackend(Position position) async {
     print('Error sending location: $error');
   }
 }
+
 Future<void> initializeLocation() async {
   try {
     Position position = await determinePosition();
@@ -38,10 +36,5 @@ Future<void> initializeLocation() async {
     await _sendLocationToBackend(position);
   } catch (error) {
     print('Error determining position: $error');
-    if (error is DioException) {
-      print('Dio Error: ${error.message}');
-      print('Status Code: ${error.response?.statusCode}');
-      print('Response Data: ${error.response?.data}');
-    }
   }
 }

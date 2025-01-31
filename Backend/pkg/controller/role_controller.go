@@ -13,11 +13,6 @@ type RoleController struct {
 	Service *service.RoleService
 }
 
-// NewRoleController creates a new instance of RoleController
-func NewRoleController(Service *service.RoleService) *RoleController {
-	return &RoleController{Service: Service}
-}
-
 // CreateRole handles HTTP requests to create a new role
 func (rc *RoleController) CreateRole(c *gin.Context) {
 	var role models.Role
