@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-
 import { cn } from '@/lib/utils';
 
 const Progress = React.forwardRef<
@@ -15,15 +14,14 @@ const Progress = React.forwardRef<
   return (
     <ProgressPrimitive.Root
       ref={ref}
-      className={cn('relative w-24 h-24', className)} // Fixed size for the circular progress bar
+      className={cn(
+        'relative flex items-center justify-center w-32 h-32',
+        className
+      )}
       {...props}
     >
-      <svg
-        className="absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2"
-        width="100%"
-        height="100%"
-        viewBox="0 0 120 120"
-      >
+      <svg width="100%" height="100%" viewBox="0 0 120 120" className="block">
+        {/* Background Circle */}
         <circle
           cx="60"
           cy="60"
@@ -31,8 +29,9 @@ const Progress = React.forwardRef<
           stroke="currentColor"
           strokeWidth={strokeWidth}
           fill="none"
-          className="text-secondary" // Background circle
+          className="text-gray-300"
         />
+        {/* Progress Circle */}
         <circle
           cx="60"
           cy="60"
@@ -40,19 +39,19 @@ const Progress = React.forwardRef<
           stroke="currentColor"
           strokeWidth={strokeWidth}
           fill="none"
-          className="text-primary" // Foreground circle (progress)
+          className="text-primary"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
-          style={{ transition: 'stroke-dashoffset 0.3s ease' }}
+          strokeLinecap="round"
+          style={{ transition: 'stroke-dashoffset 0.5s ease' }}
         />
       </svg>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl font-bold text-black">
-        {value}%
-      </div>
+      {/* Centered Text */}
+      <div className="absolute text-xl font-bold text-black">{value}%</div>
     </ProgressPrimitive.Root>
   );
 });
 
-Progress.displayName = ProgressPrimitive.Root.displayName;
+Progress.displayName = 'Progress';
 
 export { Progress };

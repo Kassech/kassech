@@ -39,14 +39,12 @@ export default function Overview() {
           <Progress value={60} />
         </CardContent>
       </Card> */}
-      <div className="grid grid-cols-3 gap-4">
         <div className="flex justify-center items-center">
           <Progress value={75} />
         </div>
         <div className="flex justify-center items-center">
           <Progress value={60} />
         </div>
-      </div>
     </div>
   );
 }
