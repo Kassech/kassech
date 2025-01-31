@@ -7,6 +7,7 @@ import 'package:queue_manager_app/features/queue/provider/passenger_provider.dar
 import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
 import 'package:queue_manager_app/features/queue/widgets/notification_modal.dart';
 
+import '../../../config/route/route.dart';
 import '../../../core/permissions/app_permissions.dart';
 import '../../../core/permissions/permission_wrapper.dart';
 import '../../../shared/widgets/error_container.dart';
@@ -25,6 +26,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +57,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                scaffoldKey.currentState!.openDrawer();
+              },
+            );
+          },
+        ),
         title: const Text('Routes'),
         actions: [
           IconButton(
@@ -65,7 +77,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: AppDrawer(),
       body: PathContainer(),
     );
   }

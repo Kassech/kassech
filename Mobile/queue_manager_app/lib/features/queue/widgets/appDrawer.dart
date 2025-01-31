@@ -54,7 +54,7 @@ class AppDrawer extends ConsumerWidget {
             title: const Text('Logout'),
             onTap: () {
               ref.read(authProvider.notifier).logout();
-              // Navigator.pop(context);
+              Navigator.pop(context);
             },
           ),
         ],
