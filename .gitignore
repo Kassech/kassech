@@ -37,3 +37,4 @@ queue_manager_app/build/app/outputs/apk/
 queue_manager_app/build/
 queue_manager_app/build/
 Backend/tmp/main
+Simulation/cache/
