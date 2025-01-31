@@ -12,6 +12,7 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/owner/pages/carLocation/car_location.dart';
 import '../../features/owner/pages/delegate/delegation.dart';
 import '../../features/owner/pages/list/list_of_cars.dart';
+import '../../features/queue/models/path_model.dart';
 import '../../features/queue/pages/home.dart';
 import '../../features/queue/pages/noRoutesAssigned.dart';
 import '../../features/queue/pages/notificaton_page.dart';
@@ -88,8 +89,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     name: PathDetailsPage.routeName,
                     parentNavigatorKey: rootNavigatorKey,
                     builder: (context, state) {
-                      final extra = state.extra;
-                      return PathDetailsPage(pathId: extra as int);
+                      final extra = state.extra as Map<String, dynamic>?;
+                      final int pathId = extra?['pathId'];
+                      final PathModel path = extra?['path'];
+                      return PathDetailsPage(pathId: pathId, path: path);
                     },
                   ),
                 ]
