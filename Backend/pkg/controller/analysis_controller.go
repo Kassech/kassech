@@ -15,7 +15,7 @@ type AnalysisController struct {
 
 func (ac *AnalysisController) GetTotalUsers(c *gin.Context) {
 	totalUsers, err := ac.Service.GetTotalUsers()
-	if err == nil {
+	if err != nil {
 		responses.BadRequest(c, err,
 			responses.WithMessage("Invalid request parameters"),
 		)
