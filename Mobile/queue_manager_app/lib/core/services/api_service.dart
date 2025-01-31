@@ -4,15 +4,20 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../config/const/api_constants.dart';
+import '../../features/auth/providers/auth_provider.dart';
 import 'local_storage_service.dart';
 
+final ProviderContainer container = ProviderContainer();
+
 class ApiService {
+
   static final Dio dio = Dio(
     BaseOptions(
-      baseUrl: ApiConstants.baseUrl,
+      baseUrl: ApiConstants.apiBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Content-Type': 'application/json'},
@@ -24,10 +29,11 @@ class ApiService {
 
   static late PersistCookieJar _cookieJar;
 
-  ApiService() {
+  final WidgetRef ref;
+
+  ApiService(this.ref) {
     initializeDio();
   }
-
   /// Clear all cookies
   static Future<void> clearCookies() async {
     await _cookieJar.deleteAll();
@@ -42,7 +48,7 @@ class ApiService {
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         if (options.headers.containsKey('Authorization')) {
-          final accessToken = await _storage.getToken();
+          final accessToken = _storage.getToken();
           if (accessToken != null) {
             options.headers['Authorization'] = 'Bearer $accessToken';
           }
@@ -56,6 +62,8 @@ class ApiService {
         if (error.response?.statusCode == 403) {
           /// Handle 403 error
 
+          final user = ref.read(authProvider.notifier);
+          user.logout();
           return handler.reject(error);
         }
 
@@ -70,7 +78,6 @@ class ApiService {
             errorMessage!.toLowerCase().contains('token expired');
 
         if (isTokenExpired && !_isRefreshing) {
-          print('Refreshing token...');
           _isRefreshing = true;
           try {
             final newToken = await _refreshTokenRequest();
@@ -96,11 +103,9 @@ class ApiService {
           }
         }
 
-        print('error after 401');
         /// handle other errors
         errorMessage = handleDioError(error);
         if (errorMessage != null && errorMessage.isNotEmpty) {
-          print('error after $errorMessage');
           return handler.reject(
             DioException(
               requestOptions: error.requestOptions,
@@ -110,7 +115,6 @@ class ApiService {
           );
         }
 
-        print('error after ss $errorMessage');
         return handler.next(error);
       },
     ));

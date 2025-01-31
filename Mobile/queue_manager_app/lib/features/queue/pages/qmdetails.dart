@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:queue_manager_app/config/route/route.dart';
 import 'package:queue_manager_app/features/queue/pages/home.dart';
 import 'package:sliding_up_panel2/sliding_up_panel2.dart';
 
@@ -28,7 +27,7 @@ class _QueueManagerDetailsState extends State<QueueManagerDetails> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              context.go(HomeQueueManager.routeName);
+              context.go(HomePage.routeName);
             },
             icon: const Icon(Icons.arrow_back)),
         title: const Text('Route Details'),

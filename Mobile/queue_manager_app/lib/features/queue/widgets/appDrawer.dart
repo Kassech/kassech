@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/services/api_service.dart';
+import '../../auth/providers/auth_provider.dart';
 
 class AppDrawer extends ConsumerWidget {
-  final ApiService apiService = ApiService();
 
   AppDrawer({super.key});
 
@@ -39,20 +38,24 @@ class AppDrawer extends ConsumerWidget {
             leading: const Icon(Icons.home),
             title: const Text('Home'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pop(context);
             },
           ),
           ListTile(
             leading: const Icon(Icons.person),
             title: const Text('Profile'),
             onTap: () {
-              context.go('/profile'); // Close the drawer
+              context.go('/profile');
             },
           ),
           ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () {}),
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () {
+              ref.read(authProvider.notifier).logout();
+              // Navigator.pop(context);
+            },
+          ),
         ],
       ),
     );

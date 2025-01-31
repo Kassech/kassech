@@ -18,16 +18,15 @@ class LocalStorageService {
 
   /// Save a string value
   Future<void> saveString(String key, String value) async {
-    final result =  await _prefs?.setString(key, value);
+    await _prefs?.setString(key, value);
 
-    print('Saved $key: $value');
     if (key == LocalStorageConstants.accessTokenKey) {
       _cachedToken = value;
     }
   }
 
   /// Retrieve a string value
-  Future<String?> getString(String key) async {
+  String? getString(String key) {
     if (key == LocalStorageConstants.accessTokenKey && _cachedToken != null) {
       return _cachedToken;
     }
@@ -41,7 +40,7 @@ class LocalStorageService {
   }
 
   /// Get the auth token
-  Future<String?> getToken() async {
+  String? getToken() {
     return getString(LocalStorageConstants.accessTokenKey);
   }
 

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -56,7 +57,7 @@ func (h *PassengerHandler) HandleConnection(w http.ResponseWriter, r *http.Reque
 
 func (h *PassengerHandler) cleanupConnection(userID uint, conn *websocket.Conn) {
 	conn.Close()
-	h.connManager.RemoveConnection(userID)
+	h.connManager.RemoveConnection(userID,conn)
 }
 
 func (h *PassengerHandler) listenForMessages(userID uint, conn *websocket.Conn) {
@@ -117,6 +118,6 @@ func (h *PassengerHandler) broadcastPassengerCount(pathID uint) {
 		log.Printf("Error marshalling message: %v", err)
 		return
 	}
-
+	fmt.Println("	fmt", "fmt")
 	h.connManager.Broadcast(messageBytes)
 }

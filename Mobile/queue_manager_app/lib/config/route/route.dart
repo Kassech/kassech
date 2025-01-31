@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../features/auth/models/user.dart';
 import '../../features/auth/pages/errorpage.dart';
 import '../../features/auth/pages/selectRole.dart';
@@ -17,6 +18,7 @@ import '../../features/queue/pages/notificaton_page.dart';
 import '../../features/queue/pages/profile.dart';
 import '../../features/queue/pages/qmdetails.dart';
 import '../../features/splash/splash.dart';
+import '../../shared/widgets/custom_navigation_bar.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -26,7 +28,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
   final refreshListenable = GoRouterRefreshNotifier(authState);
 
-  final router =  GoRouter(
+  final router = GoRouter(
     initialLocation: _previousRouter?.state?.fullPath ?? Splash.routeName,
     navigatorKey: rootNavigatorKey,
     refreshListenable: refreshListenable,
@@ -41,25 +43,61 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         SelectRolePage.routeName,
       ];
 
-      print('Redirecting to ${state.matchedLocation}');
-
       if (user == null) {
         if (publicRoutes.contains(state.matchedLocation)) {
           return null;
         }
-        if(state.matchedLocation == SignInPage.routeName){
+        if (state.matchedLocation == SignInPage.routeName) {
           return null;
         }
-        print('Redirecting to ${SignInPage.routeName}');
         return SignInPage.routeName;
       } else if ((state.matchedLocation == SignInPage.routeName ||
           state.matchedLocation == SignUpPage.routeName)) {
-        return HomeQueueManager.routeName;
+        return HomePage.routeName;
       }
       return null;
     },
     errorBuilder: (context, state) => ErrorPage(state.error),
     routes: [
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return Scaffold(
+            extendBody: true,
+            backgroundColor: Colors.red,
+            body: navigationShell,
+            bottomNavigationBar: CustomNavigationBar(
+              height: 60,
+              selectedIndex: navigationShell.currentIndex,
+              icons: const [
+                Icons.home,
+                Icons.person_2,
+              ],
+              labels: null,
+              onDestinationSelected: (index) => navigationShell.goBranch(index),
+            ),
+          );
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: HomePage.routeName,
+                name: HomePage.routeName,
+                builder: (context, state) => const HomePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: ProfilePage.routeName,
+                name: ProfilePage.routeName,
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
+          ),
+        ],
+      ),
       GoRoute(
         path: Splash.routeName,
         name: Splash.routeName,
@@ -71,17 +109,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => SignInPage(),
       ),
       GoRoute(
-          path: SignUpPage.routeName,
-          name: SignUpPage.routeName,
-          builder: (context, state) {
-            final roleId = state.extra as int?;
-            return SignUpPage(role: roleId ?? 0);
-          }),
-
-      GoRoute(
-        path: HomeQueueManager.routeName,
-        name: HomeQueueManager.routeName,
-        builder: (context, state) => const HomeQueueManager(),
+        path: SignUpPage.routeName,
+        name: SignUpPage.routeName,
+        builder: (context, state) {
+          final roleId = state.extra as int?;
+          return SignUpPage(role: roleId ?? 0);
+        },
       ),
       GoRoute(
           path: ErrorPage.routeName,
@@ -101,11 +134,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: QueueManagerDetails.routeName,
         name: QueueManagerDetails.routeName,
         builder: (context, state) => const QueueManagerDetails(),
-      ),
-      GoRoute(
-        path: ProfilePage.routeName,
-        name: ProfilePage.routeName,
-        builder: (context, state) => const ProfilePage(),
       ),
       GoRoute(
         path: SelectRolePage.routeName,

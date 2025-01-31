@@ -60,6 +60,7 @@ class AuthNotifier extends AutoDisposeAsyncNotifier<User?> {
     state = const AsyncLoading();
     try {
       await _authRepository.logout();
+      print('logout');
       state = const AsyncData(null);
     } on DioException catch (e) {
       state = AsyncError(e.response?.data['message'] ?? e.message, e.stackTrace);
@@ -77,7 +78,7 @@ class AuthNotifier extends AutoDisposeAsyncNotifier<User?> {
         state = AsyncData(user);
         return user;
       }
-
+      print('no user');
       state = const AsyncData(null);
       return null;
     } catch (e, stackTrace) {

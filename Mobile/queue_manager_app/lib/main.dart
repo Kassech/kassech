@@ -1,14 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:queue_manager_app/config/provider/webSocket.dart';
-import 'package:queue_manager_app/config/route/route.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:queue_manager_app/core/theme/app_theme.dart';
-import 'package:queue_manager_app/features/notification/notification_service.dart';
-import 'package:queue_manager_app/features/queue/domain/usecase/sendlocation.dart';
+
+import 'config/route/route.dart';
 import 'core/services/api_service.dart';
 import 'core/services/local_storage_service.dart';
+import 'core/services/notification_service.dart';
+import 'core/theme/app_theme.dart';
 import 'core/util/ui_utils.dart';
+import 'features/queue/sendlocation.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -19,17 +19,33 @@ Future<void> main() async {
 
   await NotificationService().initialize();
   await LocalStorageService().init();
-  ApiService();
+
   initializeLocation();
-  runApp(ProviderScope(child: MyApp()));
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
 
-  @override  
-  Widget build(BuildContext context, WidgetRef ref) {
+class _MyAppState extends ConsumerState<MyApp> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ApiService(ref);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final goRouter = ref.watch(goRouterProvider);
 
     return MaterialApp.router(
@@ -41,17 +57,5 @@ class MyApp extends ConsumerWidget {
       routeInformationProvider: goRouter.routeInformationProvider,
       routeInformationParser: goRouter.routeInformationParser,
     );
-  }
-}
-
-final tokenProvider = StateNotifierProvider<TokenNotifier, String?>((ref) {
-  return TokenNotifier();
-});
-
-class TokenNotifier extends StateNotifier<String?> {
-  TokenNotifier() : super(null);
-
-  void updateToken(String? token) {
-    state = token;
   }
 }
