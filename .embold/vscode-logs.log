@@ -323,3 +323,15 @@ Java HotSpot(TM) 64-Bit Server VM (build 23.0.1+11-39, mixed mode, sharing)
 2025-01-27 16:50:33 info: Embold extension version response:{"hasSupport":false,"version":"0.1.6","changeNotes":"<div> <p>Release Date: 09 Oct, 2023 <br><span>Bug fixes and improvements.</span></p> </div>"}
 2025-01-27 16:50:33 info: Current installed embold extension version : 0.1.8
 2025-01-27 16:50:33 info: Latest embold extension version on marketplace : 0.1.6
+2025-01-29 22:49:11 info: Congratulations, your extension "Embold" is now active!
+2025-01-29 22:49:11 info: tempDirectory : c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\temp
+2025-01-29 22:49:12 info: Row(s) deleted
+2025-01-29 22:49:13 info: Extraction complete for source: c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\resources\embold-scanner-archive.zip, destination: c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\temp
+2025-01-29 22:49:13 info: Extension installed on machine OS : win32
+2025-01-29 22:49:13 info: Fetched the issues from DB
+2025-01-29 22:49:13 info: Java version installed on machine : 
+java version "23.0.1" 2024-10-15
+Java(TM) SE Runtime Environment (build 23.0.1+11-39)
+Java HotSpot(TM) 64-Bit Server VM (build 23.0.1+11-39, mixed mode, sharing)
+
+2025-01-29 22:49:13 info: Java installed on machine.
