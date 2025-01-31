@@ -1,60 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:queue_manager_app/features/queue/pages/home.dart';
 import 'package:sliding_up_panel2/sliding_up_panel2.dart';
 
-class QueueManagerDetails extends StatefulWidget {
-  const QueueManagerDetails({super.key});
+class PathDetailsPage extends StatefulWidget {
+  const PathDetailsPage({super.key, required this.pathId});
+  final int pathId;
 
-  static const String routeName = '/queueManagerDetails';
+  static const String routeName = '/pathDetailsPage';
 
   @override
-  State<QueueManagerDetails> createState() => _QueueManagerDetailsState();
+  State<PathDetailsPage> createState() => _PathDetailsPageState();
 }
 
-class _QueueManagerDetailsState extends State<QueueManagerDetails> {
-  final List<Map<String, dynamic>> queues = [
-    {'routeName': 'Route 1', 'routeId': 'R001', 'queueCount': 5},
-    {'routeName': 'Route 2', 'routeId': 'R002', 'queueCount': 3},
-    {'routeName': 'Route 3', 'routeId': 'R003', 'queueCount': 10},
-  ];
+class _PathDetailsPageState extends State<PathDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              context.go(HomePage.routeName);
-            },
-            icon: const Icon(Icons.arrow_back)),
         title: const Text('Route Details'),
       ),
       body: SlidingUpPanel(
         panelBuilder: () => _buildPanel(),
-        body: SafeArea(
-          child: FlutterMap(
-            options: const MapOptions(
-              initialCenter: LatLng(9.030093, 38.762791),
-              initialZoom: 15,
-            ),
-            children: [
-              openStreetMapTileLayer,
-              MarkerLayer(
-                markers: [
-                  Marker(
-                      point: const LatLng(9.036151548242255, 38.7625160846566),
-                      child: Icon(
-                        Icons.location_on_sharp,
-                        size: 60,
-                        color: Colors.green[600],
-                      ))
-                ],
-              )
-            ],
+        body: FlutterMap(
+          options: const MapOptions(
+            initialCenter: LatLng(9.030093, 38.762791),
+            initialZoom: 15,
           ),
+          children: [
+            openStreetMapTileLayer,
+            MarkerLayer(
+              markers: [
+                Marker(
+                    point: const LatLng(9.036151548242255, 38.7625160846566),
+                    child: Icon(
+                      Icons.location_on_sharp,
+                      size: 60,
+                      color: Colors.green[600],
+                    ))
+              ],
+            )
+          ],
         ),
       ),
     );
@@ -100,8 +87,7 @@ class _QueueManagerDetailsState extends State<QueueManagerDetails> {
 }
 
 TileLayer get openStreetMapTileLayer => TileLayer(
-      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
       userAgentPackageName: 'com.example.queue_manager_app',
-      subdomains: const ['a', 'b', 'c'],
     );
 

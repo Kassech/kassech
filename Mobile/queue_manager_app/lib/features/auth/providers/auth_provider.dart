@@ -60,7 +60,6 @@ class AuthNotifier extends AutoDisposeAsyncNotifier<User?> {
     state = const AsyncLoading();
     try {
       await _authRepository.logout();
-      print('logout');
       state = const AsyncData(null);
     } on DioException catch (e) {
       state = AsyncError(e.response?.data['message'] ?? e.message, e.stackTrace);
@@ -71,8 +70,7 @@ class AuthNotifier extends AutoDisposeAsyncNotifier<User?> {
 
   Future<User?> _checkAuth() async {
     try {
-      final userJson =
-          await LocalStorageService().getString(LocalStorageConstants.userKey);
+      final userJson = LocalStorageService().getString(LocalStorageConstants.userKey);
       if (userJson != null) {
         final user = User.fromJson(jsonDecode(userJson));
         state = AsyncData(user);

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
-import 'package:queue_manager_app/features/queue/pages/home.dart';
 import 'package:queue_manager_app/features/queue/widgets/profileLists.dart';
 
 class ProfilePage extends ConsumerWidget {
@@ -29,6 +27,9 @@ class ProfilePage extends ConsumerWidget {
               width: 100,
               height: 100,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.person, size: 100);
+              },
             ),
           ),
           const SizedBox(height: 20),

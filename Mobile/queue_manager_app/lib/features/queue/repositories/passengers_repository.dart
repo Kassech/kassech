@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../../config/const/api_constants.dart';
@@ -14,7 +15,7 @@ class PassengersRepository {
 
   Future<void> connect() async {
     try {
-      final token = await _storage.getToken();
+      final token = _storage.getToken();
       _channel = WebSocketChannel.connect(
         Uri.parse('${ApiConstants.passengers}?token=$token'),
       );
@@ -29,7 +30,9 @@ class PassengersRepository {
             _controllers[id]?.add(count);
           }
         } catch (e) {
-          print('Error processing message: $e');
+          if (kDebugMode) {
+            print('Error processing message: $e');
+          }
         }
       });
     } catch (e) {

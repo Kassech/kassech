@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../auth/providers/auth_provider.dart';
+import '../pages/profile.dart';
 
 class AppDrawer extends ConsumerWidget {
 
-  AppDrawer({super.key});
+  const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,7 +46,7 @@ class AppDrawer extends ConsumerWidget {
             leading: const Icon(Icons.person),
             title: const Text('Profile'),
             onTap: () {
-              context.go('/profile');
+              context.go(ProfilePage.routeName);
             },
           ),
           ListTile(

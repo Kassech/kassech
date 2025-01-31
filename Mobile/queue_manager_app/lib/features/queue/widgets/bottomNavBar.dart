@@ -23,8 +23,11 @@ List<IconData> icons = const [Icons.list, Icons.map, Icons.person];
 class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Align(alignment: Alignment.bottomCenter, child: _navBar()),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        child: _navBar(),
+      ),
     );
   }
 

@@ -16,7 +16,7 @@ import '../../features/queue/pages/home.dart';
 import '../../features/queue/pages/noRoutesAssigned.dart';
 import '../../features/queue/pages/notificaton_page.dart';
 import '../../features/queue/pages/profile.dart';
-import '../../features/queue/pages/qmdetails.dart';
+import '../../features/queue/pages/path_details_page.dart';
 import '../../features/splash/splash.dart';
 import '../../shared/widgets/custom_navigation_bar.dart';
 
@@ -63,7 +63,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state, navigationShell) {
           return Scaffold(
             extendBody: true,
-            backgroundColor: Colors.red,
             body: navigationShell,
             bottomNavigationBar: CustomNavigationBar(
               height: 60,
@@ -72,7 +71,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 Icons.home,
                 Icons.person_2,
               ],
-              labels: null,
               onDestinationSelected: (index) => navigationShell.goBranch(index),
             ),
           );
@@ -84,6 +82,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: HomePage.routeName,
                 name: HomePage.routeName,
                 builder: (context, state) => const HomePage(),
+                routes: [
+                  GoRoute(
+                    path: PathDetailsPage.routeName,
+                    name: PathDetailsPage.routeName,
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) {
+                      final extra = state.extra;
+                      return PathDetailsPage(pathId: extra as int);
+                    },
+                  ),
+                ]
               ),
             ],
           ),
@@ -129,11 +138,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/noroutes',
         name: 'noroutes',
         builder: (context, state) => const NoRoutesAssignedYet(),
-      ),
-      GoRoute(
-        path: QueueManagerDetails.routeName,
-        name: QueueManagerDetails.routeName,
-        builder: (context, state) => const QueueManagerDetails(),
       ),
       GoRoute(
         path: SelectRolePage.routeName,

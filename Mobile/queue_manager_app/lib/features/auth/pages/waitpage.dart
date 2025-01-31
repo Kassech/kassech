@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:queue_manager_app/core/theme/app_colors.dart';
 
 import 'signinpage.dart';
 
@@ -37,11 +35,7 @@ class WaitPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
            Center(
-              child: LoadingAnimationWidget.twistingDots(
-                leftDotColor:AppColors.black,
-                rightDotColor: AppColors.darkGray,
-                size: 200,
-              ),
+              child: CircularProgressIndicator()
             ),
           ],
         ),

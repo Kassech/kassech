@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/features/queue/pages/qmdetails.dart';
+import 'package:queue_manager_app/features/queue/pages/path_details_page.dart';
 import 'package:queue_manager_app/features/queue/provider/passenger_provider.dart';
 import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
 import 'package:queue_manager_app/features/queue/widgets/notification_modal.dart';
@@ -12,24 +12,22 @@ import '../../../core/permissions/permission_wrapper.dart';
 import '../../../shared/widgets/error_container.dart';
 import '../models/path_model.dart';
 import '../provider/path_provider.dart';
+import '../widgets/path_container.dart';
 import 'notificaton_page.dart';
 
-class HomePage extends ConsumerStatefulWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   static const String routeName = '/homePage';
 
   @override
-  ConsumerState<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      ref.read(pathProvider.notifier).fetchPaths();
-    });
     _initializeFirebaseMessaging();
   }
 
@@ -62,54 +60,13 @@ class _HomePageState extends ConsumerState<HomePage> {
             IconButton(
               icon: const Icon(Icons.notifications),
               onPressed: () {
-                context.go(NotificationPage.routeName);
+                context.push(NotificationPage.routeName);
               },
             ),
           ],
         ),
         drawer: AppDrawer(),
-        body: PermissionWrapper(
-          requiredPermission: AppPermissions.viewAssignedRoutes,
-          fallback: const Center(
-            child: Text('You do not have permission to view this page'),
-          ),
-          child: Consumer(
-            builder: (context, ref, child) {
-              final paths = ref.watch(pathProvider);
-              return RefreshIndicator(
-                onRefresh: () async {
-                  ref.read(pathProvider.notifier).fetchPaths();
-                },
-                child: paths.when(
-                  data: (path) {
-                    if (path == null) {
-                      return const Center(
-                        child: Text('No routes found'),
-                      );
-                    }
-                    return ListView.builder(
-                      itemCount: path.length,
-                      itemBuilder: (context, index) {
-                        return QueueCard(
-                          path: path[index],
-                        );
-                      },
-                    );
-                  },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, stackTrace) {
-                    return ErrorContainer(
-                      errorMessageText: error.toString(),
-                      onTapRetry: () {
-                        ref.read(pathProvider.notifier).fetchPaths();
-                      },
-                    );
-                  }
-                ),
-              );
-            },
-          ),
-        )
+        body:  PathContainer(),
         );
   }
 }
@@ -128,7 +85,7 @@ class QueueCard extends StatelessWidget {
           passengerNotifierProvider.select((state) => state[path.id.toString()] ?? 0),
         );
         return GestureDetector(
-          onTap: () => context.go(QueueManagerDetails.routeName),
+          onTap: () => context.push(PathDetailsPage.routeName),
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),

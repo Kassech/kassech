@@ -75,12 +75,6 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go(HomePage.routeName);
-          },
-        ),
         title: Text('Notifications'),
       ),
       body: Center(

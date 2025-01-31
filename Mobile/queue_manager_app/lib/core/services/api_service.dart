@@ -71,7 +71,13 @@ class ApiService {
         String? errorMessage = '';
 
         if (errorResponse != null && errorResponse.data != null) {
-          errorMessage = errorResponse.data['error'] ?? errorResponse.data['message'] ?? errorResponse.data;
+          if(errorResponse.data is String) {
+            errorMessage = errorResponse.data;
+          } else if (errorResponse.data is Map<String, dynamic>) {
+            errorMessage =
+                errorResponse.data['error'] ?? errorResponse.data['message'] ??
+                    errorResponse.data;
+          }
         }
 
         bool isTokenExpired = error.response?.statusCode == 401 &&
@@ -241,27 +247,5 @@ class ApiService {
       }
     }
     return errorMessage;
-  }
-
-  Future<void> sendTokensToBackend(
-      String accessToken, String refreshToken) async {
-    try {
-      final response = await dio.post(ApiConstants.notification,
-          data: {'token': accessToken, "device_id": "102934"});
-      print('Notification response: ${response.data}');
-    } catch (e) {
-      print('Error sending tokens to backend: $e');
-    }
-  }
-
-  Future<void> getNotifications(String accessToken) async {
-    try {
-      final response = await dio.post(ApiConstants.notification,
-          data: {'token': 'abcde', "device_id": "102934"});
-
-      print('Notifications response: ${response.data}');
-    } catch (e) {
-      print(e);
-    }
   }
 }
