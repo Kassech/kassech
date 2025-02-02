@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/core/util/ui_utils.dart';
 
 import '../../features/auth/models/user.dart';
 import '../../features/auth/pages/errorpage.dart';
@@ -18,10 +19,12 @@ import '../../features/queue/pages/noRoutesAssigned.dart';
 import '../../features/queue/pages/notificaton_page.dart';
 import '../../features/queue/pages/profile.dart';
 import '../../features/queue/pages/path_details_page.dart';
+import '../../features/queue/widgets/appDrawer.dart';
 import '../../features/splash/splash.dart';
 import '../../shared/widgets/custom_navigation_bar.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
 GoRouter? _previousRouter;
 
@@ -54,7 +57,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return SignInPage.routeName;
       } else if ((state.matchedLocation == SignInPage.routeName ||
           state.matchedLocation == SignUpPage.routeName)) {
-        return HomePage.routeName;
+
+        if (user.roles.contains('QueueManager') || user.roles.contains('Driver') || user.roles.contains('Owner')) {
+          return HomePage.routeName;
+        } else {
+          return SignInPage.routeName;
+        }
       }
       return null;
     },
@@ -63,13 +71,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return Scaffold(
+            key: scaffoldKey,
             extendBody: true,
             body: navigationShell,
+            drawer: AppDrawer(),
             bottomNavigationBar: CustomNavigationBar(
               height: 60,
               selectedIndex: navigationShell.currentIndex,
-              icons: const [
+              icons: [
                 Icons.home,
+                if(authState.value!.roles.contains('Admin')) Icons.car_rental,
                 Icons.person_2,
               ],
               onDestinationSelected: (index) => navigationShell.goBranch(index),
@@ -77,6 +88,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           );
         },
         branches: [
+          if (authState.value != null )
+          if ((authState.value!.roles.contains('QueueManager') || authState.value!.roles.contains('Driver')))
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -95,10 +108,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       return PathDetailsPage(pathId: pathId, path: path);
                     },
                   ),
-                ]
+                ],
               ),
             ],
           ),
+          if (authState.value != null &&
+              authState.value!.roles.contains('Owner'))
+            StatefulShellBranch(
+              routes: [
+                // GoRoute(
+                //   path: SelectRolePage.routeName,
+                //   name: SelectRolePage.routeName,
+                //   builder: (context, state) => SelectRolePage(),
+                // ),
+              ],
+            ),
           StatefulShellBranch(
             routes: [
               GoRoute(

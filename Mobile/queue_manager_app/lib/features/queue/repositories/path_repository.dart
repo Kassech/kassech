@@ -19,7 +19,7 @@ class PathRepository {
           },
         ),
       );
-
+      print(response.data);
       return (response.data['data'] as List)
           .map((path) => PathModel.fromJson(path))
           .toList();

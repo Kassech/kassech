@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/config/const/local_storage_constants.dart';
 import 'package:queue_manager_app/core/services/local_storage_service.dart';
 
+import '../../../core/util/ui_utils.dart';
 import '../models/user.dart';
 import '../models/user_params.dart';
 import '../repositories/auth_repository.dart';
@@ -52,7 +53,7 @@ class AuthNotifier extends AutoDisposeAsyncNotifier<User?> {
     }  on DioException catch (e) {
       state = AsyncError(e.error ?? 'something went wrong' , e.stackTrace);
     } catch (e, stackTrace) {
-      state = AsyncError('Something went wrong', stackTrace);
+      state = AsyncError(e.toString().contains('user') ? e.toString() : 'Something went wrong', stackTrace);
     }
   }
 
@@ -73,10 +74,13 @@ class AuthNotifier extends AutoDisposeAsyncNotifier<User?> {
       final userJson = LocalStorageService().getString(LocalStorageConstants.userKey);
       if (userJson != null) {
         final user = User.fromJson(jsonDecode(userJson));
-        state = AsyncData(user);
-        return user;
+        if (user.roles.contains('Owner') || user.roles.contains('Driver') || user.roles.contains('QueueManager')) {
+          state = AsyncData(user);
+          return user;
+        }
+        state = AsyncData(null);
+        return null;
       }
-      print('no user');
       state = const AsyncData(null);
       return null;
     } catch (e, stackTrace) {

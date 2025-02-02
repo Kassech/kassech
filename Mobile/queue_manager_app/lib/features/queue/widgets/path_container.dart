@@ -39,7 +39,7 @@ class _PathContainerState extends ConsumerState<PathContainer> {
             },
             child: paths.when(
                 data: (path) {
-                  if (path == null) {
+                  if (path == null || path.isEmpty) {
                     return const Center(
                       child: Text('No routes found'),
                     );
