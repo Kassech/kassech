@@ -1,3 +1,4 @@
+// database/database.go
 package database
 
 import (
@@ -5,16 +6,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-var REDIS *redis.Client
 var DB *gorm.DB
 
 // Connect initializes the database connection and stores it in the global DB variable.
 func Connect() {
+	// Setup the PostgreSQL connection
 	dbHost := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
@@ -32,7 +32,7 @@ func Connect() {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
 		dbHost, dbUser, dbPassword, dbName, dbPort, dbSslMode, dbTimeZone)
 
-	// Open a connection to the database
+	// Open a connection to the PostgreSQL database
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -40,12 +40,5 @@ func Connect() {
 	}
 	// Optionally, you can log the successful connection
 	log.Println("Successfully connected to the database")
-	REDIS = redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
-		Password: "",
-		DB:       0,
-		Protocol: 2,
-	})
-	log.Println("Successfully connected to the redis cache")
 
 }

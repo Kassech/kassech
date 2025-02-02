@@ -2,10 +2,12 @@ package database
 
 import (
 	"encoding/json"
+	"fmt"
 	models "kassech/backend/pkg/model"
 	"log"
 	"os"
 
+	"golang.org/x/exp/rand"
 	"gorm.io/gorm"
 )
 
@@ -100,6 +102,21 @@ func SeedDB() {
 		}
 	}
 
+	var owners []models.User
+	for i := 0; i < 20; i++ {
+		user := models.User{
+			FirstName:   fmt.Sprintf("User%d", i+1),
+			LastName:    "Test",
+			Email:       fmt.Sprintf("user%d@example.com", i+1),
+			PhoneNumber: fmt.Sprintf("+2519%08d", rand.Intn(100000000)),
+			Password:    "password123",
+			Roles:       "owner",
+		}
+		DB.Create(&user)
+		owners = append(owners, user)
+	}
+	log.Printf("%d owners created and seeded into the database.\n", len(owners))
+
 	// Seed stations
 	var stations []models.Station
 
@@ -132,6 +149,65 @@ func SeedDB() {
 	}
 
 	log.Println("Stations seeded successfully.")
+
+	// Seed vehicle types
+	var VehicleTypes []models.VehicleType
+
+	// Attempt to read the vehicle type JSON file
+	vehicleTypeData, err := os.ReadFile(cwd + "/pkg/database/data/vehicle_type.json")
+	if err != nil {
+		log.Printf("Failed to read vehicle type JSON file: %v\n", err)
+		return
+	}
+
+	// Parse the JSON data into the VehicleTypes slice
+	if err := json.Unmarshal(vehicleTypeData, &VehicleTypes); err != nil {
+		log.Printf("Failed to parse vehicle type JSON file: %v\n", err)
+		return
+	}
+
+	// Seed each vehicle type into the database
+	for _, VehicleType := range VehicleTypes {
+		if err := DB.FirstOrCreate(&models.VehicleType{}, VehicleType).Error; err != nil {
+			log.Printf("Failed to seed vehicle type %s: %v\n", VehicleType.TypeName, err)
+		} else {
+			log.Printf("Vehicle type %s seeded successfully.\n", VehicleType.TypeName)
+		}
+	}
+
+	log.Println("Vehicle types seeded successfully.")
+
+	// seed vehicle data in to the database
+
+	// Fetch owners
+	DB.Find(&owners)
+
+	// Create vehicles
+	makes := []string{"Toyota", "Honda", "Ford", "BMW", "Mercedes"}
+	colors := []string{"Red", "Blue", "Black", "White", "Silver"}
+	statuses := []string{"active", "inactive", "maintenance"}
+
+	for i := 0; i < 50; i++ {
+		owner := owners[rand.Intn(len(owners))]
+
+		vehicle := models.Vehicle{
+			TypeID:        uint(rand.Intn(2) + 1),
+			LicenseNumber: fmt.Sprintf("%03d-%04d", rand.Intn(1000), rand.Intn(10000)),
+			VIN:           fmt.Sprintf("%017d", rand.Intn(99999999999999999)),
+			Make:          makes[rand.Intn(len(makes))],
+			Year:          uint(rand.Intn(23) + 2001),
+			Color:         colors[rand.Intn(len(colors))],
+			CarPicture:    fmt.Sprintf("https://source.unsplash.com/300x200/?car&random=%d", i),
+			Bollo:         fmt.Sprintf("https://files.example.com/bollo/%d.pdf", i),
+			Insurance:     fmt.Sprintf("https://files.example.com/insurance/%d.pdf", i),
+			Libre:         fmt.Sprintf("https://files.example.com/libre/%d.pdf", i),
+			OwnerID:       owner.ID,
+			Status:        statuses[rand.Intn(len(statuses))],
+		}
+		DB.Create(&vehicle)
+	}
+
+	log.Println("Vehicles seeded successfully.")
 
 	log.Println("Database seeding completed.")
 }

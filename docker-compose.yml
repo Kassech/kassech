@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - pg_network
+
+
   # PostgreSQL service
   db:
     image: postgres:latest
@@ -63,6 +76,7 @@ services:
     depends_on:
       - db  # Wait for db to start before kassech-backend
       - redis  # Wait for redis to start before kassech-backend
+      - rabbitmq  # Wait for redis to start before kassech-backend
     volumes:
       - ./Backend:/app  # Mount the Backend directory to the container
   kassech-frontend:
@@ -87,5 +101,6 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:   # Define a named volume to persist PostgreSQL data
+  postgres_data:
   redis_data:
+  rabbitmq_data:

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"fmt"
-	"kassech/backend/pkg/database"
+	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/service"
 	"net/http"
 	"time"
@@ -38,7 +38,7 @@ func (c *UserSessionController) InvalidateToken(ctx *gin.Context) {
 	userID := uint(claims["user_id"].(float64))
 
 	redisKey := "refresh_token:" + fmt.Sprintf("%d", int(userID))
-	if err := database.REDIS.Del(ctx, redisKey).Err(); err != nil {
+	if err := config.RedisClient.Del(ctx, redisKey).Err(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to refresh Redis key"})
 		return
 	}
@@ -56,14 +56,14 @@ func (c *UserSessionController) InvalidateAllSessions(ctx *gin.Context) {
 
 	// Remove all Redis keys related to user sessions
 	redisKeyPattern := "refresh_token:%d*" + UserID
-	keys, err := database.REDIS.Keys(ctx, redisKeyPattern).Result()
+	keys, err := config.RedisClient.Keys(ctx, redisKeyPattern).Result()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch Redis keys"})
 		return
 	}
 
 	for _, key := range keys {
-		if err := database.REDIS.Del(ctx, key).Err(); err != nil {
+		if err := config.RedisClient.Del(ctx, key).Err(); err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove Redis keys"})
 			return
 		}

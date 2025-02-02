@@ -11,6 +11,7 @@ func Migrate(migrationType string) {
 		log.Fatal("Database connection is nil. Ensure Connect() is called before Migrate().")
 	}
 	DB.Exec("CREATE EXTENSION IF NOT EXISTS postgis;")
+	DB.Exec("TRUNCATE TABLE queue_manager_route_paths RESTART IDENTITY CASCADE;")
 
 	// List of models to migrate
 	modelsToMigrate := []interface{}{

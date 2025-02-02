@@ -2,8 +2,8 @@ package controller
 
 import (
 	"fmt"
+	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/constants"
-	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/domain"
 	"kassech/backend/pkg/mapper"
 	models "kassech/backend/pkg/model"
@@ -128,7 +128,7 @@ func (uc *UserController) Register(c *gin.Context) {
 
 	// Save the access token to Redis
 	redisKey := fmt.Sprintf("session_token:%d", insertedUser.ID)
-	err = database.REDIS.Set(c, redisKey, accessToken, service.AccessTokenExpiration).Err()
+	err = config.RedisClient.Set(c, redisKey, accessToken, service.AccessTokenExpiration).Err()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store access token"})
 		return
@@ -190,7 +190,7 @@ func (uc *UserController) Login(c *gin.Context) {
 
 	uc.SessionService.CreateSession(user.ID, refreshToken, time.Now().Add(service.RefreshTokenExpiration))
 	c.SetCookie("refresh_token", refreshToken, 60*60*24*30, "/", "", true, true) // Expires in 30 days
-	database.REDIS.Set(c, fmt.Sprintf("session_token:%d", user.ID), accessToken, service.AccessTokenExpiration)
+	config.RedisClient.Set(c, fmt.Sprintf("session_token:%d", user.ID), accessToken, service.AccessTokenExpiration)
 
 	c.JSON(http.StatusOK, gin.H{
 		"user":        user,
@@ -306,7 +306,7 @@ func (uc *UserController) RefreshToken(c *gin.Context) {
 	}
 	// Save the access token to Redis
 	redisKey := "session_token:" + userId
-	storedToken, err := database.REDIS.Get(c, redisKey).Result()
+	storedToken, err := config.RedisClient.Get(c, redisKey).Result()
 	if err != nil || storedToken != accessToken {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Session not found or token mismatch"})
 		c.Abort()

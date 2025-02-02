@@ -1,0 +1,12 @@
+[
+    {
+        "TypeName": "Mini-Bus",
+        "Capacity": 12,
+        "Description": "public transport "
+    },
+    {
+        "TypeName": "Bus",
+        "Capacity": 24,
+        "Description": "public transport "
+    }
+]

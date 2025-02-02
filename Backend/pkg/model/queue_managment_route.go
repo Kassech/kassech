@@ -7,7 +7,7 @@ type QueueManagerRoute struct {
 	gorm.Model
 	UserID    uint    `gorm:"not null"`
 	StationID uint    `gorm:"not null"`
-	Paths     []Path  `gorm:"many2many:queue_manager_route_paths;"`
+	Paths     []Path  `gorm:"many2many:queue_manager_route_paths;"` // No auto-population
 	User      User    `gorm:"foreignKey:UserID"`
 	Station   Station `gorm:"foreignKey:StationID"`
 }

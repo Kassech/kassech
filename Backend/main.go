@@ -3,9 +3,13 @@ package main
 import (
 	"fmt"
 	"kassech/backend/pkg/config"
+	"kassech/backend/pkg/consumer"
+	"kassech/backend/pkg/controller"
 	"kassech/backend/pkg/database"
+	"kassech/backend/pkg/repository"
 	"kassech/backend/pkg/service"
 	"kassech/backend/pkg/websocket"
+	"kassech/backend/pkg/workers"
 	"log"
 	"os"
 	"time"
@@ -18,6 +22,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Initialize config, JWT, and Firebase when the app starts
 func init() {
 	config.LoadEnv()
 	service.InitJWTSecret()
@@ -39,12 +44,22 @@ func main() {
 
 	// Initialize database connection
 	database.Connect()
+	config.InitRedis()
+	config.InitRabbitMQ()
+	workers.StartBatchFlusher()
+
+	// Start consumers
+	queues := []string{"location_updates"}
+	for _, queue := range queues {
+		go consumer.ConsumeQueue(config.RabbitMQChannel, queue)
+	}
 	// Run migrations
 	scripts.HandleScriptCommands()
 
 	// Setup Gin router
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
+		// Allow requests from the frontend
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
@@ -62,6 +77,14 @@ func main() {
 
 	// Register HTTP routes
 	r.Static("/uploads", "./uploads")
+	vehicleRepo := &repository.VehicleRepository{}
+
+	vehicleSvc := &service.VehicleService{Repo: vehicleRepo}
+
+	vehicleCtrl := &controller.VehicleController{Service: vehicleSvc}
+
+	r.GET("/simulation/vehicle", vehicleCtrl.GetAllVehicles) // Get all vehicles
+
 	routes.RegisterRoutes(r)
 
 	// Start the server

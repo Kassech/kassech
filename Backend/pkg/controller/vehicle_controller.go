@@ -7,6 +7,7 @@ import (
 	"kassech/backend/pkg/mapper"
 	"kassech/backend/pkg/service"
 	"kassech/backend/pkg/utils"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -165,33 +166,39 @@ func (vc *VehicleController) FindVehicleByID(c *gin.Context) {
 func (vc *VehicleController) GetAllVehicles(c *gin.Context) {
 	page, err := utils.GetPageFromQuery(c)
 	if err != nil {
+		log.Printf("Error getting page: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	perPage, err := utils.GetPerPageFromQuery(c)
 	if err != nil {
+		log.Printf("Error getting per page: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	if err != nil || limit < 1 {
+		log.Printf("Invalid limit, defaulting to 10: %v", err)
 		limit = 10
 	}
 
 	search := c.Query("search")
 	ownerID := c.Query("owner_id")
 	typeID := c.Query("type_id")
-	roles, ok := c.Get("role")
-	if !ok {
-		return
-	}
+	// roles, ok := c.Get("role")
+	// if !ok {
+	// 	log.Println("Roles not found in context")
+	// 	return
+	// }
 
-	if utils.Contains(roles.([]string), constants.DriverRoleName) || utils.Contains(roles.([]string), constants.OwnerRoleName) {
-		ownerID = fmt.Sprint(c.Get("userID"))
-	}
+	// if utils.Contains(roles.([]string), constants.DriverRoleName) || utils.Contains(roles.([]string), constants.OwnerRoleName) {
+	// 	ownerID = fmt.Sprint(c.Get("userID"))
+	// }
 
+	log.Printf("Fetching vehicles with search: %s, ownerID: %s, typeID: %s", search, ownerID, typeID)
 	vehicles, total, err := vc.Service.GetAllVehicles(page, perPage, search, ownerID, typeID)
 	if err != nil {
+		log.Printf("Error fetching vehicles: %v", err)
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}

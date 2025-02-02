@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/database"
 	"os"
 	"time"
@@ -132,7 +133,7 @@ func RefreshTokenService(refreshToken string) (string, string, error) {
 	redisKey := "refresh_token:" + fmt.Sprintf("%d", int(userID))
 
 	// Check token in Redis
-	val, redisErr := database.REDIS.Get(ctx, redisKey).Result()
+	val, redisErr := config.RedisClient.Get(ctx, redisKey).Result()
 	if redisErr == nil && val == "active" {
 		// Token is valid in Redis, proceed to generate a new access token
 		accessToken, _, err := GenerateToken(userID, roleStr)
@@ -156,13 +157,13 @@ func RefreshTokenService(refreshToken string) (string, string, error) {
 	}
 
 	// Cache token in Redis for future requests
-	err = database.REDIS.Set(ctx, redisKey, "active", 24*time.Hour).Err()
+	err = config.RedisClient.Set(ctx, redisKey, "active", 24*time.Hour).Err()
 	if err != nil {
 		return "", "", errors.New("failed to cache refresh token in Redis")
 	}
 
 	// Generate a new access token
-	accessToken, _, err := GenerateToken(userID,roleStr)
+	accessToken, _, err := GenerateToken(userID, roleStr)
 	if err != nil {
 		return "", "", err
 	}

@@ -1,0 +1,30 @@
+[
+    {
+      "TypeID": 1,
+      "LicenseNumber": "ABC-123",
+      "VIN": "1HGCM82633A123456",
+      "Make": "Toyota",
+      "Year": 2020,
+      "Color": "Red",
+      "CarPicture": "path/to/car_picture.jpg",
+      "Bollo": "path/to/bollo.jpg",
+      "Insurance": "path/to/insurance.jpg",
+      "Libre": "path/to/libre.jpg",
+      "OwnerID": 1,
+      "Status": "active"
+    },
+    {
+      "TypeID": 2,
+      "LicenseNumber": "XYZ-789",
+      "VIN": "2HGCM82633A654321",
+      "Make": "Honda",
+      "Year": 2022,
+      "Color": "Blue",
+      "CarPicture": "path/to/car_picture2.jpg",
+      "Bollo": "path/to/bollo2.jpg",
+      "Insurance": "path/to/insurance2.jpg",
+      "Libre": "path/to/libre2.jpg",
+      "OwnerID": 2,
+      "Status": "inactive"
+    }
+  ]
