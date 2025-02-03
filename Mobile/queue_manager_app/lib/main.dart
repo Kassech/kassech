@@ -20,7 +20,6 @@ Future<void> main() async {
   await NotificationService().initialize();
   await LocalStorageService().init();
 
-  initializeLocation();
   runApp(
     ProviderScope(
       child: MyApp(),

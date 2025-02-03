@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
 import 'package:queue_manager_app/features/queue/widgets/path_card.dart';
 
 import '../../../core/permissions/app_permissions.dart';
 import '../../../core/permissions/permission_wrapper.dart';
+import '../../../core/services/location_service.dart';
 import '../../../shared/widgets/error_container.dart';
+import '../../location/providers/location_provider.dart';
 import '../provider/path_provider.dart';
 
 class PathContainer extends ConsumerStatefulWidget {
@@ -19,9 +22,38 @@ class _PathContainerState extends ConsumerState<PathContainer> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration.zero, () {
-      ref.read(pathProvider.notifier).fetchPaths();
+    Future.delayed(Duration.zero, () async {
+      final paths = ref.read(pathProvider.notifier).fetchPaths();
+
+      final user = ref.read(authProvider).value;
+
+      if(user != null && !user.permissions.contains(AppPermissions.sendLocation)) {
+        await ref.read(locationNotifierProvider.notifier).startListening(122, 1, user.id);
+      }
+
+      // LocationService locationService = LocationService();
+      //
+      // if (user != null && !user.permissions.contains(AppPermissions.sendLocation)) {
+      //   await locationService.startLocationUpdates(122, 1, user.id);
+      // }
+
+      // if (user != null && !user.permissions.contains(AppPermissions.sendLocation)) {
+      //   final data = {
+      //     'permissions': user.permissions,
+      //     'vehicleId': 122,
+      //     'pathId': 1,
+      //     'userID': user.id,
+      //   };
+      //   ref.read(locationNotifierProvider(data).notifier);
+      // }
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    // LocationService().stopLocationUpdates();
   }
   @override
   Widget build(BuildContext context) {

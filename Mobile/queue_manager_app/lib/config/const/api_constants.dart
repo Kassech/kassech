@@ -1,7 +1,7 @@
 class ApiConstants {
   /// Base url of the API
-  static const String apiBaseUrl = 'http://10.0.2.2:5000/api';
-  static const String socketBaseUrl = 'ws://10.0.2.2:5000/ws';
+  static const String apiBaseUrl = 'http://192.168.114.190:5000/api';
+  static const String socketBaseUrl = 'ws://192.168.114.190:5000/ws';
 
   /// Auth API endpoints
   static const String login = '$apiBaseUrl/login';
@@ -17,4 +17,5 @@ class ApiConstants {
   /// Socket Api endpoints
   static const String passengers = '$socketBaseUrl/passengers';
   static const String status = '$socketBaseUrl/status';
+  static const String location = '$socketBaseUrl/location';
 }
