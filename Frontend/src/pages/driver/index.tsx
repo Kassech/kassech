@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { driverAttachmentSchema, driverSchema } from '@/types/schemas';
 import { z } from 'zod';
 import { DRIVER_ROLE } from '@/constants';
+import DriverForm from '@/sections/Driver/driverForm';
+import DriverAttachmentForm from '@/sections/Driver/driverAttacchmentForm';
 
 export default function DriverPage({
   defaultValues={},
