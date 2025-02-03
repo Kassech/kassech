@@ -1,50 +1,59 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+'use client';
+
+import {
+  useGetTotalUsers,
+  useGetActiveUsers,
+  useGetTotalDrivers,
+  useGetTotalVehicles,
+  useGetActiveVehicles,
+  useGetTotalTravelLogs,
+  useGetTotalRoutes,
+  useGetTotalStations,
+  useGetLoginLogs,
+} from '@/services/dashboardService';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // Importing ShadCN card components
+import ProgresBar from './ProgresBar';
+
 
 export default function Overview() {
+  const totalDrivers = useGetTotalDrivers()?.data;
+  const totalVehicles = useGetTotalVehicles()?.data;
+  const totalTravelLogs = useGetTotalTravelLogs()?.data;
+  const totalRoutes = useGetTotalRoutes()?.data;
+  const totalStations = useGetTotalStations()?.data;
+  const loginLogs = useGetLoginLogs()?.data;
+
+
+
   return (
-    <div className="grid grid-cols-3 gap-4">
-      {[
-        { title: 'Total Drivers', count: 1200 },
-        { title: 'Total Vehicles', count: 900 },
-        { title: 'Total Car Owners', count: 850 },
-        { title: 'Total Stations', count: 150 },
-        { title: 'Total Queue Managers', count: 100 },
-        { title: 'Total Routes', count: 75 },
-      ].map((item) => (
-        <Card key={item.title}>
-          <CardHeader>
-            <CardTitle>{item.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">{item.count}</p>
-          </CardContent>
-        </Card>
-      ))}
-
-      {/* <Card className="col-span-3">
-        <CardHeader>
-          <CardTitle>Active Drivers</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Progress value={75} />
-        </CardContent>
-      </Card>
-
-      <Card className="col-span-3">
-        <CardHeader>
-          <CardTitle>Active Queue Managers</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Progress value={60} />
-        </CardContent>
-      </Card> */}
-        <div className="flex justify-center items-center">
-          <Progress value={75} />
-        </div>
-        <div className="flex justify-center items-center">
-          <Progress value={60} />
-        </div>
+    <div className="space-y-6 p-4">
+      <div className="grid auto-rows-min md:grid-cols-3 gap-4">
+        {[
+          // { title: 'Active Users', value: activeUsers },
+          { title: 'Total Drivers', value: totalDrivers },
+          { title: 'Total Vehicles', value: totalVehicles },
+          // { title: 'Active Vehicles', value: activeVehicles },
+          // { title: 'Total Travel Logs', value: totalTravelLogs },
+          { title: 'Total Routes', value: totalRoutes },
+          { title: 'Total Stations', value: totalStations },
+          // { title: 'Login Logs', value: loginLogs },
+        ].map((item, index) => (
+          <div className="aspect-video rounded-xl bg-muted/50 flex items-center justify-center">
+            <Card key={index} className="w-full h-full flex flex-col">
+              <CardHeader>
+                <CardTitle>{item.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 flex items-center justify-center">
+                {typeof item.value === 'number' ? item.value : 'Loading...'}
+              </CardContent>
+            </Card>
+          </div>
+        ))}
+      </div>
+      <div className=" ">
+        <ProgresBar />
+      </div>
     </div>
   );
 }

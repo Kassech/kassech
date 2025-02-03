@@ -1,7 +1,7 @@
 // pages/Dashboard.jsx
 
 import Header from "@/components/header";
-import Overview from "./overview";
+import Overview from "./Overview";
 import DemandingRoutesGraph from "./DemandingRoutesGraph";
 
 export default function Dashboard() {
