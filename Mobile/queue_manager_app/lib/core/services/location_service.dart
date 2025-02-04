@@ -14,9 +14,10 @@ class LocationService {
   Position? _lastPosition;
   final LocalStorageService _localStorageService = LocalStorageService();
 
-  final int minDistance = 10;
+  final int minDistance = 1;
 
   Future<bool> _checkAndRequestPermissions() async {
+    // Check if location services are enabled
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       bool serviceRequested = await Geolocator.openLocationSettings();
@@ -25,24 +26,32 @@ class LocationService {
       }
     }
 
+    // Check current permission status
     LocationPermission permission = await Geolocator.checkPermission();
+
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return false;
+        return false; // User denied permission
       }
     }
+
     if (permission == LocationPermission.deniedForever) {
+      // The user permanently denied location permission. Direct them to settings.
+      await Geolocator.openAppSettings();
       return false;
     }
+
+    // For foreground services, we need "Always" permission in SDK 34+
     if (permission == LocationPermission.whileInUse) {
-      permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.always) {
-        // return false;
+      if (await Geolocator.requestPermission() != LocationPermission.always) {
+        debugPrint("Warning: Foreground services require 'Always' location access on Android 14+.");
       }
     }
-    return true;
+
+    return permission == LocationPermission.always || permission == LocationPermission.whileInUse;
   }
+
 
   Future<void> startLocationUpdates(
       int? vehicleId, int? pathId, int userId) async {
@@ -63,8 +72,18 @@ class LocationService {
     }
 
     _positionSubscription = Geolocator.getPositionStream(
-      locationSettings: LocationSettings(
-          accuracy: LocationAccuracy.high, distanceFilter: minDistance),
+      locationSettings: AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationText:
+          "Example app will continue to receive your location even when you aren't using it",
+          notificationTitle: "Running in Background",
+          setOngoing: true,
+          enableWakeLock: true,
+          enableWifiLock: true,
+        ),
+        distanceFilter: 1,
+      ),
     ).listen((Position newPosition) {
       if (_lastPosition == null ||
           Geolocator.distanceBetween(

@@ -3,8 +3,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sliding_up_panel2/sliding_up_panel2.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
+import '../../../core/services/api_service.dart';
 import '../../location/providers/location_provider.dart';
+import '../../location/providers/route_provider.dart';
 import '../models/path_model.dart';
 import '../provider/passenger_provider.dart';
 
@@ -22,6 +25,32 @@ class PathDetailsPage extends StatefulWidget {
 
 class _PathDetailsPageState extends State<PathDetailsPage> {
   ScrollController sc = ScrollController();
+  final MapController mapController = MapController();
+
+  Future<List<LatLng>> getRoute(LatLng start, LatLng arrival) async {
+    final response = await ApiService.dio.get(
+      'http://router.project-osrm.org/route/v1/driving/${start.longitude},${start.latitude};${arrival.longitude},${arrival.latitude}?steps=true',
+    );
+
+    if (response.statusCode == 200) {
+      final data = response.data;
+      print('Route data: $data');
+
+      // Extract the polyline string from the API response
+      final polyline = data['routes'][0]['geometry'];
+
+      // Decode the polyline using flutter_polyline_points
+      PolylinePoints polylinePoints = PolylinePoints();
+      List<PointLatLng> result =  polylinePoints.decodePolyline(polyline);
+
+      // Convert the result into LatLng objects
+      List<LatLng> path = result.map((point) => LatLng(point.latitude, point.longitude)).toList();
+
+      return path;
+    } else {
+      throw Exception('Failed to load route');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,45 +62,123 @@ class _PathDetailsPageState extends State<PathDetailsPage> {
       ),
       body: SlidingUpPanel(
         panelBuilder: () => _buildPanel(themeData),
-        body: Consumer(
-          builder: (context, ref, child) {
-            final position = ref.watch(locationNotifierProvider);
-            final location = position?.latitude != null && position?.longitude != null
-                ? LatLng(position!.latitude, position.longitude)
-                : LatLng(widget.path.route.startingLocation.latitude, widget.path.route.startingLocation.longitude);
-            print('Position: $position');
-            return FlutterMap(
-              options: MapOptions(
-                initialCenter: location,
-                initialZoom: 15,
+        body: Consumer(builder: (context, ref, child) {
+          final position = ref.watch(locationNotifierProvider);
+          ref.read(routeNotifierProvider.notifier).fetchRoute(
+              LatLng(widget.path.route.startingLocation.latitude,
+                  widget.path.route.startingLocation.longitude),
+              LatLng(widget.path.route.arrivalLocation.latitude,
+                  widget.path.route.arrivalLocation.longitude));
+          final route = ref.read(routeNotifierProvider);
+          final location =
+              position?.latitude != null && position?.longitude != null
+                  ? LatLng(position!.latitude, position.longitude)
+                  : LatLng(
+                      widget.path.route.startingLocation.latitude,
+                      widget.path.route.startingLocation.longitude,
+                    );
+
+          // Coordinates for the start and arrival points
+          final start = LatLng(
+            widget.path.route.startingLocation.latitude,
+            widget.path.route.startingLocation.longitude,
+          );
+          final arrival = LatLng(
+            widget.path.route.arrivalLocation.latitude,
+            widget.path.route.arrivalLocation.longitude,
+          );
+
+          print('Position: $position');
+
+          // Get the actual path between start and arrival
+          return FlutterMap(
+            mapController: mapController,
+            options: MapOptions(
+              initialCenter: location,
+              initialZoom: 15,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                userAgentPackageName: 'com.example.queue_manager_app',
               ),
-              children: [
-                openStreetMapTileLayer,
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: LatLng(widget.path.route.startingLocation.latitude, widget.path.route.startingLocation.longitude),
-                      child: Icon(
-                        Icons.location_on_sharp,
-                        size: 60,
-                        color: Colors.green[600],
-                      ),
+              MarkerLayer(
+                markers: [
+                  // Start location marker
+                  Marker(
+                    point: start,
+                    child: Icon(
+                      Icons.location_on_sharp,
+                      size: 60,
+                      color: Colors.red.shade700,
                     ),
-                    /// driver location
-                    Marker(
-                      point: LatLng(position?.latitude ?? 0, position?.longitude ?? 0),
-                      child: Icon(
-                        Icons.directions_car,
-                        size: 60,
-                        color: Colors.red[600],
-                      ),
+                  ),
+                  // Arrival location marker
+                  Marker(
+                    point: arrival,
+                    child: Icon(
+                      Icons.location_on_sharp,
+                      size: 60,
+                      color: Colors.blue,
                     ),
-                  ],
-                )
-              ],
-            );
-          }
-        ),
+                  ),
+                  // Driver's location marker
+                  Marker(
+                    point: LatLng(position?.latitude ?? 0,
+                        position?.longitude ?? 0),
+                    child: Icon(
+                      Icons.directions_car,
+                      color: Colors.blue.shade700,
+                    ),
+                  ),
+                ],
+              ),
+              PolylineLayer(
+                polylines: [
+                  // Actual path line between start and arrival
+                  Polyline(
+                    points: route,
+                    strokeWidth: 6.0,
+                    color: Colors.blue,
+                  ),
+                  // Line between the driver and the start location
+                  // Polyline(
+                  //   points: [
+                  //     LatLng(position?.latitude ?? 0,
+                  //         position?.longitude ?? 0),
+                  //     start
+                  //   ],
+                  //   strokeWidth: 4.0,
+                  //   color: Colors.red,
+                  // ),
+                  // // Line between the driver and the arrival location
+                  // Polyline(
+                  //   points: [
+                  //     LatLng(position?.latitude ?? 0,
+                  //         position?.longitude ?? 0),
+                  //     arrival
+                  //   ],
+                  //   strokeWidth: 4.0,
+                  //   color: Colors.green,
+                  // ),
+                ],
+              ),
+            ],
+          );
+        }),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          mapController.move(
+            LatLng(
+              widget.path.route.startingLocation.latitude,
+              widget.path.route.startingLocation.longitude,
+            ),
+            15,
+          );
+        },
+        child: const Icon(Icons.arrow_upward),
       ),
     );
   }
@@ -101,10 +208,14 @@ class _PathDetailsPageState extends State<PathDetailsPage> {
                 spacing: 10,
                 children: [
                   buildPathDetailItem('Route:', widget.path.pathName),
-                  buildPathDetailItem('Distance:', '${widget.path.distanceKm} km'),
-                  buildPathDetailItem('Duration:', widget.path.estimatedTime.toString()),
-                  buildPathDetailItem('Start:', widget.path.route.startingLocation.locationName),
-                  buildPathDetailItem('End:', widget.path.route.arrivalLocation.locationName),
+                  buildPathDetailItem(
+                      'Distance:', '${widget.path.distanceKm} km'),
+                  buildPathDetailItem(
+                      'Duration:', widget.path.estimatedTime.toString()),
+                  buildPathDetailItem('Start:',
+                      widget.path.route.startingLocation.locationName),
+                  buildPathDetailItem(
+                      'End:', widget.path.route.arrivalLocation.locationName),
                   Consumer(
                     builder: (context, ref, child) {
                       ref
@@ -112,7 +223,7 @@ class _PathDetailsPageState extends State<PathDetailsPage> {
                           .getInitialData(widget.pathId);
                       final passengerCount = ref.watch(
                         passengerNotifierProvider.select(
-                                (state) => state[widget.pathId.toString()] ?? 0),
+                            (state) => state[widget.pathId.toString()] ?? 0),
                       );
                       return Row(
                         children: [
@@ -176,11 +287,6 @@ class _PathDetailsPageState extends State<PathDetailsPage> {
     );
   }
 }
-
-TileLayer get openStreetMapTileLayer => TileLayer(
-      urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-      userAgentPackageName: 'com.example.queue_manager_app',
-    );
 
 class ArrowPainter extends CustomPainter {
   final Color color;
