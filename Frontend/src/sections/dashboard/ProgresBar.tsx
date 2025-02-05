@@ -18,9 +18,9 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
-import { useActiveUsers, useActiveVehicles } from '@/services/dashboardService';
+import { useActiveUsers, useActiveVehicles, useTotalUsers, useTotalVehicles } from '@/services/dashboardService';
 const chartData = [
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
+  { browser: 'safari', visitors: 200, fill: 'hsl(187.9 85.7% 53.3%)' },
 ];
 
 const chartConfig = {
@@ -36,6 +36,12 @@ const chartConfig = {
 export default function ProgresBar() {
     const activeUsers = useActiveUsers()?.data;
     const activeVehicles = useActiveVehicles()?.data;
+    const totalUsers = useTotalUsers()?.data;
+    const totalVehicles = useTotalVehicles()?.data;
+    const usersCount = Number(totalUsers);
+const vehiclesCount = Number(totalVehicles);
+
+
   return (
     <div className="flex items-center justify-center gap-10">
       {[
@@ -45,7 +51,18 @@ export default function ProgresBar() {
         <Card key={index} className="flex flex-col">
           <CardHeader className="items-center pb-0">
             <CardTitle>{item.title}</CardTitle>
-            <CardDescription>January - June 2024</CardDescription>
+            <CardDescription>
+              {' '}
+              {new Date().toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+              })}
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex-1 pb-0">
             <ChartContainer
@@ -55,7 +72,11 @@ export default function ProgresBar() {
               <RadialBarChart
                 data={chartData}
                 startAngle={0}
-                endAngle={item.value}
+                endAngle={
+                  item.title === 'Active Users'
+                    ? ((item.value ?? 0) * 360) / usersCount
+                    : ((item.value ?? 0) * 360) / vehiclesCount
+                }
                 innerRadius={80}
                 outerRadius={110}
               >
@@ -63,10 +84,15 @@ export default function ProgresBar() {
                   gridType="circle"
                   radialLines={false}
                   stroke="none"
-                  className="first:fill-muted last:fill-background"
+                  className="first:fill-muted last:fill-background "
                   polarRadius={[86, 74]}
                 />
-                <RadialBar dataKey="visitors" background cornerRadius={10} />
+                <RadialBar
+                  dataKey="visitors"
+                  background
+                  cornerRadius={10}
+                  fill="#3B82F6"
+                />
                 <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
                   <Label
                     content={({ viewBox }) => {
@@ -103,10 +129,16 @@ export default function ProgresBar() {
           </CardContent>
           <CardFooter className="flex-col gap-2 text-sm">
             <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="leading-none text-muted-foreground">
-              Showing total visitors for the last 6 months
+              {item.title === 'Active Users'
+                ? `Currently, there are ${(
+                    ((item.value ?? 0) / usersCount) *
+                    100
+                  ).toFixed(1)}% active users`
+                : `Currently, there are ${(
+                    ((item.value ?? 0) / vehiclesCount) *
+                    100
+                  ).toFixed(1)}% available taxis`}
+              <TrendingUp className="h-4 w-4" />
             </div>
           </CardFooter>
         </Card>
