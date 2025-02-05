@@ -38,3 +38,4 @@ queue_manager_app/build/
 queue_manager_app/build/
 Backend/tmp/main
 Simulation/cache/
+application/storage/logs/*.log
