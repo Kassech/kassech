@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { queueManagerSchema } from '@/types/schemas';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUploader from '@/components/image-uploader';
-import { useCreateUser } from '@/services/userService';
+import { useCreateUser, useUpdateUserData } from '@/services/userService';
 import { QUEUE_MANAGER_ROLE } from '@/constants';
 
 export default function QueueManagerForm({
@@ -34,11 +34,15 @@ export default function QueueManagerForm({
       PhoneNumber: defaultValues?.PhoneNumber || '',
       national_id: defaultValues?.national_id || null,
       Profile: defaultValues?.Profile || null,
-      Role: defaultValues?.Role ?? QUEUE_MANAGER_ROLE.toString(), 
+      Role: defaultValues?.Role ?? QUEUE_MANAGER_ROLE.toString(),
+      ID: defaultValues?.ID || '',
     },
   });
   console.log('profile type',typeof(defaultValues?.Profile))
-  const { mutateAsync } = useCreateUser(); 
+
+  const createUser = useCreateUser();
+  const updateUser = useUpdateUserData();
+
   const onSubmit = async (values: z.infer<typeof queueManagerSchema>) => {
     console.log('Form values:', values); 
 
@@ -49,16 +53,27 @@ export default function QueueManagerForm({
       }
     });
 
+     const isEdit = !!defaultValues?.ID;
     console.log('Prepared form data for mutation:', formData); 
 
     toast.promise(
       (async () => {
-        const data = await mutateAsync(formData);
-        return data;
+        if (isEdit) {
+          return await updateUser.mutateAsync({
+            id: defaultValues.ID!.toString(),
+            userData: formData,
+          });
+        } else {
+          return await createUser.mutateAsync(formData);
+        }
       })(),
       {
-        loading: 'Creating queue manager...',
-        success: 'Queue manager successfully created!',
+        loading: isEdit
+          ? 'Updating Queue Manager...'
+          : 'Creating Queue Manager...',
+        success: isEdit
+          ? 'Queue Manager successfully updated!'
+          : 'Queue Manager successfully created!',
         error: (error) =>
           error?.response?.data?.message || 'Submission failed.',
       }
