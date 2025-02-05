@@ -1,12 +1,12 @@
 import React from 'react';
-import CarOwnerForm from './carOwnerForm';
+import CarOwnerForm from './OwnerForm';
 
-const Vehicle: React.FC = () => {
+const Owner: React.FC = () => {
   return (
     <div>
       <CarOwnerForm />
     </div>
   );
 };
+export default Owner;
 
-export default Vehicle;

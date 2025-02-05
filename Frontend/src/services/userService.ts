@@ -37,8 +37,8 @@ export const useGetUserById = (id: number | null) => {
 
 // Update user data with react-query
 export const useUpdateUserData = () => {
-  return useMutation(async (userData: unknown) => {
-    const response = await api.put('/users', userData);
+  return useMutation(async ({id,userData}:{id: string;userData:unknown}) => {
+    const response = await api.put(`/users/${id}`, userData);
     return response.data;
   });
 };

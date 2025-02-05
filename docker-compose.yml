@@ -12,6 +12,11 @@ services:
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
         - pg_network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 
   # PostgreSQL service
@@ -74,9 +79,12 @@ services:
     networks:
       - pg_network
     depends_on:
-      - db  # Wait for db to start before kassech-backend
-      - redis  # Wait for redis to start before kassech-backend
-      - rabbitmq  # Wait for redis to start before kassech-backend
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     volumes:
       - ./Backend:/app  # Mount the Backend directory to the container
   kassech-frontend:

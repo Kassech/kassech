@@ -3,7 +3,11 @@ import DriverForm from './driverForm';
 import DriverTable from './driverTable';
 
 const Driver: React.FC = () => {
-  return <DriverForm />;
+  const switchTab = (tab: string) => {
+    console.log(`Switching to tab: ${tab}`);
+  };
+
+  return <DriverForm switchTab={switchTab} />;
 };
 
 export default Driver;

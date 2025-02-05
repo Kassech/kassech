@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/features/queue/pages/path_details_page.dart';
-import 'package:queue_manager_app/features/queue/provider/passenger_provider.dart';
-import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
-import 'package:queue_manager_app/features/queue/widgets/notification_modal.dart';
 
 import '../../../config/route/route.dart';
-import '../../../core/permissions/app_permissions.dart';
-import '../../../core/permissions/permission_wrapper.dart';
-import '../../../shared/widgets/error_container.dart';
-import '../models/path_model.dart';
-import '../provider/path_provider.dart';
+import '../widgets/notification_modal.dart';
 import '../widgets/path_container.dart';
 import 'notificaton_page.dart';
 

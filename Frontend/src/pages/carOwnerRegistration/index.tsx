@@ -1,7 +1,5 @@
-// pages/driver/Driver.jsx
-
 import Header from '@/components/header';
-import CarOwnerForm from '@/sections/owner/carOwnerForm';
+import CarOwnerForm from '@/sections/Owner';
 
 export default function OwnerRegistration() {
   const paths = [
