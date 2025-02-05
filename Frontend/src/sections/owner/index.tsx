@@ -9,4 +9,3 @@ const Owner: React.FC = () => {
   );
 };
 export default Owner;
-
