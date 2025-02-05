@@ -1,74 +1,157 @@
 import { useQuery } from 'react-query';
 import api from '../api/axiosInstance';
 
-// Fetch total number of users
-export const useGetTotalUsers = () => {
-  return useQuery<number>('total-users', async () => {
-    const response = await api.get('/analysis/total-users');
-    return response.data;
+interface Log {
+  ID: number;
+  LoginTime: string;
+  IP: string;
+  UserAgent: string;
+  UserID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string | null;
+}
+
+
+
+interface ApiResponse<T> {
+  meta: {
+    status: number;
+    message: string;
+  };
+  data: T;
+}
+
+// Fetch total users
+export const useTotalUsers = () => {
+  return useQuery('totalUsers', async () => {
+    const response = await api.get<ApiResponse<number>>(
+      '/analysis/total-users'
+    );
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+    throw new Error(response.data.meta.message || 'Error fetching total users');
   });
 };
 
-// Fetch total number of active users
-export const useGetActiveUsers = () => {
-  return useQuery<number>('active-users', async () => {
-    const response = await api.get('/analysis/active-users');
-    return response.data;
+// Fetch active users
+export const useActiveUsers = () => {
+  return useQuery('activeUsers', async () => {
+    const response = await api.get<ApiResponse<number>>(
+      '/analysis/active-users'
+    );
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+    throw new Error(
+      response.data.meta.message || 'Error fetching active users'
+    );
   });
 };
 
-// Fetch total number of drivers
-export const useGetTotalDrivers = () => {
-  return useQuery<number>('total-drivers', async () => {
-    const response = await api.get('/analysis/total-drivers');
-    return response.data;
+// Fetch total drivers
+export const useTotalDrivers = () => {
+  return useQuery('totalDrivers', async () => {
+    const response = await api.get<ApiResponse<number>>(
+      '/analysis/total-drivers'
+    );
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+    throw new Error(
+      response.data.meta.message || 'Error fetching total drivers'
+    );
   });
 };
 
-// Fetch total number of vehicles
-export const useGetTotalVehicles = () => {
-  return useQuery<number>('total-vehicles', async () => {
-    const response = await api.get('/analysis/total-vehicles');
-    return response.data;
+// Fetch total vehicles
+export const useTotalVehicles = () => {
+  return useQuery('totalVehicles', async () => {
+    const response = await api.get<ApiResponse<number>>(
+      '/analysis/total-vehicles'
+    );
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+    throw new Error(
+      response.data.meta.message || 'Error fetching total vehicles'
+    );
   });
 };
 
-// Fetch total number of active vehicles
-export const useGetActiveVehicles = () => {
-  return useQuery<number>('active-vehicles', async () => {
-    const response = await api.get('/analysis/active-vehicles');
-    return response.data;
+// Fetch active vehicles
+export const useActiveVehicles = () => {
+  return useQuery('activeVehicles', async () => {
+    const response = await api.get<ApiResponse<number>>(
+      '/analysis/active-vehicles'
+    );
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+    throw new Error(
+      response.data.meta.message || 'Error fetching active vehicles'
+    );
   });
 };
 
-// Fetch total number of travel logs
-export const useGetTotalTravelLogs = () => {
-  return useQuery<number>('total-travel-logs', async () => {
-    const response = await api.get('/analysis/total-travel-logs');
-    return response.data;
+// Fetch total travel logs
+export const useTotalTravelLogs = () => {
+  return useQuery('totalTravelLogs', async () => {
+    const response = await api.get<ApiResponse<number>>(
+      '/analysis/total-travel-logs'
+    );
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+    throw new Error(
+      response.data.meta.message || 'Error fetching total travel logs'
+    );
   });
 };
 
-// Fetch total number of routes
-export const useGetTotalRoutes = () => {
-  return useQuery<number>('total-routes', async () => {
-    const response = await api.get('/analysis/total-routes');
-    return response.data;
+// Fetch total routes
+export const useTotalRoutes = () => {
+  return useQuery('totalRoutes', async () => {
+    const response = await api.get<ApiResponse<number>>(
+      '/analysis/total-routes'
+    );
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+    throw new Error(
+      response.data.meta.message || 'Error fetching total routes'
+    );
   });
 };
 
-// Fetch total number of stations
-export const useGetTotalStations = () => {
-  return useQuery<number>('total-stations', async () => {
-    const response = await api.get('/analysis/total-stations');
-    return response.data;
+// Fetch total stations
+export const useTotalStations = () => {
+  return useQuery('totalStations', async () => {
+    const response = await api.get<ApiResponse<number>>(
+      '/analysis/total-stations'
+    );
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+    throw new Error(
+      response.data.meta.message || 'Error fetching total stations'
+    );
   });
 };
 
-// Fetch total number of login logs
-export const useGetLoginLogs = () => {
-  return useQuery<number>('login-logs', async () => {
-    const response = await api.get('/analysis/login-logs');
-    return response.data;
+// Fetch login logs
+export const useLoginLogs = () => {
+  return useQuery<Log[]>('loginLogs', async () => {
+    const response = await api.get<ApiResponse<Log[]>>('/analysis/login-logs');
+
+    if (response.data.meta.status === 200) {
+      return response.data.data;
+    }
+
+    throw new Error(response.data.meta.message || 'Error fetching login logs');
   });
 };
+
+
+

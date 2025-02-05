@@ -18,7 +18,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
-import { useGetActiveUsers, useGetActiveVehicles } from '@/services/dashboardService';
+import { useActiveUsers, useActiveVehicles } from '@/services/dashboardService';
 const chartData = [
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
 ];
@@ -34,8 +34,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function ProgresBar() {
-    const activeUsers = useGetActiveUsers()?.data;
-    const activeVehicles = useGetActiveVehicles()?.data;
+    const activeUsers = useActiveUsers()?.data;
+    const activeVehicles = useActiveVehicles()?.data;
   return (
     <div className="flex items-center justify-center gap-10">
       {[

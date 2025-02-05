@@ -1,18 +1,14 @@
 // pages/Dashboard.jsx
 
-import Header from "@/components/header";
 import Overview from "./Overview";
 import DemandingRoutesGraph from "./DemandingRoutesGraph";
+import LoginLogsTable from "./LoginLogsTable";
 
 export default function Dashboard() {
-    const paths = [
-        { name: "Home", href: "/" },
-        { name: "Dashboard", href: "/dashboard" },
-      ];
   return (
     <>
-      <Header paths={paths} />
       <Overview />
+      <LoginLogsTable/>
       <DemandingRoutesGraph />
 
     </>

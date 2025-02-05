@@ -48,16 +48,16 @@ export const useCreateDriver = () => {
 };
 
 // Custom Hook to handle Update Driver Mutation
-export const useUpdateDriver = () => {
-  return useCustomMutation(updateDriver, {
-    onSuccess: (data) => {
-      console.log('Driver updated successfully:', data);
-    },
-    onError: (error) => {
-      console.error('Error updating driver:', error);
-    },
-  });
-};
+// export const useUpdateDriver = () => {
+//   return useCustomMutation(updateDriver, {
+//     onSuccess: (data) => {
+//       console.log('Driver updated successfully:', data);
+//     },
+//     onError: (error) => {
+//       console.error('Error updating driver:', error);
+//     },
+//   });
+// };
 
 // Custom Hook to handle Delete Driver Mutation
 export const useDeleteDriver = () => {

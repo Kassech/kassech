@@ -1,5 +1,3 @@
-'use client';
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -17,7 +15,7 @@ import { toast } from 'sonner';
 import { ownerSchema } from '@/types/schemas';
 import ImageUploader from '@/components/image-uploader';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { useCreateUser } from '@/services/userService';
+import { useCreateUser, useUpdateUserData } from '@/services/userService';
 import { OWNER_ROLE } from '@/constants';
 
 export default function CarOwnerForm({
@@ -25,7 +23,8 @@ export default function CarOwnerForm({
 }: {
   defaultValues?: Partial<z.infer<typeof ownerSchema>> | null;
 }) {
-  const { mutateAsync } = useCreateUser(); // Use async mutation
+  const createUser = useCreateUser();
+  const updateUser = useUpdateUserData();
 
   const form = useForm<z.infer<typeof ownerSchema>>({
     resolver: zodResolver(ownerSchema),
@@ -39,6 +38,7 @@ export default function CarOwnerForm({
       national_id: defaultValues?.national_id || null,
       insurance_document: defaultValues?.insurance_document || null,
       Role: OWNER_ROLE.toString(),
+      ID: defaultValues?.ID || '',
     },
   });
 
@@ -58,15 +58,24 @@ export default function CarOwnerForm({
     for (let pair of formData.entries()) {
       console.log(`${pair[0]}:`, pair[1]);
     } // Debug log
+     const isEdit = !!defaultValues?.ID;
 
     toast.promise(
       (async () => {
-        const data = await mutateAsync(formData);
-        return data;
+        if (isEdit) {
+          return await updateUser.mutateAsync({
+            id: defaultValues.ID!.toString(),
+            userData: formData,
+          });
+        } else {
+          return await createUser.mutateAsync(formData);
+        }
       })(),
       {
-        loading: 'Creating owner...',
-        success: 'Owner successfully created!',
+        loading: isEdit ? 'Updating owner...' : 'Creating Owner...',
+        success: isEdit
+          ? 'Car Owner successfully updated!'
+          : 'Car Owner successfully created!',
         error: (error) =>
           error?.response?.data?.message || 'Submission failed.',
       }
@@ -215,5 +224,5 @@ export default function CarOwnerForm({
         </Form>
       </Card>
     </>
-  );
+  )
 }
