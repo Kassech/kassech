@@ -55,7 +55,7 @@ export default function ProgresBar() {
               <RadialBarChart
                 data={chartData}
                 startAngle={0}
-                endAngle={250}
+                endAngle={item.value}
                 innerRadius={80}
                 outerRadius={110}
               >
@@ -83,7 +83,7 @@ export default function ProgresBar() {
                               y={viewBox.cy}
                               className="fill-foreground text-4xl font-bold"
                             >
-                              {chartData[0].visitors.toLocaleString()}
+                              {item.value}
                             </tspan>
                             <tspan
                               x={viewBox.cx}

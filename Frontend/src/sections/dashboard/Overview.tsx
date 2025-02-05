@@ -50,37 +50,37 @@ export default function Overview() {
 console.log('login log',loginLogs)
   const stats = [
     {
-      title: 'Total Drivers',
+      title: '🧑‍✈️ Total Drivers',
       value: totalDrivers,
       loading: loadingDrivers,
       error: errorDrivers,
     },
     {
-      title: 'Total Vehicles',
+      title: '🚗 Total Vehicles',
       value: totalVehicles,
       loading: loadingVehicles,
       error: errorVehicles,
     },
     {
-      title: 'Total Travel Logs',
+      title: '📜 Total Travel Logs',
       value: totalTravelLogs,
       loading: loadingTravelLogs,
       error: errorTravelLogs,
     },
     {
-      title: 'Total Routes',
+      title: '🗺️ Total Routes',
       value: totalRoutes,
       loading: loadingRoutes,
       error: errorRoutes,
     },
     {
-      title: 'Total Stations',
+      title: '🏢 Total Stations',
       value: totalStations,
       loading: loadingStations,
       error: errorStations,
     },
     {
-      title: 'Login Logs',
+      title: '🔑 Login Logs',
       value: loginLogsCount,
       loading: loadingLoginLogs,
       error: errorLoginLogs,
@@ -93,13 +93,13 @@ console.log('login log',loginLogs)
         {stats.map((item, index) => (
           <div
             key={index}
-            className="aspect-video rounded-xl bg-muted/50 flex items-center justify-center"
+            className="aspect-video auto-rows-min rounded-xl bg-muted/50 flex items-center justify-center"
           >
             <Card className="w-full h-full flex flex-col">
               <CardHeader>
                 <CardTitle>{item.title}</CardTitle>
               </CardHeader>
-              <CardContent className="flex-1 flex items-center justify-center">
+              <CardContent className="flex-1 flex items-center justify-center text-5xl text-[#3A7CA5] font-bold">
                 {item.loading ? (
                   <span className="text-gray-500">Loading...</span>
                 ) : item.error ? (
