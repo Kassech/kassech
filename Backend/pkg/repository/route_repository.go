@@ -22,7 +22,7 @@ func (rr *RouteRepository) Create(route *models.Route) (*models.Route, error) {
 // Find a route by ID
 func (rr *RouteRepository) FindByID(routeID uint) (*models.Route, error) {
 	var route models.Route
-	if err := database.DB.First(&route, routeID).Error; err != nil {
+	if err := database.DB.Preload("StationA").Preload("StationB").First(&route, routeID).Error; err != nil {
 		return nil, err
 	}
 	return &route, nil
