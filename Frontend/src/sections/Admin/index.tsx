@@ -1,4 +1,3 @@
-'use client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,7 +15,7 @@ import { toast } from 'sonner';
 import { queueManagerSchema } from '@/types/schemas';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUploader from '@/components/image-uploader';
-import { useCreateUser } from '@/services/userService';
+import { useCreateUser, useUpdateUserData } from '@/services/userService';
 import { ADMIN_ROLE } from '@/constants';
 
 export default function AdminForm({
@@ -34,9 +33,14 @@ export default function AdminForm({
       PhoneNumber: defaultValues?.PhoneNumber || '',
       Profile: defaultValues?.Profile || null,
       Role: defaultValues?.Role ?? ADMIN_ROLE.toString(),
+      national_id: defaultValues?.national_id instanceof File ? defaultValues.national_id : null,
+      ID: defaultValues?.ID || '',
     },
   });
-  const { mutateAsync } = useCreateUser();
+
+  const createUser = useCreateUser();
+  const updateUser = useUpdateUserData();
+
   const onSubmit = async (values: z.infer<typeof queueManagerSchema>) => {
     console.log('Form values:', values);
 
@@ -46,17 +50,26 @@ export default function AdminForm({
         formData.append(key, value);
       }
     });
-
+    
+    const isEdit = !!defaultValues?.ID;
     console.log('Prepared form data for mutation:', formData);
 
     toast.promise(
       (async () => {
-        const data = await mutateAsync(formData);
-        return data;
+        if (isEdit) {
+          return await updateUser.mutateAsync({
+            id: defaultValues.ID!.toString(),
+            userData: formData,
+          });
+        } else {
+          return await createUser.mutateAsync(formData);
+        }
       })(),
       {
-        loading: 'Creating queue manager...',
-        success: 'Queue manager successfully created!',
+        loading: isEdit ? 'Updating User...' : 'Creating User...',
+        success: isEdit
+          ? 'User successfully updated!'
+          : 'User successfully created!',
         error: (error) =>
           error?.response?.data?.message || 'Submission failed.',
       }
@@ -64,16 +77,16 @@ export default function AdminForm({
   };
 
   const { errors } = form.formState;
-  console.log('🚀 ~ QueueManagerForm ~ errors:', errors);
+
   const errorMessage = Object.values(errors)
     .map((error) => error.message)
     .join(', ');
 
   return (
     <Card className="py-8 px-4 w-full mx-2 flex flex-col items-center justify-center">
-      {/* <CardHeader className="w-full flex items-start justify-start"> */}
-        {/* <CardTitle>Edit Admin</CardTitle> */}
-      {/* </CardHeader> */}
+      <CardHeader className="w-full flex items-start justify-start">
+        <CardTitle>Edit Admin</CardTitle>
+      </CardHeader>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

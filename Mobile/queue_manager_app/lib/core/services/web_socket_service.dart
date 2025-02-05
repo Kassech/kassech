@@ -8,7 +8,6 @@ import 'local_storage_service.dart';
 class WebSocketService {
   final String uri;
   late WebSocketChannel _channel;
-  StreamSubscription<dynamic>? _subscription;
   final _storage = LocalStorageService();
 
   WebSocketService(this.uri) {
@@ -23,14 +22,19 @@ class WebSocketService {
   }
 
   Future<void> sendMessage(Map<String, dynamic> message) async {
-    if (_channel.closeCode != null) await _connect();
-    _channel.sink.add(jsonEncode(message));
+    try {
+      if (_channel.closeCode != null) await _connect();
+      print('Sending message: ${jsonEncode(message)}');
+      _channel.sink.add(jsonEncode(message));
+    } on Exception catch (e) {
+      // TODO
+      print('socket exception $e');
+    }
   }
 
   Stream<dynamic> get messages => _channel.stream;
 
   Future<void> dispose() async {
-    await _subscription?.cancel();
     if (_channel.closeCode == null) {
       _channel.sink.close(status.normalClosure);
     }
