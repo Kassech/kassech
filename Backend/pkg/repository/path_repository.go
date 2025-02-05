@@ -18,7 +18,11 @@ func (pr *PathRepository) Create(path *models.Path) (*models.Path, error) {
 // Find a path by ID
 func (pr *PathRepository) FindByID(pathID uint) (*models.Path, error) {
 	var path models.Path
-	if err := database.DB.First(&path, pathID).Error; err != nil {
+	if err := database.DB.
+		Preload("Route").
+		Preload("Route.StationA").
+		Preload("Route.StationB").
+		First(&path, pathID).Error; err != nil {
 		return nil, err
 	}
 	return &path, nil

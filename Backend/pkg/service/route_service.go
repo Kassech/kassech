@@ -36,7 +36,12 @@ func (rs *RouteService) CreateRoute(route *models.Route) (*models.Route, error) 
 		return nil, err
 	}
 
-	return createdRoute, nil
+	station, err := rs.Repo.FindByID(createdRoute.LocationA)
+	if err != nil {
+		return nil, err
+	}
+
+	return station, nil
 }
 
 func (rs *RouteService) DeleteRouteByID(routeID uint) (*models.Route, error) {
