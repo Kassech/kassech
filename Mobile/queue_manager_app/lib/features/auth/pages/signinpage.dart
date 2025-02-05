@@ -57,7 +57,7 @@ class _SignInPageState extends State<SignInPage> {
                   labelText: "Phone Number",
                   validator: (val) =>
                       val.isEmpty ? 'Enter your phone number' : null,
-                  controller: phoneController..text = "+251984852481",
+                  controller: phoneController..text = "+251904400385",
                   hintText: "+251 ___ ___ ___",
                 ),
                 const SizedBox(height: 20),

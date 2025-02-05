@@ -84,7 +84,6 @@ def update(frame):
     return car_icons + route_lines + [info_text]
 
 # Run animation
-ani = animation.FuncAnimation(fig, update, init_func=init,
-                              frames=200, interval=100, blit=True, repeat=False)
+ani = animation.FuncAnimation(fig, update, init_func=init,frames=200, interval=100, blit=True, repeat=False)
 
 plt.show()
