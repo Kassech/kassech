@@ -1,5 +1,3 @@
-// pages/driver/DriverAttachmentForm.tsx
-'use client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,7 +14,7 @@ import { driverSchema, driverAttachmentSchema } from '@/types/schemas'; // Impor
 import ImageUploader from '@/components/image-uploader';
 import { Card } from '@/components/ui/card';
 import { useDriverStore } from '@/store/driverStore';
-import { useCreateUser } from '@/services/userService';
+import { useCreateUser, useUpdateUserData } from '@/services/userService';
 
 export default function DriverAttachmentForm({
   switchTab,
@@ -26,8 +24,8 @@ export default function DriverAttachmentForm({
   defaultValues?: Partial<z.infer<typeof driverAttachmentSchema>> | null;
 }) {
   const { formData, setField } = useDriverStore();
-  const { mutateAsync } = useCreateUser(); // Use the custom mutation hook to create a driver
-
+const createUser = useCreateUser();
+const updateUser = useUpdateUserData();
   const form = useForm<
     z.infer<typeof driverSchema & typeof driverAttachmentSchema>
   >({
@@ -46,7 +44,7 @@ export default function DriverAttachmentForm({
     },
   });
 
-  const onSubmit = (
+  const onSubmit = async (
     values: z.infer<typeof driverSchema & typeof driverAttachmentSchema>
   ) => {
     const formData = new FormData();
@@ -55,17 +53,25 @@ export default function DriverAttachmentForm({
         formData.append(key, value);
       }
     });
-
+    const isEdit = !!defaultValues?.ID;
     console.log(formData);
 
     toast.promise(
       (async () => {
-        const data = await mutateAsync(formData);
-        return data;
+        if (isEdit) {
+          return await updateUser.mutateAsync({
+            id: defaultValues.ID!.toString(),
+            userData: formData,
+          });
+        } else {
+          return await createUser.mutateAsync(formData);
+        }
       })(),
       {
-        loading: 'Creating driver...',
-        success: 'Driver successfully created!',
+        loading: isEdit ? 'Updating driver...' : 'Creating driver...',
+        success: isEdit
+          ? 'Driver successfully updated!'
+          : 'Driver successfully created!',
         error: (error) =>
           error?.response?.data?.message || 'Submission failed.',
       }

@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { driverAttachmentSchema, driverSchema } from '@/types/schemas';
 import { z } from 'zod';
 import { DRIVER_ROLE } from '@/constants';
+import DriverForm from '@/sections/Driver/driverForm';
+import DriverAttachmentForm from '@/sections/Driver/driverAttacchmentForm';
 
 export default function DriverPage({
   defaultValues={},
@@ -52,6 +54,7 @@ export default function DriverPage({
           <TabsContent value="person">
             <DriverForm
               defaultValues={{
+                ID: defaultValues?.ID || '',
                 FirstName: defaultValues?.FirstName || '',
                 LastName: defaultValues?.LastName || '',
                 Email: defaultValues?.Email || '',
@@ -65,6 +68,7 @@ export default function DriverPage({
           <TabsContent value="attachments">
             <DriverAttachmentForm
               defaultValues={{
+                ID: defaultValues?.ID || '',
                 driving_license: defaultValues?.driving_license || null,
                 national_id: defaultValues?.national_id || null,
                 insurance_document: defaultValues?.insurance_document || null,

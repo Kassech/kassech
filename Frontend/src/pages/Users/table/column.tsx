@@ -30,6 +30,7 @@ import VerificationToggle from './verificationToggle';
 import { toast } from 'sonner';
 import DriverPage from '@/pages/driver';
 import AdminForm from '@/sections/Admin';
+import CarOwnerForm from '@/sections/Owner/OwnerForm';
 
 export const columns: ColumnDef<User>[] = [
   {
