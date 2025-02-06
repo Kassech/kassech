@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import api from '../api/axiosInstance';
+import { useTotalUsers } from './dashboardService';
 
 type SearchParams = {
   search?: string;
@@ -7,13 +8,15 @@ type SearchParams = {
   ID?:number;
 };
 
+
 // Fetch user data with react-query
 export const useFetchUserData = ({ search = '', role , ID}: SearchParams = {}) => {
+  const totalUsers = useTotalUsers()?.data;
   return useQuery(['userData', search, role,ID], async () => {
     const params: Record<string, string | number | undefined> = {
       search: search || '',
       page: 1,
-      limit: 5,
+      limit: totalUsers,
       role,
       ID,
     };
