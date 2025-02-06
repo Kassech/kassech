@@ -2,18 +2,23 @@
 
 import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useSearchUsers } from '../../services/carOwnerService';
 import LoadingSpinner from '@/components/loading-spinner';
+import { useFetchUserData } from '@/services/userService';
 
 interface OwnerSearchProps {
   onOwnerSelect: (id: string, name: string) => void;
+}
+
+interface Users {
+  ID: number;
+  FirstName: string;
+  LastName: string;
 }
 
 export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
@@ -22,9 +27,10 @@ export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
   const [value, setValue] = React.useState('');
 
   // Fetch users with role 1 and matching the search term
-  const { data, isLoading, isError } = useSearchUsers({
+  const { data, isLoading, isError } = useFetchUserData({
     search: search || '',
   });
+const userList: Users[] = data?.data || [];
 
   if (!data) {
     return <LoadingSpinner />;
@@ -40,9 +46,10 @@ export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
           className="w-full justify-between"
         >
           {value
-            ? data?.users.find((user) => user.ID.toString() === value)
+            ? data?.data?.find((user: Users) => user.ID.toString() === value)
                 ?.FirstName ?? 'Select Owner'
             : 'Select Owner'}
+
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -64,11 +71,11 @@ export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
               <div className="p-2 text-gray-500">Loading...</div>
             ) : isError ? (
               <div className="p-2 text-red-500">Error fetching users.</div>
-            ) : !data?.users || data.users.length === 0 ? (
+            ) : !data?.data || data.data.length === 0 ? (
               <div className="p-2 text-gray-500">No owner found.</div>
             ) : (
               <ul>
-                {data?.users.map((user) => {
+                {userList.map((user: Users) => {
                   console.log('Rendering User:', user);
                   return (
                     <li
