@@ -77,13 +77,13 @@ func main() {
 
 	// Register HTTP routes
 	r.Static("/uploads", "./uploads")
+
+	// temporary solution for the simulation
 	vehicleRepo := &repository.VehicleRepository{}
-
 	vehicleSvc := &service.VehicleService{Repo: vehicleRepo}
-
 	vehicleCtrl := &controller.VehicleController{Service: vehicleSvc}
-
 	r.GET("/simulation/vehicle", vehicleCtrl.GetAllVehicles) // Get all vehicles
+	// temporary solution for the simulation
 
 	routes.RegisterRoutes(r)
 

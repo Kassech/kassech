@@ -31,9 +31,13 @@ func (us *UserService) CreateUser(user *models.User, role uint) (*models.User, e
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	fmt.Println(user.Password)
+	fmt.Println(string(hashedPassword))
 	if err != nil {
-		return nil, errors.New("failed to hash password")
+		log.Println("Password hashing error:", err)       // Log the specific bcrypt error
+		return nil, errors.New("failed to hash password") // Return a generic error to the user
 	}
+
 	user.Password = string(hashedPassword)
 
 	// Create the user in the database

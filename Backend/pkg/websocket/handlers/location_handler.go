@@ -128,6 +128,8 @@ func (h *LocationHandler) listenForMessages(_ uint, conn *websocket.Conn) {
 				if msg.PathID != nil {
 					go h.subscribeToPath(ctx, *msg.PathID)
 				}
+			case "all": // Add new case for "all" type
+				go h.subscribeToAll(ctx)
 			case "nearby":
 				if msg.Lat != nil && msg.Lon != nil && msg.Radius != nil {
 					go h.subscribeToNearby(ctx, *msg.Lat, *msg.Lon, *msg.Radius)
@@ -191,10 +193,11 @@ func (h *LocationHandler) listenForMessages(_ uint, conn *websocket.Conn) {
 		if err != nil {
 			log.Printf("Error publishing location update: %v", err)
 		}
-
 		// Publish location update to Redis channels for real-time listeners
+		allVehiclesChannel := "all_vehicles"
 		vehicleChannel := "vehicle:" + strconv.Itoa(int(locationMsg.VehicleID))
 		config.RedisClient.Publish(ctx, vehicleChannel, locationData)
+		config.RedisClient.Publish(ctx, allVehiclesChannel, locationData) // New publish
 
 		if locationMsg.PathID != nil {
 			pathChannel := "path:" + strconv.Itoa(int(*locationMsg.PathID))
@@ -258,4 +261,14 @@ func getNearbyVehicles(ctx context.Context, lat, lon, radius float64) ([]uint, e
 		vehicleIDs = append(vehicleIDs, uint(vid))
 	}
 	return vehicleIDs, nil
+}
+func (h *LocationHandler) subscribeToAll(ctx context.Context) {
+	pubsub := config.RedisClient.Subscribe(ctx, "all_vehicles")
+	defer pubsub.Close()
+
+	ch := pubsub.Channel()
+	for msg := range ch {
+		// Send message to write channel for all connected clients
+		h.writeChan <- []byte(msg.Payload)
+	}
 }
