@@ -50,8 +50,8 @@ class ErrorContainer extends StatelessWidget {
             SizedBox(
               child: SvgPicture.asset(
                 errorMessageText.toString().toLowerCase().contains('no internet')
-                    ? Helper.getImagePath('no_internet.svg')
-                    : Helper.getImagePath('something_went_wrong.svg'),
+                    ? Helper.getAssetPath('no_internet.svg')
+                    : Helper.getAssetPath('something_went_wrong.svg'),
                 height: size.height * 0.5,
                 fit: BoxFit.fitWidth,
               ),

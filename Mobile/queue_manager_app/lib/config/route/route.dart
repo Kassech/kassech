@@ -18,7 +18,7 @@ import '../../features/queue/pages/home.dart';
 import '../../features/queue/pages/noRoutesAssigned.dart';
 import '../../features/queue/pages/notificaton_page.dart';
 import '../../features/queue/pages/profile.dart';
-import '../../features/queue/pages/path_details_page.dart';
+import '../../features/location/screens/path_details_page.dart';
 import '../../features/queue/widgets/appDrawer.dart';
 import '../../features/splash/splash.dart';
 import '../../shared/widgets/custom_navigation_bar.dart';
