@@ -21,7 +21,7 @@ services:
 
   # PostgreSQL service
   db:
-    image: postgres:latest
+    image: postgis/postgis:latest
     container_name: postgres-container
     environment:
       POSTGRES_USER: root

@@ -1,0 +1,7 @@
+[
+    {"type_name": "Sedan", "description": "4-door passenger car", "capacity": 5},
+    {"type_name": "SUV", "description": "Sports utility vehicle", "capacity": 7},
+    {"type_name": "Truck", "description": "Commercial transport vehicle", "capacity": 20},
+    {"type_name": "Motorcycle", "description": "Two-wheeled vehicle", "capacity": 1},
+    {"type_name": "Van", "description": "Multi-purpose vehicle", "capacity": 15}
+  ]

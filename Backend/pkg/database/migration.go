@@ -35,8 +35,8 @@ func Migrate(migrationType string) {
 		&models.QueueManagerRoute{},
 		&models.PassengerHistory{},
 		&models.DriverVehicle{},
-		&models.ManualDriverAssignmentHistory{},
-		&models.AutoDriverAssignmentHistory{},
+		&models.DriverAssignmentHistory{},
+		&models.DriverAssignmentLog{},
 		&models.VehicleType{},
 		&models.NotificationToken{},
 		&models.UserSession{},
@@ -68,9 +68,7 @@ func Migrate(migrationType string) {
 		log.Printf("Unknown migration type: %s. Use 'auto' or 'clean'.", migrationType)
 	}
 	DB.Exec(`
-        CREATE INDEX idx_location_gist ON vehicle_gps_logs USING GIST (
-            ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)
-        )
-    `)
+    CREATE INDEX idx_location_gist ON vehicle_gps_logs USING GIST (location);
+`)
 
 }

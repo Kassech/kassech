@@ -1,5 +1,4 @@
 // models/driver.go
-
 package models
 
 import (
@@ -9,14 +8,16 @@ import (
 
 type Driver struct {
 	gorm.Model
-	UserID             uint   `gorm:"not null"`
-	User               User   `gorm:"foreignKey:UserID"` // Link to the User model
-	DriverLicense      string `gorm:"not null"`
-	Status             string
-	DrivingLicensePath string
-	NationalIdPath     string
+	UserID             uint   `gorm:"not null;uniqueIndex"`
+	User               User   `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	DriverLicense      string `gorm:"not null;size:50"`
+	Status             string `gorm:"size:20;default:'pending'"`
+	DrivingLicensePath string `gorm:"not null"`
+	NationalIdPath     string `gorm:"not null"`
 	InsuranceDocPath   string
 	OtherFilePath      string
+	Vehicle            *Vehicle `gorm:"foreignKey:DriverID;constraint:OnDelete:SET NULL"` // One-to-one back reference
+
 }
 
 func (d Driver) Validate() error {

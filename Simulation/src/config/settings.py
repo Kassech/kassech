@@ -2,7 +2,7 @@ import os
 
 # OSMnx configuration
 CACHE_DIR = os.path.join(os.path.expanduser('~'), '.cache/osmnx')
-PLACE_NAME = "Dire Dawa, Ethiopia"
+PLACE_NAME = "Addis Ababa, Ethiopia"
 SIMPLIFY_GRAPH = True
 NETWORK_TYPE = 'drive'
 

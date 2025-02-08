@@ -299,11 +299,6 @@ func (uc *UserController) RefreshToken(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println("accessToken:", accessToken)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
 	// Save the access token to Redis
 	redisKey := "session_token:" + userId
 	storedToken, err := config.RedisClient.Get(c, redisKey).Result()
