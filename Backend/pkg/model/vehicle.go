@@ -11,13 +11,15 @@ type Vehicle struct {
 	Make          string      `gorm:"not null"`
 	Year          uint        `gorm:"not null"`
 	Color         string
-	CarPicture    string `gorm:"type:text"`
-	Bollo         string `gorm:"type:text"`
-	Insurance     string `gorm:"type:text"`
-	Libre         string `gorm:"type:text"`
-	OwnerID       uint   `gorm:"not null"`
-	Status        string `gorm:"size:20;not null;default:'active'"`
-	Owner         User   `gorm:"foreignKey:OwnerID;references:ID"`
+	CarPicture    string  `gorm:"type:text"`
+	Bollo         string  `gorm:"type:text"`
+	Insurance     string  `gorm:"type:text"`
+	Libre         string  `gorm:"type:text"`
+	OwnerID       uint    `gorm:"not null"`
+	Status        string  `gorm:"size:20;not null;default:'active'"`
+	Owner         User    `gorm:"foreignKey:OwnerID;references:ID"`
+	DriverID      *uint   `gorm:"unique"` // One-to-one relation (nullable)
+	Driver        *Driver `gorm:"foreignKey:DriverID;references:ID"`
 }
 
 func (v *Vehicle) SetCarPicture(path string) {

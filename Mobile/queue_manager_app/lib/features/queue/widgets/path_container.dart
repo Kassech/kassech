@@ -27,25 +27,9 @@ class _PathContainerState extends ConsumerState<PathContainer> {
 
       final user = ref.read(authProvider).value;
 
-      if(user != null && !user.permissions.contains(AppPermissions.sendLocation)) {
+      if(user != null && user.permissions.contains(AppPermissions.sendLocation)) {
         await ref.read(locationNotifierProvider.notifier).startListening(122, 1, user.id);
       }
-
-      // LocationService locationService = LocationService();
-      //
-      // if (user != null && !user.permissions.contains(AppPermissions.sendLocation)) {
-      //   await locationService.startLocationUpdates(122, 1, user.id);
-      // }
-
-      // if (user != null && !user.permissions.contains(AppPermissions.sendLocation)) {
-      //   final data = {
-      //     'permissions': user.permissions,
-      //     'vehicleId': 122,
-      //     'pathId': 1,
-      //     'userID': user.id,
-      //   };
-      //   ref.read(locationNotifierProvider(data).notifier);
-      // }
     });
   }
 

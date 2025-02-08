@@ -10,6 +10,7 @@ import (
 )
 
 func RegisterRoutes(r *gin.Engine) {
+
 	// Initialize Repositories
 	userRepo := &repository.UserRepository{}
 	roleRepo := &repository.RoleRepository{}
@@ -25,6 +26,7 @@ func RegisterRoutes(r *gin.Engine) {
 	PathRepo := &repository.PathRepository{}
 	QueueManagerPathRepo := &repository.QueueManagerRouteRepository{}
 	AnalysisRepo := &repository.AnalysisRepository{}
+	DriverDeligationRepo := &repository.DriverDeligationRepository{}
 
 	// Initialize Services
 	userSvc := &service.UserService{Repo: userRepo}
@@ -41,6 +43,7 @@ func RegisterRoutes(r *gin.Engine) {
 	pathSvc := &service.PathService{Repo: PathRepo}
 	queueManagerPathSvc := &service.QueueManagerRouteService{Repo: QueueManagerPathRepo}
 	analysesSvc := &service.AnalysisService{Repo: AnalysisRepo}
+	driverDeligationSvc := &service.DriverDeligationService{Repo: DriverDeligationRepo}
 
 	// Initialize Controllersz
 	userCtrl := &controller.UserController{Service: userSvc, SessionService: sessionService}
@@ -57,6 +60,7 @@ func RegisterRoutes(r *gin.Engine) {
 	pathCtrl := &controller.PathController{Service: pathSvc}
 	queueManagerPathCtrl := &controller.QueueManagerRouteController{Service: queueManagerPathSvc}
 	analysisCtrl := &controller.AnalysisController{Service: analysesSvc}
+	driverDeligationCtrl := &controller.DriverDeligationController{Service: driverDeligationSvc}
 
 	// Group API routes
 	api := r.Group("/api")
@@ -88,6 +92,8 @@ func RegisterRoutes(r *gin.Engine) {
 		locationRoutes(api, locationCtrl) // Register location-related routes
 
 		queueManagerRouteRoutes(api, queueManagerPathCtrl) // Register queue manager path-related routes
+
+		driverDeligationRoutes(api, driverDeligationCtrl) // Register queue manager path-related routes
 
 	}
 }
@@ -254,47 +260,6 @@ func analysisRoutes(api *gin.RouterGroup, ctrl *controller.AnalysisController) {
 		// Total number of login logs
 		analysisApi.GET("/login-logs", ctrl.GetLoginLogs)
 
-		// Total number of vehicle types
-		// analysisApi.GET("/vehicle-types", ctrl.GetVehicleTypes)
-
-		// // Total number of assignments
-		// analysisApi.GET("/total-assignments", ctrl.GetTotalAssignments)
-
-		// // Total number of notifications sent
-		// analysisApi.GET("/total-notifications", ctrl.GetTotalNotifications)
-
-		// // Total number of passenger travel records
-		// analysisApi.GET("/passenger-travel-records", ctrl.GetPassengerTravelRecords)
-
-		// // Average travel distance
-		// analysisApi.GET("/average-travel-distance", ctrl.GetAverageTravelDistance)
-
-		// // Total online users
-		// analysisApi.GET("/online-users", ctrl.GetOnlineUsers)
-
-		// // Total queue managers
-		// analysisApi.GET("/total-queue-managers", ctrl.GetTotalQueueManagers)
-
-		// // Total vehicles assigned to drivers
-		// analysisApi.GET("/assigned-vehicles", ctrl.GetAssignedVehicles)
-
-		// // Total number of unassigned vehicles
-		// analysisApi.GET("/unassigned-vehicles", ctrl.GetUnassignedVehicles)
-
-		// // Total number of notifications per user
-		// analysisApi.GET("/user-notifications/:userID", ctrl.GetUserNotifications)
-
-		// // Total vehicle GPS logs
-		// analysisApi.GET("/vehicle-gps-logs", ctrl.GetVehicleGPSLogs)
-
-		// // Total manual assignments
-		// analysisApi.GET("/manual-assignments", ctrl.GetManualAssignments)
-
-		// // Total auto assignments
-		// analysisApi.GET("/auto-assignments", ctrl.GetAutoAssignments)
-
-		// Most frequently traveled route
-		// analysisApi.GET("/frequent-route", ctrl.GetFrequentRoute)
 	}
 }
 func registerPermissionRoutes(api *gin.RouterGroup, ctrl *controller.PermissionController) {
@@ -345,5 +310,12 @@ func queueManagerRouteRoutes(router *gin.RouterGroup, ctrl *controller.QueueMana
 		routes.GET("/", ctrl.GetAllRoutes)
 		routes.GET("/:id", ctrl.GetRoute)
 		routes.DELETE("/:id", ctrl.DeleteRoute)
+	}
+}
+func driverDeligationRoutes(router *gin.RouterGroup, ctrl *controller.DriverDeligationController) {
+	routes := router.Group("/driver-deligation")
+	{
+		routes.POST("/assign", ctrl.AssignDriver)
+		routes.GET("/active-driver/:vehicleId", ctrl.GetActiveDriver)
 	}
 }

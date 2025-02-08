@@ -1,6 +1,7 @@
 package config
 
 import (
+	"kassech/backend/pkg/event"
 	"log"
 	"os"
 
@@ -8,7 +9,7 @@ import (
 )
 
 var RabbitMQConn *amqp.Connection
-var RabbitMQChannel *amqp.Channel
+var EventEmitter *event.EventEmitter
 
 // InitRabbitMQ initializes the RabbitMQ connection and declares the queue.
 func InitRabbitMQ() {
@@ -25,29 +26,11 @@ func InitRabbitMQ() {
 		log.Fatal("Failed to connect to RabbitMQ:", err)
 	}
 
-	// Open a channel
-	RabbitMQChannel, err = RabbitMQConn.Channel()
+	log.Println("RabbitMQ initialized")
+
+	conn, err := RabbitMQConn.Channel()
 	if err != nil {
 		log.Fatal("Failed to open RabbitMQ channel:", err)
 	}
-
-	// Declare a queue
-	queueName := os.Getenv("RABBITMQ_QUEUE") // Default: "location_updates"
-	if queueName == "" {
-		queueName = "location_updates" // Default queue name
-	}
-
-	_, err = RabbitMQChannel.QueueDeclare(
-		queueName,
-		true,  // Durable
-		false, // Auto-delete
-		false, // Exclusive
-		false, // No-wait
-		nil,   // Arguments
-	)
-	if err != nil {
-		log.Fatal("Failed to declare queue:", err)
-	}
-
-	log.Println("RabbitMQ initialized")
+	EventEmitter = event.NewEventEmitter(conn)
 }

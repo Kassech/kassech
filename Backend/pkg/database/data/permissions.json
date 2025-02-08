@@ -1,0 +1,33 @@
+[
+    {
+        "permission_name": "ViewProfile",
+        "description": "Permission to view profile",
+        "roles": [
+            "Admin",
+            "Driver",
+            "QueueManager",
+            "CustomerService",
+            "Owner"
+        ]
+    },
+    {
+      "permission_name": "CreateUser",
+      "description": "Permission to create users",
+      "roles": ["Admin"]
+    },
+    {
+      "permission_name": "DeleteUser",
+      "description": "Permission to delete users",
+      "roles": ["Admin"]
+    },
+    {
+      "permission_name": "UpdateUser",
+      "description": "Permission to update users",
+      "roles": ["Admin"]
+    },
+    {
+      "permission_name": "ViewReports",
+      "description": "Permission to view reports",
+      "roles": ["Admin", "Driver"]
+    }
+  ]

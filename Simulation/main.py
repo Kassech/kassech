@@ -1,103 +1,116 @@
+# main.py (optimized)
 import asyncio
 import json
 import sys
 import os
+import time
+import logging
 from matplotlib import pyplot as plt
-import networkx as nx
-
 import aiohttp
 import websockets
+import osmnx as ox
 
-# Add the src directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
-import osmnx as ox
 from services.graph_loader import GraphLoader
 from models.car import Car
 from visualization.animator import Animator
 from utils.logger import configure_logger
-import time
-import logging
 
-VEHICLES_API = "http://localhost:5000/simulation/vehicle/"
-WS_URL = "ws://localhost:5000/ws/location?test_id={}"  # WebSocket URL
+VEHICLES_API = "http://localhost:5000/simulation/vehicle?limit=100&per_page=100"
+WS_URL = "ws://localhost:5000/ws/location?test_id={}"
+WS_PASSENGER_URL = "ws://localhost:5000/ws/passenger?test_id={}"
+ROUTES_API = "http://localhost:5000/simulation/path?limit=100&per_page=100"
 
 async def fetch_vehicles():
-    """Fetch vehicle data from API"""
-    logger = logging.getLogger(__name__)
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(VEHICLES_API) as response:
                 data = await response.json()
-                logger.debug("Fetched vehicle data: %s", data)
                 return data.get("data", [])
         except Exception as e:
-            logger.error("Error fetching vehicles: %s", e)
+            logging.getLogger(__name__).error(f"Error fetching vehicles: {e}")
             return []
 
-async def run_animation(animator, cars):
-    """High-frequency animation updates"""
-    animator.init_cars(cars)
-    plt.show(block=False)
-
-    try:
-        while True:
-            # Update positions continuously
-            for car in cars:
-                car.update_position()
-
-            animator.update_display()
-            await asyncio.sleep(0.05)  # ~20 FPS
-    except asyncio.CancelledError:
-        animator.close()
+async def fetch_routes():
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(ROUTES_API) as response:
+                data = await response.json()
+                return data.get("data", [])
+        except Exception as e:
+            logging.getLogger(__name__).error(f"Error fetching routes: {e}")
+            return []
 
 async def send_location(car):
-    """Send current position without modifying it"""
-    async with websockets.connect(WS_URL.format(car.vehicle_id)) as ws:
+    while True:
+        try:
+            async with websockets.connect(WS_URL.format(car.vehicle_id), ping_interval=10, ping_timeout=20) as ws:
+                while True:
+                    if car.current_position:
+                        await ws.send(json.dumps({
+                            'vehicle_id': car.vehicle_id,
+                            'lat': car.current_position[1],
+                            'lon': car.current_position[0],
+                            'created_at': time.time()
+                        }))
+                    await asyncio.sleep(1)
+        except (websockets.exceptions.ConnectionClosed, asyncio.CancelledError) as e:
+            logging.error(f"WebSocket closed for vehicle {car.vehicle_id}: {e}")
+            await asyncio.sleep(5)  # Wait before reconnecting
+
+async def listen_destination(car):
+    dest_ws_url = f"ws://localhost:5000/ws/destination?test_id={car.vehicle_id}"
+    async with websockets.connect(dest_ws_url) as ws:
         while True:
-            if car.current_position:
-                await ws.send(json.dumps({
-                    'vehicle_id': car.vehicle_id,
-                    'lat': car.current_position[1],
-                    'lon': car.current_position[0],
-                    'speed': car.speed,
-                    'created_at': time.time()
-                }))
-            await asyncio.sleep(1)  # 1 second updates
+            message = await ws.recv()
+            data = json.loads(message)
+            if "station_a" in data and "station_b" in data:
+                car.set_destination(data["station_a"], data["station_b"])
+            await asyncio.sleep(1)
+
+# main.py (updated)
 async def main():
     logger = configure_logger()
     try:
-        # Load graph data
+        # Initialize graph loader
+        loader = GraphLoader()
+
+        # Load graph with timing
         logger.info("Loading graph data...")
         start_time = time.time()
-        loader = GraphLoader()
         graph = loader.load_graph()
-        nodes, edges = ox.graph_to_gdfs(graph)
-        logger.info(f"Graph loaded in {time.time()-start_time:.2f}s. Nodes: {len(nodes)}, Edges: {len(edges)}")
+        logger.info(f"Graph loaded in {time.time()-start_time:.2f}s")
 
-        # Fetch vehicles
-        logger.info("Fetching vehicle data...")
-        vehicles = await fetch_vehicles()
-        logger.info(f"Fetched {len(vehicles)} vehicles")
+        # Convert graph to GeoDataFrames
+        _, edges = ox.graph_to_gdfs(graph)  # We only need edges for visualization
 
+        # Parallel data fetching
+        logger.info("Fetching initial data...")
+        vehicles, routes_data = await asyncio.gather(
+            fetch_vehicles(),
+            fetch_routes()
+        )
+
+        # Initialize components
         cars = [Car(graph, vehicle_data) for vehicle_data in vehicles]
-        animator = Animator(edges)
-        logger.info("Cars and animator initialized")
+        animator = Animator(edges, routes_data)  # Pass only edges and routes_data
 
-        # Create tasks
-        ws_tasks = [asyncio.create_task(send_location(car)) for car in cars]
-        animation_task = asyncio.create_task(animator.run_animation(cars))
-        logger.info("Tasks created for sending locations and running animation")
+        # Create async tasks
+        tasks = [
+            *[asyncio.create_task(send_location(car)) for car in cars],
+            *[asyncio.create_task(listen_destination(car)) for car in cars],
+            asyncio.create_task(animator.run_animation(cars))
+        ]
 
-        try:
-            await asyncio.gather(*ws_tasks, animation_task)
-        except KeyboardInterrupt:
-            logger.warning("Keyboard interrupt received, closing animator")
-            animator.close()
+        await asyncio.gather(*tasks)
+    except KeyboardInterrupt:
+        logger.info("Simulation stopped by user")
     except Exception as e:
-        logger.error(f"Exception during task execution: {str(e)}")
-        logger.error(f"Error in main execution: {str(e)}")
-
+        logger.error(f"Critical error: {e}", exc_info=True)
+    finally:
+        if 'animator' in locals():
+            animator.close()
 
 if __name__ == "__main__":
     asyncio.run(main())

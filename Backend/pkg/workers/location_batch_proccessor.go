@@ -26,16 +26,18 @@ func FlushLocations() {
 	if len(LocationBuffer) == 0 {
 		return
 	}
+
 	// Build SQL query
 	var queryBuilder strings.Builder
-	queryBuilder.WriteString("INSERT INTO vehicle_gps_logs (vehicle_id, latitude, longitude, path_id, created_at) VALUES ")
+	queryBuilder.WriteString("INSERT INTO vehicle_gps_logs (vehicle_id, location, path_id, created_at) VALUES ")
 
 	values := []interface{}{}
 	placeholders := []string{}
 
 	for i, loc := range LocationBuffer {
-		placeholders = append(placeholders, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)", 5*i+1, 5*i+2, 5*i+3, 5*i+4, 5*i+5))
-		values = append(values, loc.VehicleID, loc.Latitude, loc.Longitude, loc.PathID, loc.CreatedAt)
+		// ST_GeomFromText('POINT(lon lat)', 4326) converts lat/lon into PostGIS Point
+		placeholders = append(placeholders, fmt.Sprintf("($%d, ST_GeomFromText($%d, 4326), $%d, $%d)", 4*i+1, 4*i+2, 4*i+3, 4*i+4))
+		values = append(values, loc.VehicleID, fmt.Sprintf("POINT(%f %f)", loc.Longitude, loc.Latitude), loc.PathID, loc.CreatedAt)
 	}
 
 	queryBuilder.WriteString(strings.Join(placeholders, ", "))

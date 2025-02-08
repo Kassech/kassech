@@ -24,6 +24,10 @@ class LocationNotifier extends StateNotifier<Position?> {
     });
   }
 
+  updateLocation(Position position) {
+    state = position;
+  }
+
   void stopListening() {
     _subscription?.cancel();
     _repository.stopTracking();

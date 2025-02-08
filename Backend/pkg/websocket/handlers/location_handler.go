@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 
 	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/websocket/middleware"
@@ -15,7 +16,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
-	"github.com/streadway/amqp"
 )
 
 type LocationHandler struct {
@@ -23,6 +23,7 @@ type LocationHandler struct {
 	locationService *service.LocationService
 	auth            *middleware.WebSocketAuth
 	writeChan       chan []byte // Channel for serializing WebSocket writes
+	closeOnce       sync.Once
 }
 
 type ClientMessage struct {
@@ -85,9 +86,10 @@ func (h *LocationHandler) HandleConnection(w http.ResponseWriter, r *http.Reques
 func (h *LocationHandler) cleanupConnection(userID uint, conn *websocket.Conn) {
 	conn.Close()
 	h.connManager.RemoveConnection(userID, conn)
-	close(h.writeChan) // Close the write channel
+	h.closeOnce.Do(func() {
+		close(h.writeChan)
+	})
 }
-
 func (h *LocationHandler) handleWrites(conn *websocket.Conn) {
 	for message := range h.writeChan {
 		err := conn.WriteMessage(websocket.TextMessage, message)
@@ -184,12 +186,7 @@ func (h *LocationHandler) listenForMessages(_ uint, conn *websocket.Conn) {
 		if err != nil {
 			log.Printf("Error updating GEO set: %v", err)
 		}
-
-		// Publish to RabbitMQ for DB persistence
-		err = config.RabbitMQChannel.Publish("", "location_updates", false, false, amqp.Publishing{
-			ContentType: "application/json",
-			Body:        message,
-		})
+		err = config.EventEmitter.Emit("location_updates", locationData)
 		if err != nil {
 			log.Printf("Error publishing location update: %v", err)
 		}

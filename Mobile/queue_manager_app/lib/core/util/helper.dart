@@ -1,5 +1,5 @@
 class Helper {
-  static getImagePath(String image) {
+  static getAssetPath(String image) {
     return 'assets/$image';
   }
 }
