@@ -1,29 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import api from '../api/axiosInstance';
+import { Vehicle } from '@/types/vehicle';
 
-type Vehicle = {
-  id: number;
-  vin: string;
-  make: string;
-  year: string;
-  color: string;
-  carType: string;
-  carPicture: File | null;
-  bollo: File | null;
-  insurance: File | null;
-  libre: File | null;
-  ownerId: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-// Fetch all vehicles
-export const useGetAllVehicles = () => {
-  return useQuery<Vehicle[]>('vehicles', async () => {
-    const response = await api.get('/vehicles/');
-    return response.data;
+export const useGetAllVehicles = (search?: string) => {
+  return useQuery(['vehicleData', search], async () => {
+    const response = await api.get('/vehicles/', {
+      params: search ? { search } : {},
+    });
+    console.log('from the function',response); 
+    return response.data; 
   });
 };
+
 
 // Fetch a vehicle by ID
 export const useGetVehicleById = (id: number | null) => {
