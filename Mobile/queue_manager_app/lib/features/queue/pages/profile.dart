@@ -40,6 +40,7 @@ class ProfilePage extends ConsumerWidget {
                 ProfileField(label: 'Name', value: '${user?.firstName} ${user?.lastName}'),
                 ProfileField(label: 'Phone', value: user?.phoneNumber ?? 'N/A'),
                 ProfileField(label: 'Email', value: user?.email ?? 'N/A'),
+                ProfileField(label: 'Role', value: user?.roles.first ?? 'N/A'),
                 // ProfileField(label: 'Vehicle Type', value: user?.firstName ?? 'N/A'),
                 // ProfileField(label: 'License Plate', value: user?.firstName ?? 'N/A'),
                 ElevatedButton(

@@ -10,14 +10,23 @@ import (
 	"gorm.io/gorm"
 )
 
+// VehicleGPSLog stores GPS coordinates using PostgreSQL's PostGIS extension
 type VehicleGPSLog struct {
 	gorm.Model
 	VehicleID uint    `gorm:"not null" validate:"required" json:"vehicle_id"`
-	Latitude  float64 `gorm:"not null" validate:"required,gt=0,lt=90" json:"lat"`
-	Longitude float64 `gorm:"not null" validate:"required,gt=-180,lt=180" json:"lon"`
+	Latitude  float64 `gorm:"-" json:"lat"`                       // Ignored in DB, used for JSON
+	Longitude float64 `gorm:"-" json:"lon"`                       // Ignored in DB, used for JSON
+	Location  string  `gorm:"type:geometry(Point,4326);not null"` // Stores lat/lon as PG geo data
 	PathID    uint    `validate:"omitempty" json:"path_id,omitempty"`
 }
 
+// BeforeCreate hook to store lat/lon as PostGIS POINT
+func (v *VehicleGPSLog) BeforeCreate(tx *gorm.DB) error {
+	v.Location = fmt.Sprintf("SRID=4326;POINT(%f %f)", v.Longitude, v.Latitude)
+	return nil
+}
+
+// UnmarshalJSON to handle timestamps
 func (v *VehicleGPSLog) UnmarshalJSON(data []byte) error {
 	type Alias VehicleGPSLog
 	aux := &struct {
@@ -33,7 +42,6 @@ func (v *VehicleGPSLog) UnmarshalJSON(data []byte) error {
 
 	switch t := aux.CreatedAt.(type) {
 	case string:
-		// Handle string timestamps like "1709464702.123"
 		ts, err := strconv.ParseFloat(t, 64)
 		if err != nil {
 			return fmt.Errorf("invalid timestamp format: %v", err)
@@ -42,7 +50,6 @@ func (v *VehicleGPSLog) UnmarshalJSON(data []byte) error {
 		nsec := int64((ts - float64(sec)) * 1e9)
 		v.CreatedAt = time.Unix(sec, nsec).UTC()
 	case float64:
-		// Handle numeric timestamps directly (e.g., 1709464702.123)
 		sec := int64(t)
 		nsec := int64((t - float64(sec)) * 1e9)
 		v.CreatedAt = time.Unix(sec, nsec).UTC()
@@ -53,6 +60,7 @@ func (v *VehicleGPSLog) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Validate function
 func (v *VehicleGPSLog) Validate() error {
 	return validator.New().Struct(v)
 }

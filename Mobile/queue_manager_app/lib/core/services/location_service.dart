@@ -14,7 +14,7 @@ class LocationService {
   Position? _lastPosition;
   final LocalStorageService _localStorageService = LocalStorageService();
 
-  final int minDistance = 1;
+  final int minDistance = 50;
 
   Future<bool> _checkAndRequestPermissions() async {
     // Check if location services are enabled
@@ -45,39 +45,40 @@ class LocationService {
     // For foreground services, we need "Always" permission in SDK 34+
     if (permission == LocationPermission.whileInUse) {
       if (await Geolocator.requestPermission() != LocationPermission.always) {
-        debugPrint("Warning: Foreground services require 'Always' location access on Android 14+.");
+        debugPrint(
+            "Warning: Foreground services require 'Always' location access on Android 14+.");
       }
     }
 
-    return permission == LocationPermission.always || permission == LocationPermission.whileInUse;
+    return permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse;
   }
-
 
   Future<void> startLocationUpdates(
       int? vehicleId, int? pathId, int userId) async {
     if (!await _checkAndRequestPermissions()) {
-      print('Location permissions are not granted');
       throw Exception('Location permissions are not granted');
     }
 
     final token = _localStorageService.getToken();
 
-    print('Starting location updates');
     try {
       _channel = WebSocketChannel.connect(
         Uri.parse('${ApiConstants.location}?test_id=$userId'),
       );
     } catch (e) {
-      print('Error connecting to WebSocket: $e');
+      if (kDebugMode) {
+        print('Error connecting to WebSocket: $e');
+      }
     }
 
     _positionSubscription = Geolocator.getPositionStream(
       locationSettings: AndroidSettings(
         accuracy: LocationAccuracy.high,
         foregroundNotificationConfig: const ForegroundNotificationConfig(
-          notificationText:
-          "Example app will continue to receive your location even when you aren't using it",
-          notificationTitle: "Running in Background",
+          /// write a descriptive notification text and title
+          notificationTitle: 'Location Service',
+          notificationText: 'Location service is running',
           setOngoing: true,
           enableWakeLock: true,
           enableWifiLock: true,
@@ -93,7 +94,6 @@ class LocationService {
                 newPosition.longitude,
               ) >=
               minDistance) {
-        print('Location updated: $newPosition, $_lastPosition}');
         _lastPosition = newPosition;
 
         final data = jsonEncode({
@@ -107,7 +107,9 @@ class LocationService {
         try {
           _channel?.sink.add(data);
         } catch (e) {
-          print('Error sending location data: $e');
+          if (kDebugMode) {
+            print('Error sending location data: $e');
+          }
         }
       }
     }, onError: (error) {

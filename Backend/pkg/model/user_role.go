@@ -7,8 +7,8 @@ import (
 
 type UserRole struct {
 	gorm.Model
-	UserID uint `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:UserID;references:ID" validate:"required"`
-	RoleID uint `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:RoleID;references:ID" validate:"required"`
+	UserID uint `validate:"required"`
+	RoleID uint `validate:"required"`
 }
 
 // Validate method for UserRole

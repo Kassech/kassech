@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/core/permissions/permission_wrapper.dart';
 
+import '../../../core/permissions/app_permissions.dart';
 import '../models/path_model.dart';
-import '../pages/path_details_page.dart';
+import '../../location/screens/path_details_page.dart';
 import '../provider/passenger_provider.dart';
 
 class PathCard extends StatelessWidget {
@@ -92,36 +94,39 @@ class PathCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Consumer(
-                        builder: (context, ref, child) {
-                          ref
-                              .watch(passengerNotifierProvider.notifier)
-                              .getInitialData(path.id);
-                          final passengerCount = ref.watch(
-                            passengerNotifierProvider.select(
-                                (state) => state[path.id.toString()] ?? 0),
-                          );
-                          return Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove),
-                                onPressed: () => ref
-                                    .read(passengerNotifierProvider.notifier)
-                                    .updateCount(path.id.toString(), -1),
-                              ),
-                              Text(
-                                '$passengerCount',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: () => ref
-                                    .read(passengerNotifierProvider.notifier)
-                                    .updateCount(path.id.toString(), 1),
-                              ),
-                            ],
-                          );
-                        },
+                      PermissionWrapper(
+                        requiredPermission: AppPermissions.manageQueue,
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            ref
+                                .watch(passengerNotifierProvider.notifier)
+                                .getInitialData(path.id);
+                            final passengerCount = ref.watch(
+                              passengerNotifierProvider.select(
+                                  (state) => state[path.id.toString()] ?? 0),
+                            );
+                            return Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () => ref
+                                      .read(passengerNotifierProvider.notifier)
+                                      .updateCount(path.id.toString(), -1),
+                                ),
+                                Text(
+                                  '$passengerCount',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () => ref
+                                      .read(passengerNotifierProvider.notifier)
+                                      .updateCount(path.id.toString(), 1),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(

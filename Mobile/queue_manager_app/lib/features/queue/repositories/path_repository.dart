@@ -47,4 +47,19 @@ class PathRepository {
       rethrow;
     }
   }
+
+  /// fetch stream of paths
+  Stream<List<PathModel>> fetchPathForDriver() async* {
+    try {
+      final response =
+          await dio.get(ApiConstants.path, options: Options(headers: {}));
+      yield (response.data['data'] as List)
+          .map((path) => PathModel.fromJson(path))
+          .toList();
+    } on DioException catch (_) {
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

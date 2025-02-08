@@ -176,10 +176,10 @@ func (vc *VehicleController) GetAllVehicles(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "100"))
 	if err != nil || limit < 1 {
 		log.Printf("Invalid limit, defaulting to 10: %v", err)
-		limit = 10
+		limit = 100
 	}
 
 	search := c.Query("search")

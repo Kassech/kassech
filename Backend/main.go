@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/consumer"
+	"kassech/backend/pkg/consumer/handlers"
 	"kassech/backend/pkg/controller"
 	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/repository"
@@ -47,12 +48,12 @@ func main() {
 	config.InitRedis()
 	config.InitRabbitMQ()
 	workers.StartBatchFlusher()
+	workers.StartLogBatchFlusher()
 
 	// Start consumers
-	queues := []string{"location_updates"}
-	for _, queue := range queues {
-		go consumer.ConsumeQueue(config.RabbitMQChannel, queue)
-	}
+	go consumer.ConsumeQueue(config.RabbitMQConn, "logs", handlers.HandleLogEvent)
+	go consumer.ConsumeQueue(config.RabbitMQConn, "location_updates", handlers.HandleLocationMessage)
+
 	// Run migrations
 	scripts.HandleScriptCommands()
 
@@ -82,7 +83,12 @@ func main() {
 	vehicleRepo := &repository.VehicleRepository{}
 	vehicleSvc := &service.VehicleService{Repo: vehicleRepo}
 	vehicleCtrl := &controller.VehicleController{Service: vehicleSvc}
+	PathRepo := &repository.PathRepository{}
+	pathSvc := &service.PathService{Repo: PathRepo}
+	pathCtrl := &controller.PathController{Service: pathSvc}
+
 	r.GET("/simulation/vehicle", vehicleCtrl.GetAllVehicles) // Get all vehicles
+	r.GET("/simulation/path", pathCtrl.GetAllPaths)          // Get all vehicles
 	// temporary solution for the simulation
 
 	routes.RegisterRoutes(r)

@@ -43,13 +43,27 @@ func (cm *ConnectionManager) RemoveConnection(userID uint, conn *websocket.Conn)
 func (cm *ConnectionManager) Broadcast(message []byte) {
 	cm.mu.RLock()
 	defer cm.mu.RUnlock()
-	fmt.Println("Current connections:", cm.connections)
 	for userID, conns := range cm.connections {
 		for _, conn := range conns {
 			if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 				fmt.Printf("[DEBUG] Failed to send message to user %d: %v\n", userID, err)
 				cm.RemoveConnection(userID, conn)
 			}
+		}
+	}
+}
+
+func (cm *ConnectionManager) SendToUser(userID uint, message []byte) {
+	cm.mu.RLock()
+	conns, exists := cm.connections[userID]
+	cm.mu.RUnlock()
+	if !exists {
+		return
+	}
+	for _, conn := range conns {
+		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
+			fmt.Printf("Failed to send message to user %d: %v\n", userID, err)
+			cm.RemoveConnection(userID, conn)
 		}
 	}
 }

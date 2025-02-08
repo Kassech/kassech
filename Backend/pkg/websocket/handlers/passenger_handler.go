@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
 	"kassech/backend/pkg/websocket/middleware"
 	"kassech/backend/pkg/websocket/server"
@@ -17,6 +18,9 @@ type PassengerHandler struct {
 	connManager      *server.ConnectionManager
 	passengerService *service.PassengerService
 	auth             *middleware.WebSocketAuth
+	writeChan        chan []byte // Channel for serializing WebSocket writes
+	closeOnce        sync.Once   // Ensures writeChan is closed only once
+
 }
 
 func NewPassengerHandler(
@@ -28,6 +32,7 @@ func NewPassengerHandler(
 		connManager:      connManager,
 		passengerService: passengerService,
 		auth:             auth,
+		writeChan:        make(chan []byte, 100), // Initialize writeChan
 	}
 }
 
@@ -57,7 +62,10 @@ func (h *PassengerHandler) HandleConnection(w http.ResponseWriter, r *http.Reque
 
 func (h *PassengerHandler) cleanupConnection(userID uint, conn *websocket.Conn) {
 	conn.Close()
-	h.connManager.RemoveConnection(userID,conn)
+	h.connManager.RemoveConnection(userID, conn)
+	h.closeOnce.Do(func() {
+		close(h.writeChan) // Close the write channel
+	})
 }
 
 func (h *PassengerHandler) listenForMessages(userID uint, conn *websocket.Conn) {

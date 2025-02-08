@@ -15,21 +15,31 @@ func (rr *VehicleRepository) Create(vehicle *models.Vehicle) (*models.Vehicle, e
 	return vehicle, nil
 }
 
-// Find a vehicle by ID
-func (rr *VehicleRepository) FindByID(roleID uint) (*models.Vehicle, error) {
+// Find a vehicle by ID with active driver
+func (rr *VehicleRepository) FindByID(vehicleID uint) (*models.Vehicle, error) {
 	var vehicle models.Vehicle
-	if err := database.DB.Preload("Owner").Preload("Type").First(&vehicle, roleID).Error; err != nil {
+	err := database.DB.
+		Preload("Owner").
+		Preload("Type").
+		Preload("Driver.User").
+		First(&vehicle, vehicleID).Error
+
+	if err != nil {
 		return nil, err
 	}
 	return &vehicle, nil
 }
 
-// GetAll a vehicle by ID
+// GetAll vehicles with optional filters and active drivers
 func (rr *VehicleRepository) GetAll(page, perPage int, search, ownerID, typeID string) ([]models.Vehicle, int64, error) {
 	var vehicles []models.Vehicle
 	var total int64
 
-	query := database.DB.Preload("Owner").Preload("Type").Model(&models.Vehicle{})
+	query := database.DB.
+		Preload("Owner").
+		Preload("Type").
+		Preload("Driver.User").
+		Model(&models.Vehicle{})
 
 	if search != "" {
 		query = query.Where("license_number ILIKE ? OR vin ILIKE ?", "%"+search+"%", "%"+search+"%")
@@ -43,53 +53,41 @@ func (rr *VehicleRepository) GetAll(page, perPage int, search, ownerID, typeID s
 		query = query.Where("type_id = ?", typeID)
 	}
 
-	err := query.Count(&total).Error
-	if err != nil {
+	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
-	err = query.Offset((page - 1) * perPage).Limit(perPage).Find(&vehicles).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return vehicles, total, nil
+	err := query.Offset((page - 1) * perPage).Limit(perPage).Find(&vehicles).Error
+	return vehicles, total, err
 }
 
 // Update an existing vehicle by ID
-func (rr *VehicleRepository) Update(vehicle *models.Vehicle, roleID uint) (*models.Vehicle, error) {
-	// Check if the vehicle exists
-	existingRole, err := rr.FindByID(roleID)
+func (rr *VehicleRepository) Update(vehicle *models.Vehicle, vehicleID uint) (*models.Vehicle, error) {
+	existingVehicle, err := rr.FindByID(vehicleID)
 	if err != nil {
 		return nil, err
 	}
 
-	// Use GORM's Updates method to update only the fields provided in the input
-	if err := database.DB.Model(existingRole).Updates(vehicle).Error; err != nil {
+	if err := database.DB.Model(existingVehicle).Updates(vehicle).Error; err != nil {
 		return nil, err
 	}
-
-	return existingRole, nil
+	return existingVehicle, nil
 }
 
 // Delete a vehicle by ID
-func (rr *VehicleRepository) DeleteByID(roleID uint, forceDelete bool) (*models.Vehicle, error) {
+func (rr *VehicleRepository) DeleteByID(vehicleID uint, forceDelete bool) (*models.Vehicle, error) {
 	var vehicle models.Vehicle
-
-	// Optionally perform an unscoped delete
-	var query = database.DB
+	query := database.DB
 	if forceDelete {
 		query = query.Unscoped()
 	}
-	// Find the vehicle first to ensure it exists
-	if err := query.First(&vehicle, roleID).Error; err != nil {
+
+	if err := query.First(&vehicle, vehicleID).Error; err != nil {
 		return nil, err
 	}
 
-	// Delete the vehicle after fetching it
 	if err := query.Delete(&vehicle).Error; err != nil {
 		return nil, err
 	}
-
 	return &vehicle, nil
 }
