@@ -1,7 +1,7 @@
 class ApiConstants {
   /// Base url of the API
-  static const String apiBaseUrl = 'http://192.168.0.136:5000/api';
-  static const String socketBaseUrl = 'ws://192.168.0.136:5000/ws';
+  static const String apiBaseUrl = 'http://10.0.2.2:5000/api';
+  static const String socketBaseUrl = 'ws://10.0.2.2:5000/ws';
 
   /// Auth API endpoints
   static const String login = '$apiBaseUrl/login';
@@ -10,6 +10,12 @@ class ApiConstants {
 
   /// Path API endpoints
   static const String path = '$apiBaseUrl/path';
+
+  /// Owner API endpoints
+  static String carsByID(id) => '$apiBaseUrl/vehicles/$id';
+
+//get cars
+  static String getCars = '$apiBaseUrl/vehicles';
 
   /// Notification API endpoint
   static const String notification = '$apiBaseUrl/notification';

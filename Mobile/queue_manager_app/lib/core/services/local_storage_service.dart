@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 import '../../config/const/local_storage_constants.dart';
 
@@ -42,6 +43,16 @@ class LocalStorageService {
   /// Get the auth token
   String? getToken() {
     return getString(LocalStorageConstants.accessTokenKey);
+  }
+
+  /// Retrieve user data
+  Future<Map<String, dynamic>> getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userDataString = prefs.getString('userData');
+    if (userDataString != null) {
+      return json.decode(userDataString);
+    }
+    return {};
   }
 
   /// Remove a specific key
