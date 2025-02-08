@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useCreateVehicle } from '@/services/vehicleService';
+import { useGetAllVehicleTypes } from '@/services/vehicleTypeService';
 
 export default function VehicleForm() {
   const form = useForm<z.infer<typeof vehicleSchema>>({
@@ -35,6 +36,7 @@ export default function VehicleForm() {
     defaultValues: {
       carType: '',
       vin: '',
+      licenseNumber: '',
       make: '',
       year: '',
       color: '',
@@ -115,6 +117,20 @@ export default function VehicleForm() {
 
           <FormField
             control={form.control}
+            name="licenseNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Licence Plate Number</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter Plate Number" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="make"
             render={({ field }) => (
               <FormItem>
@@ -161,28 +177,50 @@ export default function VehicleForm() {
           <FormField
             control={form.control}
             name="carType"
-            render={({ field }) => (
-              <FormItem className="md:pt-8">
-                <Select
-                  onValueChange={(value) => form.setValue('carType', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select vehicle type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Car type</SelectLabel>
-                      <SelectItem value="5">Mini Bus15</SelectItem>
-                      <SelectItem value="6">Mini Bus16</SelectItem>
-                      <SelectItem value="7">Mini Bus17</SelectItem>
-                      <SelectItem value="8">Mini Bus18</SelectItem>
-                      <SelectItem value="9">Mini Bus19</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const {
+                data: vehicleTypes,
+                isLoading,
+                isError,
+              } = useGetAllVehicleTypes();
+
+              return (
+                <FormItem className="md:pt-8">
+                  <Select
+                    onValueChange={(value) => form.setValue('carType', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select vehicle type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Car type</SelectLabel>
+                        {isLoading ? (
+                          <SelectItem value="loading" disabled>
+                            Loading...
+                          </SelectItem>
+                        ) : isError ? (
+                          <SelectItem value="error" disabled>
+                            Error loading vehicle types
+                          </SelectItem>
+                        ) : (
+                          vehicleTypes?.map((vehicle) => (
+                            <SelectItem
+                              key={vehicle.ID}
+                              value={vehicle.ID.toString()}
+                            >
+                              {vehicle.TypeName} (Capacity: {vehicle.Capacity})
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              );
+            }}
           />
+
           <div className="md:pt-8">
             <OwnerSearch onOwnerSelect={handleOwnerSelect} />
           </div>

@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/popover';
 import LoadingSpinner from '@/components/loading-spinner';
 import { useFetchUserData } from '@/services/userService';
+import { OWNER_ROLE } from '@/constants';
 
 interface OwnerSearchProps {
   onOwnerSelect: (id: string, name: string) => void;
@@ -29,6 +30,7 @@ export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
   // Fetch users with role 1 and matching the search term
   const { data, isLoading, isError } = useFetchUserData({
     search: search || '',
+    role: OWNER_ROLE,
   });
 const userList: Users[] = data?.data || [];
 
@@ -64,7 +66,7 @@ const userList: Users[] = data?.data || [];
               console.log('Search:', search);
               console.log('Fetched Users:', data?.users, data?.users.length);
             }}
-            className="w-full px-2 py-1 border border-gray-300 rounded"
+            className="w-full px-2 py-1 border border-gray-300 rounded z-100"
           />
           <div>
             {isLoading ? (
