@@ -2,14 +2,17 @@
 
 import * as React from 'react';
 import {
-  BookOpen,
-  Bot,
+  ClipboardList,
   Command,
   Frame,
   Map,
   PieChart,
+  Route,
+  SatelliteIcon,
   Settings2,
-  SquareTerminal,
+  Shuffle,
+  User,
+  UserCog,
 } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
@@ -32,7 +35,7 @@ const data = {
     {
       title: 'Registration',
       url: '#',
-      icon: SquareTerminal,
+      icon: ClipboardList,
       isActive: true,
       items: [
         {
@@ -53,15 +56,24 @@ const data = {
         },
       ],
     },
+
     {
       title: 'Users',
+      url: '/user',
+      icon: User,
+    },
+
+    {
+      title: 'Delegation',
+      url: '/delegation',
+      icon: Shuffle,
+    },
+
+    {
+      title: 'Route Management',
       url: '#',
-      icon: Bot,
+      icon: Route,
       items: [
-        {
-          title: 'Users',
-          url: '/user',
-        },
         {
           title: 'Stations',
           url: '/stations',
@@ -78,20 +90,29 @@ const data = {
           title: 'QueueManagerPaths',
           url: '/QueueManagerPaths',
         },
+      ],
+    },
+
+    {
+      title: 'User Administration',
+      url: '#',
+      icon: UserCog,
+      items: [
+        {
+          title: 'Users',
+          url: '/user',
+        },
         {
           title: 'Role And Permission',
           url: '/rolepermission',
         },
-        {
-          title: 'Assign Driver to Vehicle',
-          url: '/driverVehicleMap',
-        },
       ],
     },
+
     {
       title: 'Real Time Monitoring',
       url: '#',
-      icon: BookOpen,
+      icon: SatelliteIcon,
       items: [
         {
           title: 'Track Vehicle',
@@ -123,35 +144,24 @@ const data = {
       ],
     },
   ],
-  //   navSecondary: [
-  //     {
-  //       title: 'Support',
-  //       url: '#',
-  //       icon: LifeBuoy,
-  //     },
-  //     {
-  //       title: 'Feedback',
-  //       url: '#',
-  //       icon: Send,
-  //     },
-  //   ],
-  projects: [
-    {
-      name: 'Delegation',
-      url: '#',
-      icon: Frame,
-    },
-    {
-      name: 'Active Driver',
-      url: '#',
-      icon: PieChart,
-    },
-    {
-      name: 'Report',
-      url: '#',
-      icon: Map,
-    },
-  ],
+
+  // projects: [
+  //   {
+  //     name: 'Delegation',
+  //     url: '#',
+  //     icon: Frame,
+  //   },
+  //   {
+  //     name: 'Active Driver',
+  //     url: '#',
+  //     icon: PieChart,
+  //   },
+  //   {
+  //     name: 'Report',
+  //     url: '#',
+  //     icon: Map,
+  //   },
+  // ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -178,7 +188,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="truncate font-semibold">
                     Kassech Transportaion Managment
                   </span>
-                  <span className="truncate text-xs">Role</span>
+                  <span className="truncate text-xs">KETAS</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -187,7 +197,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>{user ? <NavUser user={user} /> : null}</SidebarFooter>

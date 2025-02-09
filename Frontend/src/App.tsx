@@ -24,10 +24,9 @@ import { Toaster } from 'sonner';
 import DriverPage from './pages/driver';
 import RoutePage from './pages/route';
 import PathPage from './pages/path';
-
-import DriverVehicleMapping from './pages/Driver-VehicleMapping';
 import VehicleTracking from './pages/VehicleTracking';
 import QueueManagerPaths from './pages/QueueManagerPathsRegistration';
+import Delegation from './pages/Delegation';
 
 function App() {
   return (
@@ -63,8 +62,8 @@ function App() {
             <Route path="/paths" element={<PathPage />} />
             <Route path="/rolepermission" element={<RolePermission />} />
             <Route
-              path="/driverVehicleMap"
-              element={<DriverVehicleMapping />}
+              path="/delegation"
+              element={<Delegation />}
             />
             <Route path="/vehicleTracking" element={<VehicleTracking />} />
             <Route path="/QueueManagerPaths" element={<QueueManagerPaths />} />

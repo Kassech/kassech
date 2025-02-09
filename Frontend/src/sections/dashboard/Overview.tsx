@@ -13,14 +13,15 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProgresBar from './ProgresBar';
 import {
-  PlusIcon,
-  TruckIcon,
-  UsersIcon,
-  MapPinIcon,
-  ArchiveBoxIcon,
-  KeyIcon,
-  DocumentTextIcon,
-} from '@heroicons/react/24/solid';
+  Plus,
+  Truck,
+  Users,
+  MapPin,
+  Archive,
+  Key,
+  FileText,
+} from 'lucide-react';
+
 
 export default function Overview() {
   const {
@@ -62,58 +63,58 @@ export default function Overview() {
 
   // Extract count if loginLogs is an array
   const loginLogsCount = Array.isArray(loginLogs) ? loginLogs.length : 0;
+const stats = [
+  {
+    title: 'Total Drivers',
+    value: totalDrivers,
+    loading: loadingDrivers,
+    error: errorDrivers,
+    icon: <Users className="w-8 h-8 text-customBlue" />,
+  },
+  {
+    title: 'Total Vehicles',
+    value: totalVehicles,
+    loading: loadingVehicles,
+    error: errorVehicles,
+    icon: <Truck className="w-8 h-8 text-customBlue" />,
+  },
+  {
+    title: 'Total Users',
+    value: totalUsers,
+    loading: loadingtotalUsers,
+    error: errortotalUsers,
+    icon: <Users className="w-8 h-8 text-customBlue" />, // Changed from UsersIcon to Users
+  },
+  {
+    title: 'Total Routes',
+    value: totalRoutes,
+    loading: loadingRoutes,
+    error: errorRoutes,
+    icon: <MapPin className="w-8 h-8 text-customBlue" />, // Changed from MapPinIcon to MapPin
+  },
+  {
+    title: 'Total Stations',
+    value: totalStations,
+    loading: loadingStations,
+    error: errorStations,
+    icon: <Archive className="w-8 h-8 text-customBlue" />, // Changed from ArchiveBoxIcon to Archive
+  },
+  {
+    title: 'Login Logs',
+    value: loginLogsCount,
+    loading: loadingLoginLogs,
+    error: errorLoginLogs,
+    icon: <Key className="w-8 h-8 text-customBlue" />, // Changed from KeyIcon to Key
+  },
+  {
+    title: 'Total Travel Logs',
+    value: totalTravelLogs,
+    loading: loadingTravelLogs,
+    error: errorTravelLogs,
+    icon: <FileText className="w-8 h-8 text-customBlue" />, // Changed from DocumentTextIcon to FileText
+  },
+];
 
-  const stats = [
-    {
-      title: 'Total Drivers',
-      value: totalDrivers,
-      loading: loadingDrivers,
-      error: errorDrivers,
-      icon: <UsersIcon className="w-8 h-8 text-customBlue" />,
-    },
-    {
-      title: 'Total Vehicles',
-      value: totalVehicles,
-      loading: loadingVehicles,
-      error: errorVehicles,
-      icon: <TruckIcon className="w-8 h-8 text-customBlue" />,
-    },
-    {
-      title: 'Total Users',
-      value: totalUsers,
-      loading: loadingtotalUsers,
-      error: errortotalUsers,
-      icon: <UsersIcon className="w-8 h-8 text-customBlue" />,
-    },
-    {
-      title: 'Total Routes',
-      value: totalRoutes,
-      loading: loadingRoutes,
-      error: errorRoutes,
-      icon: <MapPinIcon className="w-8 h-8 text-customBlue" />,
-    },
-    {
-      title: 'Total Stations',
-      value: totalStations,
-      loading: loadingStations,
-      error: errorStations,
-      icon: <ArchiveBoxIcon className="w-8 h-8 text-customBlue" />,
-    },
-    {
-      title: 'Login Logs',
-      value: loginLogsCount,
-      loading: loadingLoginLogs,
-      error: errorLoginLogs,
-      icon: <KeyIcon className="w-8 h-8 text-customBlue" />,
-    },
-    {
-      title: 'Total Travel Logs',
-      value: totalTravelLogs,
-      loading: loadingTravelLogs,
-      error: errorTravelLogs,
-      icon: <DocumentTextIcon className="w-8 h-8 text-customBlue" />,
-    },
-  ];
 
   return (
     <div className="space-y-6 p-4">
