@@ -23,10 +23,13 @@ class AppDrawer extends ConsumerWidget {
             child: userAsyncValue.when(
               data: (user) => Column(
                 children: [
-                  const CircleAvatar(
+                    CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/test.jpg'),
-                  ),
+                    backgroundImage: user?.profilePictureUrl != null
+                      ? NetworkImage(user!.profilePictureUrl)
+                      : const NetworkImage('https://www.vecteezy.com/vector-art/47543251-user-icon-symbol-design-illustration') as ImageProvider,
+                    ),
+                  
                   Text(
                     user?.firstName ?? '',
                     style: const TextStyle(
