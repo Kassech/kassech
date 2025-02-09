@@ -138,7 +138,7 @@ return Scaffold(
                                   const SizedBox(height: 8.0),
                                   // License Plate
                                   Text(
-                                    'License: ${car.libre}',
+                                    'License: ${car.licenseNumber}',
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       color:
