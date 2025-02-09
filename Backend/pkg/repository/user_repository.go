@@ -109,6 +109,24 @@ func (ur *UserRepository) Update(user *models.User) error {
 	return nil
 }
 
+// In repository/user_repository.go
+func (r *UserRepository) GetDriverByUserID(userID uint) (*models.Driver, error) {
+	var driver models.Driver
+	result := database.DB.Where("user_id = ?", userID).First(&driver)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &driver, nil
+}
+
+func (r *UserRepository) UpdateDriver(driver *models.Driver) (*models.Driver, error) {
+	result := database.DB.Save(driver)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return driver, nil
+}
+
 // Delete removes a user from the database
 func (ur *UserRepository) Delete(user *models.User, isForce bool) error {
 	query := database.DB

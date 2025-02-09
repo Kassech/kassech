@@ -165,6 +165,8 @@ export const columns: ColumnDef<User>[] = [
               </AlertDialogContent>
             </AlertDialog>
           )}
+                    {selectedUser === row.original.ID && (
+
           <AlertDialog
             open={isEditDialogOpen}
             onOpenChange={setEditDialogClose}
@@ -195,6 +197,8 @@ export const columns: ColumnDef<User>[] = [
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          )}
+
         </>
       );
     },

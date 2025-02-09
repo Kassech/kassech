@@ -34,7 +34,7 @@ export default function CarOwnerForm({
       LastName: defaultValues?.LastName || '',
       Email: defaultValues?.Email || '',
       PhoneNumber: defaultValues?.PhoneNumber || '',
-      Profile: defaultValues?.Profile || null,
+      Profile: defaultValues?.ProfilePicture || null,
       national_id: defaultValues?.national_id || null,
       insurance_document: defaultValues?.insurance_document || null,
       Role: OWNER_ROLE.toString(),
@@ -42,8 +42,7 @@ export default function CarOwnerForm({
     },
   });
 
-  
-  console.log('profile type', typeof defaultValues?.Profile);
+  console.log('defaultValues', defaultValues);
 
   const onSubmit = async (values: z.infer<typeof ownerSchema>) => {
     console.log('Form values:', values); // Debug log
@@ -58,7 +57,7 @@ export default function CarOwnerForm({
     for (let pair of formData.entries()) {
       console.log(`${pair[0]}:`, pair[1]);
     } // Debug log
-     const isEdit = !!defaultValues?.ID;
+    const isEdit = !!defaultValues?.ID;
 
     toast.promise(
       (async () => {
@@ -224,5 +223,5 @@ export default function CarOwnerForm({
         </Form>
       </Card>
     </>
-  )
+  );
 }

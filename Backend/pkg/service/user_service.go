@@ -194,27 +194,57 @@ func (us *UserService) ListUsers(page, limit int, search string, typ string, rol
 }
 
 // UpdateUser updates a user by ID
+// UpdateUser updates a user's information and related driver documents if applicable
 func (us *UserService) UpdateUser(userId uint, user *models.User) (*models.User, error) {
-
 	existingUser, err := us.Repo.FindByID(userId)
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
 
-	// Update user fields
-	existingUser.FirstName = user.FirstName
-	existingUser.LastName = user.LastName
-	existingUser.Email = user.Email
-	existingUser.PhoneNumber = user.PhoneNumber
+	// Update fields if provided
+	if user.FirstName != "" {
+		existingUser.FirstName = user.FirstName
+	}
+	if user.LastName != "" {
+		existingUser.LastName = user.LastName
+	}
+	if user.Email != "" {
+		existingUser.Email = user.Email
+	}
+	if user.PhoneNumber != "" {
+		existingUser.PhoneNumber = user.PhoneNumber
+	}
+	if user.ProfilePicture != nil {
+		existingUser.ProfilePicture = user.ProfilePicture
+	}
+
+	// Handle password update
+	if user.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, errors.New("failed to hash password")
+		}
+		existingUser.Password = string(hashedPassword)
+	}
 
 	// Save the updated user
-	err = us.Repo.Update(existingUser)
-	if err != nil {
+	if err := us.Repo.Update(existingUser); err != nil {
 		return nil, err
 	}
 
 	return existingUser, nil
 }
+
+// GetDriverByUserID retrieves a driver by their associated user ID
+func (us *UserService) GetDriverByUserID(userID uint) (*models.Driver, error) {
+	return us.Repo.GetDriverByUserID(userID)
+}
+
+// UpdateDriver updates a driver's document paths
+func (us *UserService) UpdateDriver(driver *models.Driver) (*models.Driver, error) {
+	return us.Repo.UpdateDriver(driver)
+}
+
 // DeleteUser deletes a user by ID
 func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 	force := len(isForce) > 0 && isForce[0]

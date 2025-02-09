@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/aws/smithy-go/ptr"
 	"golang.org/x/exp/rand"
 	"gorm.io/gorm"
 )
@@ -208,12 +209,13 @@ func SeedDB() {
 	var owners []models.User
 	for i := 0; i < 5000; i++ {
 		owner := models.User{
-			FirstName:   fmt.Sprintf("Owner%d", i+1),
-			LastName:    "Owner",
-			Email:       fmt.Sprintf("owner%d@example.com", i+1),
-			PhoneNumber: fmt.Sprintf("+2519%08d", rand.Intn(100000000)),
-			Password:    "$2a$10$pkluPLasY7LCXOK25EBkmeUsQDuZwrOhKMhu5EXfN4W0YOZPqST7S",
-			IsVerified:  true,
+			FirstName:      fmt.Sprintf("Owner%d", i+1),
+			LastName:       "Owner",
+			Email:          fmt.Sprintf("owner%d@example.com", i+1),
+			PhoneNumber:    fmt.Sprintf("+2519%08d", rand.Intn(100000000)),
+			Password:       "$2a$10$pkluPLasY7LCXOK25EBkmeUsQDuZwrOhKMhu5EXfN4W0YOZPqST7S",
+			ProfilePicture: ptr.String("uploads/profiles/testing.jpg"),
+			IsVerified:     true,
 		}
 
 		if err := DB.Create(&owner).Error; err != nil {

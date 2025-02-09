@@ -31,9 +31,12 @@ export default function AdminForm({
       LastName: defaultValues?.LastName || '',
       Email: defaultValues?.Email || '',
       PhoneNumber: defaultValues?.PhoneNumber || '',
-      Profile: defaultValues?.Profile || null,
+      Profile: defaultValues?.ProfilePicture || null,
       Role: defaultValues?.Role ?? ADMIN_ROLE.toString(),
-      national_id: defaultValues?.national_id instanceof File ? defaultValues.national_id : null,
+      national_id:
+        defaultValues?.national_id instanceof File
+          ? defaultValues.national_id
+          : null,
       ID: defaultValues?.ID || '',
     },
   });
@@ -50,7 +53,7 @@ export default function AdminForm({
         formData.append(key, value);
       }
     });
-    
+
     const isEdit = !!defaultValues?.ID;
     console.log('Prepared form data for mutation:', formData);
 
@@ -70,10 +73,12 @@ export default function AdminForm({
         success: isEdit
           ? 'User successfully updated!'
           : 'User successfully created!',
+
         error: (error) =>
           error?.response?.data?.message || 'Submission failed.',
       }
     );
+    form.reset();
   };
 
   const { errors } = form.formState;
@@ -94,6 +99,7 @@ export default function AdminForm({
         >
           <div className="col-span-full">
             <ImageUploader
+              initialPreview={form.getValues('Profile')}
               onImageUpload={(file: File | null) =>
                 form.setValue('Profile', file)
               }

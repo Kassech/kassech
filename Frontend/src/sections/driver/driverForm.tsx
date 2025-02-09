@@ -22,7 +22,7 @@ export default function DriverForm({
   defaultValues = null,
 }: {
   switchTab: (tab: string) => void;
-    defaultValues?: Partial<z.infer<typeof driverSchema>> | null;
+  defaultValues?: Partial<z.infer<typeof driverSchema>> | null;
 }) {
   const { formData, setField } = useDriverStore();
   console.log('🚀 ~ DriverForm ~ formData:', formData);
@@ -35,10 +35,11 @@ export default function DriverForm({
       LastName: defaultValues?.LastName || formData?.LastName || '',
       Email: defaultValues?.Email || formData?.Email || '',
       PhoneNumber: defaultValues?.PhoneNumber || formData?.PhoneNumber || '',
-      Profile: defaultValues?.Profile || formData?.Profile || null,
+      Profile: defaultValues?.Profile || null,
       Role: defaultValues?.Role ?? formData?.Role ?? DRIVER_ROLE.toString(),
     },
   });
+  console.log('🚀 ~ Profile:', defaultValues?.Profile, formData?.Profile);
 
   const onSubmit = (values: z.infer<typeof driverSchema>) => {
     Object.entries(values).forEach(([key, value]) => {
@@ -57,7 +58,7 @@ export default function DriverForm({
         >
           <div className="col-span-full">
             <ImageUploader
-              initialPreview={formData.Profile}
+              initialPreview={form.getValues('Profile')}
               onImageUpload={(file) => form.setValue('Profile', file)}
               maxFileSize={2000000}
               acceptedFormats={{
@@ -123,7 +124,6 @@ export default function DriverForm({
               </FormItem>
             )}
           />
-
 
           <FormItem>
             <FormLabel>Go To Next Step</FormLabel>
