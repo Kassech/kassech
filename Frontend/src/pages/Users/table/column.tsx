@@ -200,4 +200,5 @@ export const columns: ColumnDef<User>[] = [
     },
     size: 80, // Define column wIDth for actions
   },
+
 ];

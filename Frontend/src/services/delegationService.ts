@@ -10,7 +10,7 @@ export const useAssignDriverToVehicle = () => {
   return useMutation(async (data: DelegationData) => {
     const response = await api.post('/driver-deligation/assign', data);
 
-    if (response.status === 200) {
+    if (response.status === 201) {
       return response.data;
     }
 

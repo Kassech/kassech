@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"kassech/backend/pkg/database"
 	models "kassech/backend/pkg/model"
 
@@ -85,7 +86,7 @@ func (ur *UserRepository) FindByEmailOrPhone(email string, phone string) (*model
 // FindByID fetches a user by their unique ID
 func (ur *UserRepository) FindByID(userID uint) (*models.User, error) {
 	var user models.User
-	err := database.DB.Preload("Roles").First(&user, userID).Error
+	err := database.DB.First(&user, userID).Error
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +120,7 @@ func (ur *UserRepository) Delete(user *models.User, isForce bool) error {
 
 // ListUsers fetches users with pagination, optional search filter, and active/deleted filter
 func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) ([]models.User, int64, error) {
+	fmt.Printf("🔍 ListUsers: page=%d, limit=%d, search=%s, typ=%s, role=%s\n", page, limit, search, typ, role)
 	var users []models.User
 	var total int64
 
@@ -130,24 +132,31 @@ func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) (
 		Joins("LEFT JOIN roles ON roles.id = user_roles.role_id").
 		Group("users.id")
 
+	fmt.Println("🔗 Built base query")
+
 	// Apply the search filter
 	if search != "" {
 		query = query.Where("email ILIKE ? OR phone_number ILIKE ?", "%"+search+"%", "%"+search+"%")
+		fmt.Println("🔍 Applied search filter")
 	}
 
 	// Filter by the 'typ' parameter (active or deleted)
 	switch typ {
 	case "active":
 		query = query.Where("users.deleted_at IS NULL")
+		fmt.Println("🔴 Filtered by active")
 	case "deleted":
 		query = query.Unscoped().Where("users.deleted_at IS NOT NULL")
+		fmt.Println("🔴 Filtered by deleted")
 	default:
 		query = query.Where("users.deleted_at IS NULL")
+		fmt.Println("🔴 Filtered by active (default)")
 	}
 
 	// Filter by the 'role' parameter
 	if role != "" {
 		query = query.Where("roles.id = ?", role)
+		fmt.Println("🔴 Filtered by role")
 	}
 
 	// Get the total number of users matching the filters
@@ -156,11 +165,15 @@ func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) (
 		return []models.User{}, 0, err
 	}
 
+	fmt.Printf("📊 Total users: %d\n", total)
+
 	// Retrieve the users with roles and pagination
 	err = query.Offset((page - 1) * limit).Limit(limit).Scan(&users).Error
 	if err != nil {
 		return []models.User{}, 0, err
 	}
+
+	fmt.Printf("📝 Retrieved %d users with pagination\n", len(users))
 
 	return users, total, nil
 }
