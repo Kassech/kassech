@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/features/owner/pages/trackOrDelegate/track_or_delegate.dart';
 import '../../features/auth/models/user.dart';
 import '../../features/auth/pages/errorpage.dart';
 import '../../features/auth/pages/selectRole.dart';
@@ -57,14 +58,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           state.matchedLocation == SignUpPage.routeName)) {
         if (user.roles.contains('QueueManager') ||
             user.roles.contains('Driver')) {
-              
           return HomePage.routeName;
-        }
-        else if (user.roles.contains('Owner')) {
+        } else if (user.roles.contains('Owner')) {
           return ListOfCars.routeName;
-        }
-         else {
-
+        } else {
           return SignInPage.routeName;
         }
       }
@@ -82,11 +79,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             bottomNavigationBar: CustomNavigationBar(
               height: 60,
               selectedIndex: navigationShell.currentIndex,
-              
               icons: [
                 if (authState.value!.roles.contains('QueueManager') ||
                     authState.value!.roles.contains('Driver'))
-                Icons.home,
+                  Icons.home,
                 if (authState.value!.roles.contains('Owner')) Icons.car_rental,
                 Icons.person_2,
               ],
@@ -169,7 +165,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: ErrorPage.routeName,
           name: ErrorPage.routeName,
-          builder: (context, state) => ErrorPage(state.error, error: state.error?.toString() ?? 'Unknown error',)),
+          builder: (context, state) => ErrorPage(
+                state.error,
+                error: state.error?.toString() ?? 'Unknown error',
+              )),
       GoRoute(
         path: DelegationPage.routeName,
         name: DelegationPage.routeName,
@@ -202,7 +201,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: NotificationPage.routeName,
         builder: (context, state) => NotificationPage(),
       ),
-
+      GoRoute(
+          path: TrackOrDelegate.routeName,
+          name: TrackOrDelegate.routeName,
+          builder: (context, state) => TrackOrDelegate()),
       // GoRoute(
       //   path: ListOfCars.routeName,
       //   name: ListOfCars.routeName,

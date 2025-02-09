@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/core/theme/app_colors.dart';
 import 'package:queue_manager_app/features/owner/models/car_model.dart';
-import '../carLocation/car_location.dart';
+import 'package:queue_manager_app/features/owner/pages/trackOrDelegate/track_or_delegate.dart';
 import '../../providers/car_list_provider.dart';
+
 
 class ListOfCars extends ConsumerWidget {
   final int roleId;
@@ -82,10 +83,12 @@ return Scaffold(
 
                   return GestureDetector(
                     onTap: () {
-                      // Handle card tap
-                      context.go(CarLocation.routeName);
+                   
+                        context.go(TrackOrDelegate.routeName);
+                      
                     },
                     child: Card(
+                    
                       margin: const EdgeInsets.only(bottom: 16.0),
                       elevation: 4.0,
                       color: AppColors.black, // Use black
@@ -109,12 +112,12 @@ return Scaffold(
                                   return Container(
                                     width: 100,
                                     height: 100,
-                                    color: AppColors.darkGray, // Use darkGray
+                                    color: AppColors.lightNavBarBackground, // Use darkGray
                                     child: const Icon(
                                       Icons.car_repair,
                                       size: 50,
                                       color:
-                                          AppColors.lightGray, // Use lightGray
+                                          AppColors.black, // Use lightGray
                                     ),
                                   );
                                 },
