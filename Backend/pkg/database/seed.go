@@ -309,10 +309,27 @@ func SeedDB() {
 	//--------------------------------------------------
 	// 6. Seed Stations
 	//--------------------------------------------------
+	log.Println("🟢 Seeding stations...")
+
+	var stations []models.Station
+	stationFile, err := os.ReadFile(filepath.Join(cwd, "pkg/database/data/station.json"))
+	if err != nil {
+		log.Fatalf("❌ Failed to read station file: %v", err)
+	}
+
+	if err := json.Unmarshal(stationFile, &stations); err != nil {
+		log.Fatalf("❌ Failed to parse station JSON: %v", err)
+	}
+
+	for _, station := range stations {
+		if err := DB.FirstOrCreate(&models.Station{}, station).Error; err != nil {
+			log.Printf("⚠️ Failed to seed station %s: %v", station.LocationName, err)
+		}
+	}
+	log.Println("✅ Stations seeded successfully")
 
 	log.Println("🟢 Seeding routes...")
 
-	var stations []models.Station
 	if err := DB.Order("id").Find(&stations).Error; err != nil {
 		log.Fatalf("❌ Failed to fetch stations: %v", err)
 	}
