@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:queue_manager_app/core/util/ui_utils.dart';
-
 import '../../features/auth/models/user.dart';
 import '../../features/auth/pages/errorpage.dart';
 import '../../features/auth/pages/selectRole.dart';
@@ -57,16 +55,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return SignInPage.routeName;
       } else if ((state.matchedLocation == SignInPage.routeName ||
           state.matchedLocation == SignUpPage.routeName)) {
-
-        if (user.roles.contains('QueueManager') || user.roles.contains('Driver') || user.roles.contains('Owner')) {
+        if (user.roles.contains('QueueManager') ||
+            user.roles.contains('Driver')) {
+              
           return HomePage.routeName;
-        } else {
+        }
+        else if (user.roles.contains('Owner')) {
+          return ListOfCars.routeName;
+        }
+         else {
+
           return SignInPage.routeName;
         }
       }
       return null;
     },
-    errorBuilder: (context, state) => ErrorPage(state.error),
+    // errorBuilder: (context, state) => ErrorPage(error: state.error.toString()),
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -78,9 +82,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             bottomNavigationBar: CustomNavigationBar(
               height: 60,
               selectedIndex: navigationShell.currentIndex,
+              
               icons: [
+                if (authState.value!.roles.contains('QueueManager') ||
+                    authState.value!.roles.contains('Driver'))
                 Icons.home,
-                if(authState.value!.roles.contains('Admin')) Icons.car_rental,
+                if (authState.value!.roles.contains('Owner')) Icons.car_rental,
                 Icons.person_2,
               ],
               onDestinationSelected: (index) => navigationShell.goBranch(index),
@@ -88,39 +95,46 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           );
         },
         branches: [
-          if (authState.value != null )
-          if ((authState.value!.roles.contains('QueueManager') || authState.value!.roles.contains('Driver')))
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: HomePage.routeName,
-                name: HomePage.routeName,
-                builder: (context, state) => const HomePage(),
+          if (authState.value != null)
+            if ((authState.value!.roles.contains('QueueManager') ||
+                authState.value!.roles.contains('Driver')))
+              StatefulShellBranch(
                 routes: [
                   GoRoute(
-                    path: PathDetailsPage.routeName,
-                    name: PathDetailsPage.routeName,
-                    parentNavigatorKey: rootNavigatorKey,
-                    builder: (context, state) {
-                      final extra = state.extra as Map<String, dynamic>?;
-                      final int pathId = extra?['pathId'];
-                      final PathModel path = extra?['path'];
-                      return PathDetailsPage(pathId: pathId, path: path);
-                    },
+                    path: HomePage.routeName,
+                    name: HomePage.routeName,
+                    builder: (context, state) => const HomePage(),
+                    routes: [
+                      GoRoute(
+                        path: PathDetailsPage.routeName,
+                        name: PathDetailsPage.routeName,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final extra = state.extra as Map<String, dynamic>?;
+                          final int pathId = extra?['pathId'];
+                          final PathModel path = extra?['path'];
+                          return PathDetailsPage(pathId: pathId, path: path);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
           if (authState.value != null &&
               authState.value!.roles.contains('Owner'))
             StatefulShellBranch(
               routes: [
-                // GoRoute(
-                //   path: SelectRolePage.routeName,
-                //   name: SelectRolePage.routeName,
-                //   builder: (context, state) => SelectRolePage(),
-                // ),
+                GoRoute(
+                  path: ListOfCars.routeName,
+                  name: ListOfCars.routeName,
+                  builder: (context, state) {
+                    print('state: ${state}');
+                    final extra = state.extra as Map<String, dynamic>?;
+                    final roleId = extra?['roleId'] as int? ?? 0;
+                    final isOwner = extra?['isOwner'] as bool? ?? false;
+                    return ListOfCars(roleId: roleId, isOwner: isOwner);
+                  },
+                ),
               ],
             ),
           StatefulShellBranch(
@@ -155,7 +169,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: ErrorPage.routeName,
           name: ErrorPage.routeName,
-          builder: (context, state) => ErrorPage(state.error)),
+          builder: (context, state) => ErrorPage(state.error, error: state.error?.toString() ?? 'Unknown error',)),
       GoRoute(
         path: DelegationPage.routeName,
         name: DelegationPage.routeName,
@@ -189,16 +203,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => NotificationPage(),
       ),
 
-      GoRoute(
-        path: ListOfCars.routeName,
-        name: ListOfCars.routeName,
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>;
-          final roleId = extra['roleId'] as int;
-          final isOwner = extra['isOwner'] as bool;
-          return ListOfCars(roleId: roleId, isOwner: isOwner);
-        },
-      ),
+      // GoRoute(
+      //   path: ListOfCars.routeName,
+      //   name: ListOfCars.routeName,
+      //   builder: (context, state) {
+      //     final extra = state.extra as Map<String, dynamic>;
+      //     final roleId = extra['roleId'];
+      //     final isOwner = extra['isOwner'] as bool;
+      //     return ListOfCars(roleId: roleId, isOwner: isOwner);
+      //   },
+      // ),
     ],
   );
 

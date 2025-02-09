@@ -6,33 +6,41 @@ import '../../auth/providers/auth_provider.dart';
 import '../pages/profile.dart';
 
 class AppDrawer extends ConsumerWidget {
-
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userAsyncValue = ref.watch(authProvider);
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
+          DrawerHeader(
+            decoration: const BoxDecoration(
               color: Colors.black,
             ),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage('assets/test.jpg'),
-                ),
-                Text(
-                  'Queue Manager',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
+            child: userAsyncValue.when(
+              data: (user) => Column(
+                children: [
+                    CircleAvatar(
+                    radius: 50,
+                    backgroundImage: user?.profilePictureUrl != null
+                      ? NetworkImage(user!.profilePictureUrl)
+                      : const NetworkImage('https://www.vecteezy.com/vector-art/47543251-user-icon-symbol-design-illustration') as ImageProvider,
+                    ),
+                  
+                  Text(
+                    user?.firstName ?? '',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+              loading: () => const CircularProgressIndicator(),
+              error: (error, stackTrace) => Text('Error: $error'),
             ),
           ),
           ListTile(

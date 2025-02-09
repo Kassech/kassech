@@ -24,7 +24,44 @@ class AppColors {
   static const darkScaffoldBackground = Colors.black;
   static const darkNavBarBackground = darkGray;
 
+  /// Status colors
+  static const successColor = Color(0xFF00C853); // Green
+  static const warningColor = Color(0xFFFFA000); // Orange
+  static const errorColor = Color(0xFFD32F2F); // Red
 
-  static const successColor = Color(0xFF00C853);
-  static const errorColor = Color(0xFFD32F2F);
+  /// Car colors
+  static const carRed = Colors.red;
+  static const carBlue = Color(0xFF0D47A1); // Same as blue
+  static const carGreen = Color(0xFF00C853); // Same as successColor
+  static const carYellow = Colors.yellow;
+  static const carOrange = Colors.orange;
+  static const carPurple = Colors.purple;
+  static const carBlack = Colors.black;
+  static const carWhite = Colors.white;
+  static const carGray = Color(0xFF9E9E9E); // G
+  
+ static Color getCarColor(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'red':
+        return AppColors.carRed;
+      case 'blue':
+        return AppColors.carBlue;
+      case 'green':
+        return AppColors.carGreen;
+      case 'yellow':
+        return AppColors.carYellow;
+      case 'orange':
+        return AppColors.carOrange;
+      case 'purple':
+        return AppColors.carPurple;
+      case 'black':
+        return AppColors.carBlack;
+      case 'white':
+        return AppColors.carWhite;
+      case 'gray':
+        return AppColors.carGray;
+      default:
+        return AppColors.lightGray; // Default color if no match
+    }
+  }
 }

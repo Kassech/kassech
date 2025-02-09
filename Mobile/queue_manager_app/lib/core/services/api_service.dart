@@ -14,7 +14,6 @@ import 'local_storage_service.dart';
 final ProviderContainer container = ProviderContainer();
 
 class ApiService {
-
   static final Dio dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.apiBaseUrl,
@@ -34,6 +33,7 @@ class ApiService {
   ApiService(this.ref) {
     initializeDio();
   }
+
   /// Clear all cookies
   static Future<void> clearCookies() async {
     await _cookieJar.deleteAll();
@@ -71,12 +71,12 @@ class ApiService {
         String? errorMessage = '';
 
         if (errorResponse != null && errorResponse.data != null) {
-          if(errorResponse.data is String) {
+          if (errorResponse.data is String) {
             errorMessage = errorResponse.data;
           } else if (errorResponse.data is Map<String, dynamic>) {
-            errorMessage =
-                errorResponse.data['error'] ?? errorResponse.data['message'] ??
-                    errorResponse.data;
+            errorMessage = errorResponse.data['error'] ??
+                errorResponse.data['message'] ??
+                errorResponse.data;
           }
         }
 
@@ -193,6 +193,7 @@ class ApiService {
 
     return FormData.fromMap(newMap);
   }
+
 
   /// Handle errors and exceptions
   static String? handleDioError(DioException error) {
