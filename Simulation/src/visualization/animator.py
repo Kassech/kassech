@@ -1,5 +1,6 @@
 # visualization/animator.py
 import logging
+import os
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
@@ -11,6 +12,8 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from config.settings import UPDATE_INTERVAL
 import numpy as np
 import random
+import matplotlib.image as mpimg
+
 
 class Animator:
     def __init__(self, edges, routes_data):
@@ -115,10 +118,11 @@ class Animator:
             except Exception as e:
                 logger.error("Failed to connect to WebSocket: %s", e)
                 await asyncio.sleep(5)  # Wait before retrying
+
     async def run_animation(self, cars):
         """Main animation loop with WebSocket integration."""
         valid_cars = [car for car in cars if car.has_valid_route]
-        await self._init_markers(valid_cars)
+        self._init_markers(valid_cars)  # Remove the 'await' keyword here
 
         # Start WebSocket listener and sender
         ws_listener_task = asyncio.create_task(self.listen_passenger_updates())
@@ -148,23 +152,30 @@ class Animator:
                 pass
             plt.close()
 
-    async def _init_markers(self, cars):
+    def _init_markers(self, cars):
         """Initialize car markers and labels."""
+        logging.info("Initializing markers for %d cars", len(cars))
         self.car_markers = []
         self.car_labels = []
         self.car_images = []
+        print(os.path.join(os.path.dirname(__file__), "car.png"))
+
+        car_img = mpimg.imread(os.path.join(os.path.dirname(__file__), "car.png"))  # Load car image
+        imagebox = OffsetImage(car_img, zoom=0.05)  # Adjust size
 
         for car in cars:
-            marker, = self.ax.plot([], [], '^', color=car.color, markersize=10, alpha=0.9, zorder=3)
+            marker, = self.ax.plot([], [], 'o', alpha=0)  # Invisible marker
             self.car_markers.append(marker)
             label = self.ax.text(0, 0, f"{car.driver_name}", fontsize=8, color='black',
-                                 ha='center', va='top', backgroundcolor='white', alpha=0.7)
+                                ha='center', va='top', backgroundcolor='white', alpha=0.7)
             self.car_labels.append(label)
-            self.car_images.append(None)  # Placeholder for car images
+
+            ab = AnnotationBbox(imagebox, (0, 0), frameon=False, zorder=3)
+            self.ax.add_artist(ab)
+            self.car_images.append(ab)  # Store image annotations
 
         self.info_text = self.ax.text(0.05, 0.95, '', transform=self.ax.transAxes,
-                                      fontsize=9, color='black', backgroundcolor='white', zorder=4)
-
+                                    fontsize=9, color='black', backgroundcolor='white', zorder=4)
     def _update_display(self, cars):
         """Update all visual elements including passenger counts."""
         info = []

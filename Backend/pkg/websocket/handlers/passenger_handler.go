@@ -32,7 +32,6 @@ func NewPassengerHandler(
 		connManager:      connManager,
 		passengerService: passengerService,
 		auth:             auth,
-		writeChan:        make(chan []byte, 100), // Initialize writeChan
 	}
 }
 

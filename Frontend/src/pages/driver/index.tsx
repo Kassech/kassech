@@ -6,13 +6,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { driverAttachmentSchema, driverSchema } from '@/types/schemas';
 import { z } from 'zod';
 import { DRIVER_ROLE } from '@/constants';
-import DriverForm from '@/sections/Driver/driverForm';
-import DriverAttachmentForm from '@/sections/Driver/driverAttacchmentForm';
+import DriverForm from '@/sections/driver/driverForm';
+import DriverAttachmentForm from '@/sections/driver/driverAttacchmentForm';
 
 export default function DriverPage({
-  defaultValues={},
+  defaultValues = {},
 }: {
-  defaultValues?: Partial<z.infer<typeof driverAttachmentSchema> & z.infer<typeof driverSchema>> | null;
+  defaultValues?: Partial<
+    z.infer<typeof driverAttachmentSchema> & z.infer<typeof driverSchema>
+  > | null;
 }) {
   const [activeTab, setActiveTab] = useState('person'); // State to control active tab
   const [isTabDisabled, setIsTabDisabled] = useState(true); // Disable tabs initially
@@ -27,8 +29,8 @@ export default function DriverPage({
     setIsTabDisabled(false); // Enable tabs after switching via code
   };
 
-   const isHeaderVisible =
-     defaultValues === null || Object.keys(defaultValues).length === 0;
+  const isHeaderVisible =
+    defaultValues === null || Object.keys(defaultValues).length === 0;
 
   return (
     <>

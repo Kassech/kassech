@@ -1,5 +1,5 @@
 import Header from '@/components/header';
-import CarOwnerForm from '@/sections/Owner';
+import CarOwnerForm from '@/sections/owner';
 
 export default function OwnerRegistration() {
   const paths = [
