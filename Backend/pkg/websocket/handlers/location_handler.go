@@ -61,11 +61,16 @@ func NewLocationHandler(
 }
 
 func (h *LocationHandler) HandleConnection(w http.ResponseWriter, r *http.Request) {
+	log.Println("Handling connection")
+
 	userID, err := h.auth.Authenticate(r)
 	if err != nil {
+		log.Printf("Authentication failed: %v", err)
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
+
+	log.Printf("Authenticated user: %d", userID)
 
 	upgrader := websocket.Upgrader{}
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -74,17 +79,21 @@ func (h *LocationHandler) HandleConnection(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	log.Println("Upgraded connection to WebSocket")
+
 	state := &connectionState{
 		writeChan: make(chan []byte, 100),
 		closeChan: make(chan struct{}),
 	}
 
 	h.connManager.AddConnection(userID, conn)
+	log.Printf("Added connection to connection manager for user: %d", userID)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer func() {
 		cancel()
 		h.cleanupConnection(userID, conn, state)
+		log.Printf("Cleaned up connection for user: %d", userID)
 	}()
 
 	conn.SetPingHandler(func(appData string) error {
@@ -94,6 +103,7 @@ func (h *LocationHandler) HandleConnection(w http.ResponseWriter, r *http.Reques
 	state.wg.Add(2)
 	go h.handleWrites(conn, state)
 	go h.handleReads(conn, state)
+	log.Println("Started goroutines for handling reads and writes")
 
 	h.listenForMessages(ctx, conn, state)
 }
@@ -319,22 +329,30 @@ func (h *LocationHandler) subscribeToPath(ctx context.Context, pathID uint, stat
 }
 
 func (h *LocationHandler) subscribeToAll(ctx context.Context, state *connectionState) {
+	log.Println("Subscribing to all vehicles")
 	state.wg.Add(1)
 	defer state.wg.Done()
 
 	pubsub := config.RedisClient.Subscribe(ctx, "all_vehicles")
-	defer pubsub.Close()
+	defer func() {
+		log.Println("Closing all vehicles subscription")
+		pubsub.Close()
+	}()
 
 	ch := pubsub.Channel()
 	for {
 		select {
 		case msg := <-ch:
+			log.Println("Received message from all vehicles subscription")
 			select {
 			case state.writeChan <- []byte(msg.Payload):
+				log.Println("Sent message to client")
 			case <-state.closeChan:
+				log.Println("Closing subscription due to client close")
 				return
 			}
 		case <-state.closeChan:
+			log.Println("Closing subscription due to client close")
 			return
 		}
 	}

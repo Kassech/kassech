@@ -285,7 +285,7 @@ func SeedDB() {
 			UserID: driverUser.ID,
 			RoleID: driverRole.ID,
 		}
-		if err := DB.FirstOrCreate(&driverUserRole).Error; err != nil {
+		if err := DB.Create(&driverUserRole).Error; err != nil {
 			log.Printf("⚠️ Failed to assign Driver role: %v", err)
 		}
 

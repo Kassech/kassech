@@ -1,6 +1,6 @@
 import React from 'react';
 import DriverForm from './driverForm';
-import DriverTable from './driverTable';
+import DriverTable from './DriverTable';
 
 const Driver: React.FC = () => {
   const switchTab = (tab: string) => {

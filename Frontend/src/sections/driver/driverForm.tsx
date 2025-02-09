@@ -22,7 +22,7 @@ export default function DriverForm({
   defaultValues = null,
 }: {
   switchTab: (tab: string) => void;
-    defaultValues?: Partial<z.infer<typeof driverSchema>> | null;
+  defaultValues?: Partial<z.infer<typeof driverSchema>> | null;
 }) {
   const { formData, setField } = useDriverStore();
   console.log('🚀 ~ DriverForm ~ formData:', formData);
@@ -123,7 +123,6 @@ export default function DriverForm({
               </FormItem>
             )}
           />
-
 
           <FormItem>
             <FormLabel>Go To Next Step</FormLabel>
