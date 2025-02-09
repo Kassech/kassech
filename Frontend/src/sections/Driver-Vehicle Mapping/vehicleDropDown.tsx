@@ -1,6 +1,5 @@
 'use client';
-
-import * as React from 'react';
+import {useState} from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
@@ -17,24 +15,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useSearchUsers } from '../../services/carOwnerService';
-
+import { useGetAllVehicles } from '@/services/vehicleService';
+import { Input } from '@/components/ui/input';
 interface VehicleSearchProps {
   onVehicleSelect: (id: string, name: string) => void;
 }
 
 export default function VehicleSearch({ onVehicleSelect }: VehicleSearchProps) {
-  const [open, setOpen] = React.useState(false);
-  const [search, setSearch] = React.useState('');
-  const [value, setValue] = React.useState('');
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [value, setValue] = useState('');
 
-  // Fetch users with role 1 and matching the search term
-  const { data, isLoading, isError } = useSearchUsers({
-    search
-  });
-
-  // Extract users from data
-  const users = data?.users ?? [];
+  // Fetch vehicles from API
+  const { data: vehicles, isLoading, isError } = useGetAllVehicles(search);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -46,46 +39,43 @@ export default function VehicleSearch({ onVehicleSelect }: VehicleSearchProps) {
           className="w-full justify-between"
         >
           {value
-            ? users.find((user) => user.ID.toString() === value)?.FirstName ??
-              'Select Vehicle'
+            ? vehicles?.find((vehicle) => vehicle.id.toString() === value)
+                ?.vin ?? 'Select Vehicle'
             : 'Select Vehicle'}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput
+          <Input
             placeholder="Search Vehicle..."
             value={search}
-            onValueChange={(value) => setSearch(value)}
+            onChange={(e) => setSearch(e.target.value)} // Corrected event handler
           />
           <CommandList>
             {isLoading ? (
               <CommandEmpty>Loading...</CommandEmpty>
             ) : isError ? (
-              <CommandEmpty>Error fetching vehicle.</CommandEmpty>
-            ) : users.length === 0 ? (
-              <CommandEmpty>No vehicle found.</CommandEmpty>
+              <CommandEmpty>Error fetching vehicles.</CommandEmpty>
+            ) : vehicles?.length === 0 ? (
+              <CommandEmpty>No vehicles found.</CommandEmpty>
             ) : (
               <CommandGroup>
-                {users.map((user) => (
+                {vehicles?.map((vehicle) => (
                   <CommandItem
-                    key={user.ID}
-                    value={user.ID.toString()}
+                    key={vehicle.id}
+                    value={vehicle.id.toString()}
                     onSelect={(currentValue) => {
                       setValue(currentValue === value ? '' : currentValue);
-                      onVehicleSelect(
-                        user.ID.toString(),
-                        `${user.FirstName} ${user.LastName}`
-                      );
+                      onVehicleSelect(vehicle.id.toString(), vehicle.vin);
                       setOpen(false);
                     }}
                   >
-                    {user.FirstName} {user.LastName}
+                    {vehicle.vin}
                     <Check
                       className={cn(
                         'ml-auto',
-                        value === user.ID.toString()
+                        value === vehicle.id.toString()
                           ? 'opacity-100'
                           : 'opacity-0'
                       )}
