@@ -195,7 +195,7 @@ func SeedDB() {
 			UserID: admin.ID,
 			RoleID: adminRole.ID,
 		}
-		if err := DB.FirstOrCreate(&userRole).Error; err != nil {
+		if err := DB.Create(&userRole).Error; err != nil {
 			log.Printf("⚠️ Failed to assign Admin role: %v", err)
 		}
 	}
@@ -231,7 +231,7 @@ func SeedDB() {
 			UserID: owner.ID,
 			RoleID: ownerRole.ID,
 		}
-		if err := DB.FirstOrCreate(&ownerUserRole).Error; err != nil {
+		if err := DB.Create(&ownerUserRole).Error; err != nil {
 			log.Printf("⚠️ Failed to assign Owner role: %v", err)
 		}
 

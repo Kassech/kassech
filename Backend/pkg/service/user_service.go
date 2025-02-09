@@ -215,21 +215,28 @@ func (us *UserService) UpdateUser(userId uint, user *models.User) (*models.User,
 
 	return existingUser, nil
 }
-
 // DeleteUser deletes a user by ID
 func (us *UserService) DeleteUser(userId uint, isForce ...bool) error {
 	force := len(isForce) > 0 && isForce[0]
 
+	log.Printf("Deleting user with ID: %v (force: %v)\n", userId, force)
+
 	existingUser, err := us.Repo.FindByID(userId)
 	if err != nil {
+		log.Printf("Error finding user with ID: %v\n", userId)
 		return errors.New("user not found")
 	}
+
+	log.Printf("Found user with ID: %v\n", userId)
 
 	// Delete the user
 	err = us.Repo.Delete(existingUser, force)
 	if err != nil {
+		log.Printf("Error deleting user with ID: %v\n", userId)
 		return err
 	}
+
+	log.Printf("Deleted user with ID: %v\n", userId)
 
 	return nil
 }
