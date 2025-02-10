@@ -1,12 +1,16 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"runtime/debug"
 	"sync"
+	"time"
 
+	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/websocket/middleware"
 	"kassech/backend/pkg/websocket/server"
 	"kassech/backend/pkg/websocket/service"
@@ -18,9 +22,12 @@ type PassengerHandler struct {
 	connManager      *server.ConnectionManager
 	passengerService *service.PassengerService
 	auth             *middleware.WebSocketAuth
-	writeChan        chan []byte // Channel for serializing WebSocket writes
-	closeOnce        sync.Once   // Ensures writeChan is closed only once
+}
 
+type passengerConnectionState struct {
+	closeChan chan struct{}
+	wg        sync.WaitGroup
+	userID    uint
 }
 
 func NewPassengerHandler(
@@ -36,95 +43,178 @@ func NewPassengerHandler(
 }
 
 func (h *PassengerHandler) HandleConnection(w http.ResponseWriter, r *http.Request) {
-	// Authenticate user
 	userID, err := h.auth.Authenticate(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	// Upgrade connection
-	upgrader := &websocket.Upgrader{}        // Create a pointer to websocket.Upgrader
-	conn, err := upgrader.Upgrade(w, r, nil) // Call Upgrade on the pointer
+	upgrader := websocket.Upgrader{}
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("WebSocket upgrade failed: %v", err)
 		return
 	}
-	defer h.cleanupConnection(userID, conn)
 
-	// Register connection
+	state := &passengerConnectionState{
+		closeChan: make(chan struct{}),
+		userID:    userID,
+	}
+
 	h.connManager.AddConnection(userID, conn)
 
-	// Maintain connection
-	h.listenForMessages(userID, conn)
-}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer func() {
+		cancel()
+		h.cleanupConnection(userID, conn, state)
+	}()
 
-func (h *PassengerHandler) cleanupConnection(userID uint, conn *websocket.Conn) {
-	conn.Close()
-	h.connManager.RemoveConnection(userID, conn)
-	h.closeOnce.Do(func() {
-		close(h.writeChan) // Close the write channel
+	conn.SetPingHandler(func(appData string) error {
+		return conn.WriteControl(websocket.PongMessage, []byte(appData), time.Now().Add(10*time.Second))
 	})
+
+	state.wg.Add(1)
+	go h.handleReads(conn, state)
+
+	h.handleConnectionMessages(ctx, conn, state)
 }
 
-func (h *PassengerHandler) listenForMessages(userID uint, conn *websocket.Conn) {
+func (h *PassengerHandler) handleReads(conn *websocket.Conn, state *passengerConnectionState) {
+	defer state.wg.Done()
+
+	conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 	for {
-		_, message, err := conn.ReadMessage()
-		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
-				log.Printf("Unexpected close: %v", err)
-			}
-			break
-		}
-
-		var msg map[string]interface{}
-		if err := json.Unmarshal(message, &msg); err != nil {
-			log.Printf("Error unmarshalling message: %v", err)
-			continue
-		}
-
-		switch msg["action"] {
-		case "increment":
-			pathID := uint(msg["pathID"].(float64))
-			amount := int(msg["amount"].(float64))
-			if err := h.passengerService.IncrementPassengerCountBy(pathID, amount); err != nil {
-				log.Printf("Error incrementing passenger count: %v", err)
-			}
-			h.broadcastPassengerCount(pathID)
-		case "decrement":
-			pathID := uint(msg["pathID"].(float64))
-			amount := int(msg["amount"].(float64))
-			if err := h.passengerService.DecrementPassengerCountBy(pathID, amount); err != nil {
-				log.Printf("Error decrementing passenger count: %v", err)
-			}
-			h.broadcastPassengerCount(pathID)
-		case "getPassengers":
-			pathID := uint(msg["pathID"].(float64))
-			h.broadcastPassengerCount(pathID)
+		select {
+		case <-state.closeChan:
+			return
 		default:
-			log.Printf("Unknown action: %s", msg["action"])
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
+					log.Printf("Unexpected close: %v", err)
+				}
+				return
+			}
+
+			var msg map[string]interface{}
+			if err := json.Unmarshal(message, &msg); err != nil {
+				log.Printf("Error unmarshalling message: %v", err)
+				continue
+			}
+
+			h.handleMessage(msg, state)
 		}
 	}
+}
+
+func (h *PassengerHandler) cleanupConnection(userID uint, conn *websocket.Conn, state *passengerConnectionState) {
+	close(state.closeChan)
+	state.wg.Wait()
+	conn.Close()
+	h.connManager.RemoveConnection(userID, conn)
+}
+
+func (h *PassengerHandler) handleConnectionMessages(_ context.Context, _ *websocket.Conn, state *passengerConnectionState) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered from panic: %v\n%s", r, debug.Stack())
+		}
+	}()
+
+	for {
+		select {
+		case <-state.closeChan:
+			log.Println("Connection closed, stopping message handler")
+			return
+		}
+	}
+}
+
+func (h *PassengerHandler) handleMessage(msg map[string]interface{}, state *passengerConnectionState) {
+	switch msg["action"] {
+	case "increment":
+		h.handleIncrement(msg, state)
+	case "decrement":
+		h.handleDecrement(msg, state)
+	case "getPassengers":
+		h.handleGetPassengers(msg, state)
+	default:
+		log.Printf("Unknown action: %s", msg["action"])
+	}
+}
+
+func (h *PassengerHandler) sendPassengerCount(userID uint, pathID uint) {
+	count, err := h.passengerService.GetPassengerCount(pathID)
+	if err != nil {
+		log.Printf("Error getting passenger count: %v", err)
+		return
+	}
+
+	response := map[string]interface{}{
+		"pathID":         pathID,
+		"passengerCount": count,
+	}
+
+	message, err := json.Marshal(response)
+	if err != nil {
+		log.Printf("Error marshalling response: %v", err)
+		return
+	}
+
+	h.connManager.SendToUser(userID, message)
+}
+
+func (h *PassengerHandler) handleIncrement(msg map[string]interface{}, state *passengerConnectionState) {
+	pathID := uint(msg["pathID"].(float64))
+	amount := int(msg["amount"].(float64))
+	log.Printf("Incrementing passengers for path %d by %d", pathID, amount)
+
+	if err := h.passengerService.IncrementPassengerCountBy(pathID, amount); err != nil {
+		log.Printf("Error incrementing: %v", err)
+		return
+	}
+
+	h.sendPassengerCount(state.userID, pathID)
+	h.broadcastPassengerCount(pathID)
+}
+
+func (h *PassengerHandler) handleDecrement(msg map[string]interface{}, state *passengerConnectionState) {
+	pathID := uint(msg["pathID"].(float64))
+	amount := int(msg["amount"].(float64))
+	log.Printf("Decrementing passengers for path %d by %d", pathID, amount)
+
+	if err := h.passengerService.DecrementPassengerCountBy(pathID, amount); err != nil {
+		log.Printf("Error decrementing: %v", err)
+		return
+	}
+
+	h.sendPassengerCount(state.userID, pathID)
+	h.broadcastPassengerCount(pathID)
+}
+
+func (h *PassengerHandler) handleGetPassengers(msg map[string]interface{}, state *passengerConnectionState) {
+	pathID := uint(msg["pathID"].(float64))
+	h.sendPassengerCount(state.userID, pathID)
 }
 
 func (h *PassengerHandler) broadcastPassengerCount(pathID uint) {
-	// Fetch the current passenger count from the service
-	passengerCount, err := h.passengerService.GetPassengerCount(pathID)
+	count, err := h.passengerService.GetPassengerCount(pathID)
 	if err != nil {
-		log.Printf("Error fetching passenger count: %v", err)
+		log.Printf("Error getting count: %v", err)
 		return
 	}
 
-	// Broadcast the passenger count to all connected clients
 	message := map[string]interface{}{
 		"pathID":         pathID,
-		"passengerCount": passengerCount,
+		"passengerCount": count,
 	}
+
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
-		log.Printf("Error marshalling message: %v", err)
+		log.Printf("Error marshalling: %v", err)
 		return
 	}
-	fmt.Println("	fmt", "fmt")
-	h.connManager.Broadcast(messageBytes)
+
+	channel := fmt.Sprintf("passenger_updates:%d", pathID)
+	config.RedisClient.Publish(context.Background(), channel, messageBytes)
 }
