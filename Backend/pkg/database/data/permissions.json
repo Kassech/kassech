@@ -1,33 +1,122 @@
 [
-    {
-        "permission_name": "ViewProfile",
-        "description": "Permission to view profile",
-        "roles": [
-            "Admin",
-            "Driver",
-            "QueueManager",
-            "CustomerService",
-            "Owner"
-        ]
-    },
-    {
-      "permission_name": "CreateUser",
-      "description": "Permission to create users",
-      "roles": ["Admin"]
-    },
-    {
-      "permission_name": "DeleteUser",
-      "description": "Permission to delete users",
-      "roles": ["Admin"]
-    },
-    {
-      "permission_name": "UpdateUser",
-      "description": "Permission to update users",
-      "roles": ["Admin"]
-    },
-    {
-      "permission_name": "ViewReports",
-      "description": "Permission to view reports",
-      "roles": ["Admin", "Driver"]
-    }
-  ]
+  {
+    "permission_name": "ViewProfile",
+    "description": "Permission to view profile",
+    "roles": ["Admin", "Driver", "QueueManager", "CustomerService", "Owner", "RouteOperator"]
+  },
+  {
+    "permission_name": "CreateUser",
+    "description": "Permission to create users",
+    "roles": ["Admin", "CustomerService"]
+  },
+  {
+    "permission_name": "DeleteUser",
+    "description": "Permission to delete users",
+    "roles": ["Admin", "CustomerService"]
+  },
+  {
+    "permission_name": "UpdateUser",
+    "description": "Permission to update users",
+    "roles": ["Admin", "CustomerService"]
+  },
+  {
+    "permission_name": "ViewReports",
+    "description": "Permission to view reports",
+    "roles": ["Admin"]
+  },
+  {
+    "permission_name": "CreateDelegation",
+    "description": "Permission to create delegations",
+    "roles": ["Admin", "CustomerService"]
+  },
+  {
+    "permission_name": "ViewUser",
+    "description": "Permission to view users",
+    "roles": ["Admin", "CustomerService"]
+  },
+  {
+    "permission_name": "Assign Permission",
+    "description": "Permission to give permissions",
+    "roles": ["Admin"]
+  },
+  {
+    "permission_name": "Remove Permission",
+    "description": "Permission to remove permissions",
+    "roles": ["Admin"]
+  },
+  {
+    "permission_name": "CreateVehicle",
+    "description": "Permission to create vehicles",
+    "roles": ["Admin", "CustomerService"]
+  },
+  {
+    "permission_name": "DeleteStation",
+    "description": "Permission to delete stations",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "UpdateStation",
+    "description": "Permission to update stations",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "CreateStation",
+    "description": "Permission to create stations",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "CreateRoute",
+    "description": "Permission to create routes",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "EditRoute",
+    "description": "Permission to edit routes",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "DeleteRoute",
+    "description": "Permission to delete routes",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "ViewRoute",
+    "description": "Permission to view routes",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "CreatePath",
+    "description": "Permission to create paths",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "QueueManagerPath",
+    "description": "Permission to manage queue paths",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "VehicleTracking",
+    "description": "Permission to track vehicles",
+    "roles": ["Admin", "RouteOperator"]
+  },
+  {
+    "permission_name": "CreateRole",
+    "description": "Permission to create roles",
+    "roles": ["Admin"]
+  },
+  {
+    "permission_name": "EditRole",
+    "description": "Permission to edit roles",
+    "roles": ["Admin"]
+  },
+  {
+    "permission_name": "DeleteRole",
+    "description": "Permission to delete roles",
+    "roles": ["Admin"]
+  },
+  {
+    "permission_name": "ViewRole",
+    "description": "Permission to view roles",
+    "roles": ["Admin"]
+  }
+]

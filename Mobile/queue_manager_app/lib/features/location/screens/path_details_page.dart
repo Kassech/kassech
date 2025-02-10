@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:queue_manager_app/core/permissions/permission_wrapper.dart';
 import 'package:sliding_up_panel2/sliding_up_panel2.dart';
 
 
+import '../../../core/permissions/app_permissions.dart';
 import '../../queue/models/path_model.dart';
 import '../../queue/provider/passenger_provider.dart';
 import '../widgets/driver_map_container.dart';
@@ -101,40 +103,43 @@ class _PathDetailsPageState extends State<PathDetailsPage> {
                       widget.path.route.startingLocation.locationName),
                   buildPathDetailItem(
                       'End:', widget.path.route.arrivalLocation.locationName),
-                  Consumer(
-                    builder: (context, ref, child) {
-                      ref
-                          .watch(passengerNotifierProvider.notifier)
-                          .getInitialData(widget.pathId);
-                      final passengerCount = ref.watch(
-                        passengerNotifierProvider.select(
-                            (state) => state[widget.pathId.toString()] ?? 0),
-                      );
-                      return Row(
-                        children: [
-                          Text(
-                            'Passenger Count: $passengerCount',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                  PermissionWrapper(
+                    requiredPermission: AppPermissions.manageQueue,
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        ref
+                            .watch(passengerNotifierProvider.notifier)
+                            .getInitialData(widget.pathId);
+                        final passengerCount = ref.watch(
+                          passengerNotifierProvider.select(
+                              (state) => state[widget.pathId.toString()] ?? 0),
+                        );
+                        return Row(
+                          children: [
+                            Text(
+                              'Passenger Count: $passengerCount',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.remove),
-                            onPressed: () => ref
-                                .read(passengerNotifierProvider.notifier)
-                                .updateCount(widget.pathId.toString(), -1),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            onPressed: () => ref
-                                .read(passengerNotifierProvider.notifier)
-                                .updateCount(widget.pathId.toString(), 1),
-                          ),
-                        ],
-                      );
-                    },
+                            Spacer(),
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              onPressed: () => ref
+                                  .read(passengerNotifierProvider.notifier)
+                                  .updateCount(widget.pathId.toString(), -1),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () => ref
+                                  .read(passengerNotifierProvider.notifier)
+                                  .updateCount(widget.pathId.toString(), 1),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

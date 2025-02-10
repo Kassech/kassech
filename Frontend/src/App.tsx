@@ -27,6 +27,10 @@ import PathPage from './pages/path';
 import VehicleTracking from './pages/VehicleTracking';
 import QueueManagerPaths from './pages/QueueManagerPathsRegistration';
 import Delegation from './pages/Delegation';
+import TrackAllVehicle from './pages/TrackAllVehicle';
+import TrackVehicle from './pages/TrackVehicle';
+import TrackNearbyPage from './pages/TrackNearby';
+import TrackPathPage from './pages/TrackByPath';
 
 function App() {
   return (
@@ -61,12 +65,13 @@ function App() {
             <Route path="/route" element={<RoutePage />} />
             <Route path="/paths" element={<PathPage />} />
             <Route path="/rolepermission" element={<RolePermission />} />
-            <Route
-              path="/delegation"
-              element={<Delegation />}
-            />
+            <Route path="/delegation" element={<Delegation />} />
             <Route path="/vehicleTracking" element={<VehicleTracking />} />
             <Route path="/QueueManagerPaths" element={<QueueManagerPaths />} />
+            <Route path="/trackall" element={<TrackAllVehicle />} />
+            <Route path="/trackOne" element={<TrackVehicle />} />
+            <Route path="/trackNearby" element={<TrackNearbyPage />} />
+            <Route path="/trackByPath" element={<TrackPathPage />} />
           </Route>
 
           {/* Catch-all route for 404 */}
