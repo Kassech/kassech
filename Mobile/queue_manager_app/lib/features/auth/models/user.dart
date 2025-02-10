@@ -32,8 +32,7 @@ class User {
       phoneNumber: json['phone_number'] ?? '',
       profilePictureUrl: json['ProfilePicture'] ?? '',
       isVerified: json['is_verified'] ?? false,
-      // roles: List<String>.from(json['roles'] ?? []),
-      roles: ['Owner'],
+      roles: List<String>.from(json['roles'] ?? []),
       permissions: List<String>.from(json['permissions'] ?? []),
       role: json['role'] ?? 0,
     );
