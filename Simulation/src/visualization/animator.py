@@ -126,7 +126,7 @@ class Animator:
                         message = json.dumps({"action": "increment", "pathID": path_id, "amount": 1})
                         await ws.send(message)
                         logger.info("Sent WebSocket message: %s", message)
-                        await asyncio.sleep(0.01)  # Send every 1/10 a second
+                        await asyncio.sleep(0.1)  # Send every 1/10 a second
             except Exception as e:
                 logger.error("Failed to connect to WebSocket: %s", e)
                 await asyncio.sleep(1)  # Wait before retrying
