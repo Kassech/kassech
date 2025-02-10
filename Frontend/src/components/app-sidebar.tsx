@@ -118,6 +118,22 @@ const data = {
           title: 'Track Vehicle',
           url: '/vehicleTracking',
         },
+        {
+          title: 'Track All Vehicle',
+          url: '/trackall',
+        },
+        {
+          title: 'Track Nearby Vehicle',
+          url: '/trackNearby',
+        },
+        {
+          title: 'Track single Vehicle',
+          url: '/trackOne',
+        },
+        {
+          title: 'Track Vehicle By Path',
+          url: '/trackByPath',
+        },
       ],
     },
     {
