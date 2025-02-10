@@ -20,7 +20,7 @@ import {
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { useActiveUsers, useActiveVehicles, useTotalUsers, useTotalVehicles } from '@/services/dashboardService';
 const chartData = [
-  { browser: 'safari', visitors: 200, fill: 'hsl(187.9 85.7% 53.3%)' },
+  { browser: 'safari', visitors: 200, fill: 'hsl(217.8 91.7% 59.4%)' },
 ];
 
 const chartConfig = {

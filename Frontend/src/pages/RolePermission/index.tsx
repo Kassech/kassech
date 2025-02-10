@@ -468,7 +468,7 @@ export default function RolePermission() {
                     className={`border rounded-lg p-4 ${
                       rolePermissions?.some((rp) => rp.ID === permissions.ID) ||
                       highlightedPermissions.includes(permissions.ID)
-                        ? 'bg-blue-100 text-blue-900 border-blue-500'
+                        ? 'bg-blue-200 text-white-900 border-gray-100 shadow-sm'
                         : 'bg-gray-100 text-gray-700'
                     }`}
                     onClick={() => handlePermissionClick(permissions)}
@@ -476,7 +476,7 @@ export default function RolePermission() {
                     <h2 className="text-lg font-medium">
                       {permissions.PermissionName}
                     </h2>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-800">
                       {permissions.Description}
                     </p>
                   </div>
@@ -487,5 +487,5 @@ export default function RolePermission() {
         </div>
       </div>
     </>
-  );
+  )
 }
