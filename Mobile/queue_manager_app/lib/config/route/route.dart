@@ -8,6 +8,7 @@ import '../../features/auth/pages/signinpage.dart';
 import '../../features/auth/pages/signuppage.dart';
 import '../../features/auth/pages/waitpage.dart';
 import '../../features/auth/providers/auth_provider.dart';
+import '../../features/owner/models/car_model.dart';
 import '../../features/owner/pages/carLocation/car_location.dart';
 import '../../features/owner/pages/delegate/delegation.dart';
 import '../../features/owner/pages/list/list_of_cars.dart';
@@ -57,14 +58,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           state.matchedLocation == SignUpPage.routeName)) {
         if (user.roles.contains('QueueManager') ||
             user.roles.contains('Driver')) {
-              
           return HomePage.routeName;
-        }
-        else if (user.roles.contains('Owner')) {
+        } else if (user.roles.contains('Owner')) {
           return ListOfCars.routeName;
-        }
-         else {
-
+        } else {
           return SignInPage.routeName;
         }
       }
@@ -82,11 +79,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             bottomNavigationBar: CustomNavigationBar(
               height: 60,
               selectedIndex: navigationShell.currentIndex,
-              
               icons: [
                 if (authState.value!.roles.contains('QueueManager') ||
                     authState.value!.roles.contains('Driver'))
-                Icons.home,
+                  Icons.home,
                 if (authState.value!.roles.contains('Owner')) Icons.car_rental,
                 Icons.person_2,
               ],
@@ -169,7 +165,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: ErrorPage.routeName,
           name: ErrorPage.routeName,
-          builder: (context, state) => ErrorPage(state.error, error: state.error?.toString() ?? 'Unknown error',)),
+          builder: (context, state) => ErrorPage(
+                state.error,
+                error: state.error?.toString() ?? 'Unknown error',
+              )),
       GoRoute(
         path: DelegationPage.routeName,
         name: DelegationPage.routeName,
@@ -195,7 +194,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: CarLocation.routeName,
         name: CarLocation.routeName,
-        builder: (context, state) => CarLocation(),
+        builder: (context, state) {
+          return CarLocation(car: state.extra as Car,);
+        },
       ),
       GoRoute(
         path: NotificationPage.routeName,

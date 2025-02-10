@@ -66,6 +66,7 @@ dependencies:
   flutter_svg: ^2.0.17
   flutter_polyline_points: ^2.1.0
   flutter_compass: ^0.8.1
+  cached_network_image: ^3.4.1
   
 
 dev_dependencies:
