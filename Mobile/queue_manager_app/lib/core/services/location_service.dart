@@ -14,10 +14,9 @@ class LocationService {
   Position? _lastPosition;
   final LocalStorageService _localStorageService = LocalStorageService();
 
-  final int minDistance = 50;
+  final int minDistance = 1;
 
   Future<bool> _checkAndRequestPermissions() async {
-    // Check if location services are enabled
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       bool serviceRequested = await Geolocator.openLocationSettings();
@@ -26,23 +25,20 @@ class LocationService {
       }
     }
 
-    // Check current permission status
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return false; // User denied permission
+        return false;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // The user permanently denied location permission. Direct them to settings.
       await Geolocator.openAppSettings();
       return false;
     }
 
-    // For foreground services, we need "Always" permission in SDK 34+
     if (permission == LocationPermission.whileInUse) {
       if (await Geolocator.requestPermission() != LocationPermission.always) {
         debugPrint(
@@ -64,7 +60,7 @@ class LocationService {
 
     try {
       _channel = WebSocketChannel.connect(
-        Uri.parse('${ApiConstants.location}?test_id=$userId'),
+        Uri.parse('${ApiConstants.location}?token=$token'),
       );
     } catch (e) {
       if (kDebugMode) {
@@ -75,15 +71,14 @@ class LocationService {
     _positionSubscription = Geolocator.getPositionStream(
       locationSettings: AndroidSettings(
         accuracy: LocationAccuracy.high,
-        foregroundNotificationConfig: const ForegroundNotificationConfig(
-          /// write a descriptive notification text and title
+        foregroundNotificationConfig:  ForegroundNotificationConfig(
           notificationTitle: 'Location Service',
-          notificationText: 'Location service is running',
+          notificationText: 'Location service is running ${_lastPosition?.latitude}, ${_lastPosition?.longitude}',
           setOngoing: true,
           enableWakeLock: true,
           enableWifiLock: true,
         ),
-        distanceFilter: 1,
+        distanceFilter: minDistance,
       ),
     ).listen((Position newPosition) {
       if (_lastPosition == null ||
@@ -96,6 +91,7 @@ class LocationService {
               minDistance) {
         _lastPosition = newPosition;
 
+        print('Location update: ${newPosition.latitude}, ${newPosition.longitude}');
         final data = jsonEncode({
           if (vehicleId != null) "vehicle_id": vehicleId,
           "lat": newPosition.latitude,

@@ -27,12 +27,15 @@ class PathNotifier extends AsyncNotifier<List<PathModel>?> {
       state = const AsyncLoading();
       final response = await _repository.fetchPaths();
       state = AsyncData(response);
+      print('path provider: $response');
       return response;
     } on DioException catch (e) {
       state = AsyncError(e.error ?? 'Something went wrong', e.stackTrace);
+      print('path provider error: ${e.error}');
       return null;
     } catch (e, stackTrace) {
       state = AsyncError('Something went wrong', stackTrace);
+      print('path provider error from catch: $e');
       return null;
     }
   }

@@ -14,8 +14,8 @@ class RouteModel {
   });
 
   factory RouteModel.fromJson(Map<String, dynamic> json) {
-    final startingLocation = StationModel.fromJson(json['StationA']);
-    final arrivalLocation = StationModel.fromJson(json['StationB']);
+    final startingLocation = StationModel.fromJson(json['station_a']);
+    final arrivalLocation = StationModel.fromJson(json['station_b']);
     final name = '${startingLocation.locationName} - ${arrivalLocation.locationName}';
 
     return RouteModel(
