@@ -45,6 +45,7 @@ const routePermissions: Record<string, string[]> = {
     'EditRole',
     'DeleteRole',
     'Assign Permission',
+    'Remove Permission',
   ],
   '/vehicleTracking': ['VehicleTracking'],
 };
