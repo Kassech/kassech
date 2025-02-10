@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:queue_manager_app/config/const/api_constants.dart';
-import 'package:queue_manager_app/core/services/api_service.dart';
-import 'package:queue_manager_app/core/services/local_storage_service.dart';
-import 'package:queue_manager_app/features/owner/models/car_model.dart';
 
+import '../../../config/const/api_constants.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/services/local_storage_service.dart';
 import '../../auth/models/user.dart';
 
 class DriversRepo {
@@ -27,8 +25,6 @@ class DriversRepo {
           },
         ),
       );
-
-      print(response.data['data']);
       return (response.data['data'] as List)
           .map((e) => User.fromJson(e))
           .toList();
@@ -40,13 +36,13 @@ class DriversRepo {
   }
 
   /// hires a driver
-  Future<void> hireDriver(int driverId) async {
+  Future<void> hireDriver(int driverId, int vehicleId) async {
     try {
-      print("Hiring driver repo ");
       await dio.post(
         ApiConstants.hireDriver,
         data: {
           'driver_id': driverId,
+          'vehicle_id': vehicleId,
         },
         options: Options(
           headers: {
@@ -55,9 +51,8 @@ class DriversRepo {
         ),
       );
     } on DioException catch (_) {
-      print("This is the error $_");
       rethrow;
-    } catch (e, s) {
+    } catch (e) {
       throw Exception('Failed to hire driver');
     }
   }

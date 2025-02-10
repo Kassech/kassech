@@ -220,13 +220,11 @@ class ListOfCars extends ConsumerWidget {
                   AlwaysStoppedAnimation<Color>(AppColors.blue), // Use blue
             ),
           ),
-          error: (error, stackTrace) => Center(
-            child: ErrorContainer(
-              errorMessageText: error.toString(),
-              onTapRetry: () {
-                ref.read(carProvider.notifier).fetchCars();
-              },
-            ),
+          error: (error, stackTrace) => ErrorContainer(
+            errorMessageText: error.toString(),
+            onTapRetry: () {
+              ref.read(carProvider.notifier).fetchCars();
+            },
           ),
         ),
       );

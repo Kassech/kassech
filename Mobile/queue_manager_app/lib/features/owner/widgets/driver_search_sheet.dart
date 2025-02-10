@@ -1,14 +1,19 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/core/util/ui_utils.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/models/user.dart';
+import '../models/hire_driver_params.dart';
 import '../providers/drivers_provider.dart';
 import '../providers/hire_driver_provider.dart';
 
 class DriverSearchSheet extends ConsumerStatefulWidget {
-  const DriverSearchSheet({Key? key}) : super(key: key);
+  const DriverSearchSheet({super.key, required this.vehicleId});
+
+  final int vehicleId;
 
   @override
   ConsumerState<DriverSearchSheet> createState() => _DriverSearchSheetState();
@@ -98,8 +103,8 @@ class _DriverSearchSheetState extends ConsumerState<DriverSearchSheet> {
                         Divider(color: themeData.dividerColor),
                     itemBuilder: (context, index) {
                       final driver = drivers[index];
-                      print('Driver $index: ${driver.firstName}');
-                      return DriverListItem(driver: driver);
+                      return DriverListItem(
+                          driver: driver, vehicleId: widget.vehicleId);
                     },
                   ),
                 );
@@ -120,13 +125,22 @@ class _DriverSearchSheetState extends ConsumerState<DriverSearchSheet> {
 
 class DriverListItem extends ConsumerWidget {
   final User driver;
+  final int vehicleId;
 
-  const DriverListItem({super.key, required this.driver});
+  const DriverListItem({
+    super.key,
+    required this.driver,
+    required this.vehicleId,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeData = Theme.of(context);
-    final hireState = ref.watch(hireDriverProvider);
+    final hireState = ref.watch(
+      hireDriverProvider(
+        HireDriverParams(driverId: driver.id, vehicleId: vehicleId),
+      ),
+    );
 
     return ListTile(
       key: ValueKey(driver.id),
@@ -138,17 +152,30 @@ class DriverListItem extends ConsumerWidget {
         onPressed: hireState is AsyncLoading
             ? null
             : () async {
-                // Call the notifier's hireDriver method.
                 await ref
-                    .read(hireDriverProvider.notifier)
-                    .hireDriver(driver.id);
+                    .read(hireDriverProvider(
+                      HireDriverParams(
+                          driverId: driver.id, vehicleId: vehicleId),
+                    ).notifier)
+                    .hireDriver(
+                      HireDriverParams(
+                          driverId: driver.id, vehicleId: vehicleId),
+                    );
 
                 hireState.maybeWhen(
                   error: (error, stackTrace) {
-                    UiUtils.showOverlay(context, error.toString(), themeData.colorScheme.error);
+                    UiUtils.showOverlay(
+                      context,
+                      error.toString(),
+                      themeData.colorScheme.error,
+                    );
                   },
                   data: (_) {
-                    UiUtils.showOverlay(context, 'Driver hired', AppColors.successColor);
+                    UiUtils.showOverlay(
+                      context,
+                      'Driver hired',
+                      AppColors.successColor,
+                    );
                   },
                   orElse: () {},
                 );
@@ -159,9 +186,6 @@ class DriverListItem extends ConsumerWidget {
                 height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    themeData.colorScheme.onPrimary,
-                  ),
                 ),
               )
             : const Text("Hire"),

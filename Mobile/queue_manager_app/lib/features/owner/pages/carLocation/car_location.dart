@@ -190,7 +190,7 @@ class _CarLocationState extends State<CarLocation> {
             // Action button centered at the bottom
             Center(
               child: ElevatedButton.icon(
-                onPressed: () => showChangeDriverSheet(context),
+                onPressed: () => showChangeDriverSheet(context, widget.car.id),
                 icon: const Icon(Icons.person_outline),
                 label: const Text("Change Driver"),
                 style: ElevatedButton.styleFrom(
@@ -246,7 +246,7 @@ class _CarLocationState extends State<CarLocation> {
     );
   }
 
-  void showChangeDriverSheet(BuildContext context) {
+  void showChangeDriverSheet(BuildContext context, int vehicleId) {
     final themeData = Theme.of(context);
     showModalBottomSheet(
       context: context,
@@ -257,7 +257,7 @@ class _CarLocationState extends State<CarLocation> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
       ),
       builder: (context) {
-        return const DriverSearchSheet();
+        return DriverSearchSheet(vehicleId: vehicleId);
       },
     );
   }
