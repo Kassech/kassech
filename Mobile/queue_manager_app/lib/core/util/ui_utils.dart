@@ -83,4 +83,60 @@ class UiUtils {
       ),
     );
   }
+
+  static void showOverlay(BuildContext context, String message, Color color) {
+    final overlay = Overlay.of(context);
+    final size = MediaQuery.sizeOf(context);
+    OverlayEntry? overlayEntry;
+
+    void dismissOverlay() {
+      if (overlayEntry != null) {
+        overlayEntry!.remove();
+        overlayEntry = null;
+      }
+    }
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: size.height * 0.05,
+        left: size.width * 0.1,
+        right: size.width * 0.1,
+        child: Material(
+          color: Colors.transparent,
+          child: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              // Dismiss when swipe ends
+              dismissOverlay();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10.0,
+                    offset: Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry!);
+
+    Future.delayed(const Duration(seconds: 3), () {
+      if (overlayEntry != null) {
+        overlayEntry!.remove();
+      }
+    });
+  }
 }
