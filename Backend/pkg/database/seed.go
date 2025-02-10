@@ -72,6 +72,7 @@ func SeedDB() {
 		{RoleName: "Owner", Description: "Vehicle owner"},
 		{RoleName: "QueueManager", Description: "Manages queues"},
 		{RoleName: "CustomerService", Description: "Customer support"},
+		{RoleName: "RouteOperator", Description: "Route operator"},
 	}
 
 	for _, role := range roles {
@@ -99,20 +100,6 @@ func SeedDB() {
 		log.Fatalf("❌ Failed to parse permissions JSON: %v", err)
 	}
 
-	// Additional hardcoded permissions from second code
-	basicPermissions := []models.Permission{
-		{PermissionName: "CreateUser", Description: "Permission to create users"},
-		{PermissionName: "DeleteUser", Description: "Permission to delete users"},
-		{PermissionName: "UpdateUser", Description: "Permission to update users"},
-		{PermissionName: "ViewReports", Description: "Permission to view reports"},
-	}
-
-	for _, perm := range basicPermissions {
-		if err := DB.FirstOrCreate(&models.Permission{}, perm).Error; err != nil {
-			log.Printf("⚠️ Failed to seed basic permission %s: %v", perm.PermissionName, err)
-		}
-	}
-
 	for _, config := range permissionConfigs {
 		perm := models.Permission{
 			PermissionName: config.PermissionName,
@@ -137,7 +124,7 @@ func SeedDB() {
 				PermissionID: perm.ID,
 			}
 
-			if err := DB.FirstOrCreate(&rp).Error; err != nil {
+			if err := DB.Create(&rp).Error; err != nil {
 				log.Printf("⚠️ Failed to map %s to %s: %v", roleName, config.PermissionName, err)
 			}
 		}
@@ -569,7 +556,7 @@ func SeedDB() {
 	//--------------------------------------------------
 	log.Println("\n📊 Seeding Report:")
 	log.Printf("|- Roles: %d", len(roles))
-	log.Printf("|- Permissions: %d", len(permissionConfigs)+len(basicPermissions))
+	log.Printf("|- Permissions: %d", len(permissionConfigs))
 	log.Printf("|- Admin Users: %d", 2)
 	log.Printf("|- Owners: %d", len(owners))
 	log.Printf("|- Drivers: %d", len(driverIDs))
