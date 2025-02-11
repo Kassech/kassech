@@ -26,4 +26,5 @@ class ApiConstants {
   static const String passengers = '$socketBaseUrl/passengers';
   static const String status = '$socketBaseUrl/status';
   static const String location = '$socketBaseUrl/location';
+  static const String getPathForDriver = '$socketBaseUrl/destination';
 }
