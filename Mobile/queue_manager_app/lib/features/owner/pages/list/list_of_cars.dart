@@ -5,7 +5,6 @@ import 'package:queue_manager_app/core/theme/app_colors.dart';
 import 'package:queue_manager_app/features/owner/models/car_model.dart';
 import 'package:queue_manager_app/features/owner/pages/carLocation/car_location.dart';
 import 'package:queue_manager_app/shared/widgets/error_container.dart';
-import 'package:queue_manager_app/features/owner/pages/trackOrDelegate/track_or_delegate.dart';
 import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
 import '../../providers/car_list_provider.dart';
 
