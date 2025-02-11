@@ -13,6 +13,7 @@ class ApiConstants {
 
   /// Owner API endpoints
   static String carsByID(id) => '$apiBaseUrl/vehicles/$id';
+  static String getUsers = '$apiBaseUrl/users?role=2';
 
 //get cars
   static String getCars = '$apiBaseUrl/vehicles';

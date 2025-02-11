@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/features/owner/pages/trackCar/track_car.dart';
 import 'package:queue_manager_app/features/owner/pages/trackOrDelegate/track_or_delegate.dart';
 import '../../features/auth/models/user.dart';
 import '../../features/auth/pages/errorpage.dart';
@@ -205,6 +206,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           path: TrackOrDelegate.routeName,
           name: TrackOrDelegate.routeName,
           builder: (context, state) => TrackOrDelegate()),
+
+      GoRoute(
+          path: TrackCar.routeName,
+          name: TrackCar.routeName,
+          builder: (context, state) => TrackCar()),
+
       // GoRoute(
       //   path: ListOfCars.routeName,
       //   name: ListOfCars.routeName,
