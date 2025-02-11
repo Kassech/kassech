@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:queue_manager_app/core/theme/app_colors.dart';
 import 'package:queue_manager_app/features/owner/pages/trackCar/track_car.dart';
 import 'package:queue_manager_app/features/owner/pages/trackOrDelegate/track_or_delegate.dart';
 import '../../features/auth/models/user.dart';
@@ -79,9 +80,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             body: navigationShell,
             drawer: AppDrawer(),
             bottomNavigationBar: CustomNavigationBar(
+               selectedIconColor: AppColors.black,
+               unselectedIconColor: AppColors.white,
+              backgroundColor: AppColors.black,
               height: 60,
               selectedIndex: navigationShell.currentIndex,
               icons: [
+                
                 if (authState.value!.roles.contains('QueueManager') ||
                     authState.value!.roles.contains('Driver'))
                   Icons.home,
@@ -214,7 +219,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           path: TrackCar.routeName,
           name: TrackCar.routeName,
           builder: (context, state) => TrackCar()),
-
+      
       // GoRoute(
       //   path: ListOfCars.routeName,
       //   name: ListOfCars.routeName,

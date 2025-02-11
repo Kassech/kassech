@@ -16,6 +16,7 @@ final lightThemeData = ThemeData(
   ),
   appBarTheme: const AppBarTheme(
     centerTitle: true,
+    backgroundColor: AppColors.white
   ),
   inputDecorationTheme: InputDecorationTheme(
     enabledBorder: OutlineInputBorder(

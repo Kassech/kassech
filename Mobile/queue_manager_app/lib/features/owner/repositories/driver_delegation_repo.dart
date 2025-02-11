@@ -12,7 +12,7 @@ class DriverRepo {
   Future<List<Driver>> fetchDrivers() async {
     try {
       final response = await dio.get(
-        ApiConstants.getUsers, // Adjust the endpoint if necessary
+        ApiConstants.getDrivers, // Adjust the endpoint if necessary
         queryParameters: {
           'role': '2', // Driver role (this could vary depending on the API)
         },
@@ -39,7 +39,7 @@ class DriverRepo {
   Future<List<Driver>> searchDrivers(String query) async {
     try {
       final response = await dio.get(
-        ApiConstants.getUsers, // Adjust the endpoint if necessary
+        ApiConstants.getDrivers, // Adjust the endpoint if necessary
         queryParameters: {
           'role': '2', // Driver role (adjust as needed)
           'search':

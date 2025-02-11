@@ -52,52 +52,54 @@ class CustomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    return Container(
-      margin: isFloating
-          ? const EdgeInsets.symmetric(horizontal: 20, vertical: 20)
-          : null,
-      decoration: BoxDecoration(
-        color: backgroundColor ?? themeData.colorScheme.surface,
-        borderRadius: BorderRadius.circular(
-          borderRadius != null
-              ? borderRadius!
-              : isFloating
-                  ? 20
-                  : 0,
+    return Material(
+      child: Container(
+        margin: isFloating
+            ? const EdgeInsets.symmetric(horizontal: 20, vertical: 20)
+            : null,
+        decoration: BoxDecoration(
+          color: backgroundColor ?? themeData.colorScheme.surface,
+          borderRadius: BorderRadius.circular(
+            borderRadius != null
+                ? borderRadius!
+                : isFloating
+                    ? 20
+                    : 0,
+          ),
         ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(
-          borderRadius != null
-              ? borderRadius!
-              : isFloating
-                  ? 20
-                  : 0,
-        ),
-        child: NavigationBar(
-          elevation: elevation,
-          backgroundColor: backgroundColor,
-          shadowColor: shadowColor,
-          height: height,
-          labelBehavior: labelBehavior ?? NavigationDestinationLabelBehavior.alwaysHide,
-          surfaceTintColor: surfaceTintColor,
-          selectedIndex: selectedIndex,
-          onDestinationSelected: onDestinationSelected,
-          indicatorColor: indicatorColor,
-          indicatorShape: indicatorShape,
-          destinations: [
-            for (var i = 0; i < icons.length; i++)
-              NavigationDestination(
-                icon: Icon(
-                  icons[i],
-                  size: iconSize ?? 22,
-                  color: i == selectedIndex
-                      ? selectedIconColor ?? themeData.colorScheme.primary
-                      : unselectedIconColor ?? themeData.colorScheme.onSurface,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(
+            borderRadius != null
+                ? borderRadius!
+                : isFloating
+                    ? 20
+                    : 0,
+          ),
+          child: NavigationBar(
+            elevation: elevation,
+            backgroundColor: backgroundColor,
+            shadowColor: shadowColor,
+            height: height,
+            labelBehavior: labelBehavior ?? NavigationDestinationLabelBehavior.alwaysHide,
+            surfaceTintColor: surfaceTintColor,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onDestinationSelected,
+            indicatorColor: indicatorColor,
+            indicatorShape: indicatorShape,
+            destinations: [
+              for (var i = 0; i < icons.length; i++)
+                NavigationDestination(
+                  icon: Icon(
+                    icons[i],
+                    size: iconSize ?? 22,
+                    color: i == selectedIndex
+                        ? selectedIconColor ?? themeData.colorScheme.primary
+                        : unselectedIconColor ?? themeData.colorScheme.onSurface,
+                  ),
+                  label: labels != null ? labels![i] : '',
                 ),
-                label: labels != null ? labels![i] : '',
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

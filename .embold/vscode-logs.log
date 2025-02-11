@@ -1189,3 +1189,179 @@ Java HotSpot(TM) 64-Bit Server VM (build 23.0.1+11-39, mixed mode, sharing)
 2025-02-09 13:58:14 info: Row(s) deleted
 2025-02-09 14:25:10 info: Row(s) deleted
 2025-02-09 14:25:16 info: Row(s) deleted
+2025-02-09 14:57:01 info: Row(s) deleted
+2025-02-09 14:57:01 info: Row(s) deleted
+2025-02-09 14:57:01 info: Row(s) deleted
+2025-02-09 14:57:01 info: Row(s) deleted
+2025-02-09 14:57:01 info: Row(s) deleted
+2025-02-09 14:57:01 info: Row(s) deleted
+2025-02-09 14:57:01 info: Row(s) deleted
+2025-02-09 14:57:01 info: Row(s) deleted
+2025-02-09 14:57:03 info: Row(s) deleted
+2025-02-09 14:57:03 info: Row(s) deleted
+2025-02-09 14:57:05 info: Row(s) deleted
+2025-02-09 14:57:18 info: Row(s) deleted
+2025-02-09 15:02:13 info: Row(s) deleted
+2025-02-09 16:18:35 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:00 info: Row(s) deleted
+2025-02-09 16:21:03 info: Row(s) deleted
+2025-02-09 16:21:05 info: Row(s) deleted
+2025-02-09 16:21:15 info: Row(s) deleted
+2025-02-09 16:22:15 info: Row(s) deleted
+2025-02-09 21:25:46 info: Row(s) deleted
+2025-02-10 11:16:57 info: Row(s) deleted
+2025-02-10 12:27:47 info: Row(s) deleted
+2025-02-10 12:41:29 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:30 info: Row(s) deleted
+2025-02-10 12:41:32 info: Row(s) deleted
+2025-02-10 12:41:33 info: Row(s) deleted
+2025-02-10 12:41:35 info: Row(s) deleted
+2025-02-10 12:41:52 info: Row(s) deleted
+2025-02-10 13:53:52 info: Row(s) deleted
+2025-02-10 13:53:53 info: Row(s) deleted
+2025-02-10 13:53:53 info: Row(s) deleted
+2025-02-10 13:53:53 info: Row(s) deleted
+2025-02-10 13:53:53 info: Row(s) deleted
+2025-02-10 13:53:53 info: Row(s) deleted
+2025-02-10 13:53:53 info: Row(s) deleted
+2025-02-10 13:53:53 info: Row(s) deleted
+2025-02-10 13:53:55 info: Row(s) deleted
+2025-02-10 13:53:59 info: Row(s) deleted
+2025-02-10 13:54:14 info: Row(s) deleted
+2025-02-10 15:56:37 info: Row(s) deleted
+2025-02-10 15:57:54 info: Row(s) deleted
+2025-02-10 15:57:55 info: Row(s) deleted
+2025-02-10 15:57:55 info: Row(s) deleted
+2025-02-10 15:57:55 info: Row(s) deleted
+2025-02-10 15:57:55 info: Row(s) deleted
+2025-02-10 15:57:55 info: Row(s) deleted
+2025-02-10 15:57:55 info: Row(s) deleted
+2025-02-10 15:57:55 info: Row(s) deleted
+2025-02-10 15:57:58 info: Row(s) deleted
+2025-02-10 15:57:58 info: Row(s) deleted
+2025-02-10 15:58:00 info: Row(s) deleted
+2025-02-10 15:58:14 info: Row(s) deleted
+2025-02-11 10:31:08 info: Congratulations, your extension "Embold" is now active!
+2025-02-11 10:31:08 info: tempDirectory : c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\temp
+2025-02-11 10:31:12 info: Extraction complete for source: c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\resources\embold-scanner-archive.zip, destination: c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\temp
+2025-02-11 10:31:12 info: Extension installed on machine OS : win32
+2025-02-11 10:31:12 info: Fetched the issues from DB
+2025-02-11 10:31:12 info: Java version installed on machine : 
+java version "23.0.1" 2024-10-15
+Java(TM) SE Runtime Environment (build 23.0.1+11-39)
+Java HotSpot(TM) 64-Bit Server VM (build 23.0.1+11-39, mixed mode, sharing)
+
+2025-02-11 10:31:12 info: Java installed on machine.
+2025-02-11 10:31:16 error: request to https://v1.embold.io/api/plugins failed, reason: getaddrinfo ENOTFOUND v1.embold.io
+2025-02-11 10:31:16 info: Current installed embold extension version : 0.1.8
+2025-02-11 10:31:16 info: Latest embold extension version on marketplace : 0.1.6
+2025-02-11 10:34:39 info: Row(s) deleted
+2025-02-11 10:36:20 info: Row(s) deleted
+2025-02-11 10:36:57 info: Row(s) deleted
+2025-02-11 10:38:00 info: Row(s) deleted
+2025-02-11 10:38:00 info: Row(s) deleted
+2025-02-11 10:58:03 info: Row(s) deleted
+2025-02-11 10:58:03 info: Row(s) deleted
+2025-02-11 10:58:03 info: Row(s) deleted
+2025-02-11 10:58:03 info: Row(s) deleted
+2025-02-11 10:58:03 info: Row(s) deleted
+2025-02-11 11:03:32 info: Row(s) deleted
+2025-02-11 11:05:14 info: Row(s) deleted
+2025-02-11 11:05:14 info: Row(s) deleted
+2025-02-11 11:05:14 info: Row(s) deleted
+2025-02-11 11:05:14 info: Row(s) deleted
+2025-02-11 11:05:14 info: Row(s) deleted
+2025-02-11 11:05:14 info: Row(s) deleted
+2025-02-11 11:05:15 info: Row(s) deleted
+2025-02-11 11:05:15 info: Row(s) deleted
+2025-02-11 11:05:17 info: Row(s) deleted
+2025-02-11 11:05:20 info: Row(s) deleted
+2025-02-11 11:05:20 info: Row(s) deleted
+2025-02-11 11:05:20 info: Row(s) deleted
+2025-02-11 11:05:20 info: Row(s) deleted
+2025-02-11 11:05:21 info: Row(s) deleted
+2025-02-11 11:05:21 info: Row(s) deleted
+2025-02-11 11:05:22 info: Row(s) deleted
+2025-02-11 11:05:30 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:32 info: Row(s) deleted
+2025-02-11 11:05:33 info: Row(s) deleted
+2025-02-11 11:05:36 info: Row(s) deleted
+2025-02-11 11:05:43 info: Row(s) deleted
+2025-02-11 11:18:43 info: Row(s) deleted
+2025-02-11 21:39:08 info: Congratulations, your extension "Embold" is now active!
+2025-02-11 21:39:08 info: tempDirectory : c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\temp
+2025-02-11 21:39:11 info: Extraction complete for source: c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\resources\embold-scanner-archive.zip, destination: c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\temp
+2025-02-11 21:39:11 info: Extension installed on machine OS : win32
+2025-02-11 21:39:11 info: Fetched the issues from DB
+2025-02-11 21:39:11 info: Java version installed on machine : 
+java version "23.0.1" 2024-10-15
+Java(TM) SE Runtime Environment (build 23.0.1+11-39)
+Java HotSpot(TM) 64-Bit Server VM (build 23.0.1+11-39, mixed mode, sharing)
+
+2025-02-11 21:39:11 info: Java installed on machine.
+2025-02-11 21:39:25 info: Row(s) deleted
+2025-02-11 21:39:28 info: Embold extension version response:{"hasSupport":false,"version":"0.1.6","changeNotes":"<div> <p>Release Date: 09 Oct, 2023 <br><span>Bug fixes and improvements.</span></p> </div>"}
+2025-02-11 21:39:28 info: Current installed embold extension version : 0.1.8
+2025-02-11 21:39:28 info: Latest embold extension version on marketplace : 0.1.6
+2025-02-11 21:43:51 info: Congratulations, your extension "Embold" is now active!
+2025-02-11 21:43:51 info: tempDirectory : c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\temp
+2025-02-11 21:43:54 info: Extraction complete for source: c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\resources\embold-scanner-archive.zip, destination: c:\Users\OMEN 16\.vscode\extensions\embold-vscode.embold-0.1.8\temp
+2025-02-11 21:43:54 info: Extension installed on machine OS : win32
+2025-02-11 21:43:54 info: Fetched the issues from DB
+2025-02-11 21:43:54 info: Java version installed on machine : 
+java version "23.0.1" 2024-10-15
+Java(TM) SE Runtime Environment (build 23.0.1+11-39)
+Java HotSpot(TM) 64-Bit Server VM (build 23.0.1+11-39, mixed mode, sharing)
+
+2025-02-11 21:43:54 info: Java installed on machine.
+2025-02-11 21:45:08 error: request to https://v1.embold.io/api/plugins failed, reason: getaddrinfo ENOTFOUND v1.embold.io
+2025-02-11 21:45:08 info: Current installed embold extension version : 0.1.8
+2025-02-11 21:45:08 info: Latest embold extension version on marketplace : 0.1.6
+2025-02-11 21:58:06 info: Row(s) deleted
+2025-02-11 21:58:07 info: Row(s) deleted
+2025-02-11 21:58:07 info: Row(s) deleted
+2025-02-11 21:58:07 info: Row(s) deleted
+2025-02-11 21:58:07 info: Row(s) deleted
+2025-02-11 21:58:07 info: Row(s) deleted
+2025-02-11 21:58:07 info: Row(s) deleted
+2025-02-11 21:58:07 info: Row(s) deleted
+2025-02-11 21:58:07 info: Row(s) deleted
+2025-02-11 21:58:09 info: Row(s) deleted
+2025-02-11 21:58:09 info: Row(s) deleted
+2025-02-11 21:58:13 info: Row(s) deleted
+2025-02-11 21:58:25 info: Row(s) deleted
+2025-02-11 22:26:10 info: Row(s) deleted
+2025-02-11 22:26:11 info: Row(s) deleted
+2025-02-11 22:26:11 info: Row(s) deleted
+2025-02-11 22:26:11 info: Row(s) deleted
+2025-02-11 22:26:11 info: Row(s) deleted
+2025-02-11 22:26:11 info: Row(s) deleted
+2025-02-11 22:26:11 info: Row(s) deleted
+2025-02-11 22:26:11 info: Row(s) deleted
+2025-02-11 22:26:13 info: Row(s) deleted
+2025-02-11 22:26:14 info: Row(s) deleted
