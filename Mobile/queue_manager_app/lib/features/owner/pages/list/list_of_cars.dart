@@ -137,7 +137,7 @@ class ListOfCars extends ConsumerWidget {
                                   Text(
                                     car.make,
                                     style: const TextStyle(
-                                      fontSize: 22.0,
+                                      fontSize: 20.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -213,6 +213,7 @@ class ListOfCars extends ConsumerWidget {
                                     ],
                                   ),
                                 ],
+                              
                               ),
                             ),
                           ],
