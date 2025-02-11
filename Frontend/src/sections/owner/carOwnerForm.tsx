@@ -42,7 +42,7 @@ export default function CarOwnerForm({
     },
   });
 
-  console.log('profile type', typeof defaultValues?.Profile);
+  console.log('defaultValues', defaultValues);
 
   const onSubmit = async (values: z.infer<typeof ownerSchema>) => {
     console.log('Form values:', values); // Debug log

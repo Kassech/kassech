@@ -10,6 +10,7 @@ import '../../features/auth/pages/signinpage.dart';
 import '../../features/auth/pages/signuppage.dart';
 import '../../features/auth/pages/waitpage.dart';
 import '../../features/auth/providers/auth_provider.dart';
+import '../../features/owner/models/car_model.dart';
 import '../../features/owner/pages/carLocation/car_location.dart';
 import '../../features/owner/pages/delegate/delegation.dart';
 import '../../features/owner/pages/list/list_of_cars.dart';
@@ -195,7 +196,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: CarLocation.routeName,
         name: CarLocation.routeName,
-        builder: (context, state) => CarLocation(),
+        builder: (context, state) {
+          return CarLocation(car: state.extra as Car,);
+        },
       ),
       GoRoute(
         path: NotificationPage.routeName,

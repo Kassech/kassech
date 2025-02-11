@@ -10,4 +10,5 @@ export interface User {
   IsVerified: boolean;
   roles: string;
   IsOnline: boolean;
+  permissions:string[];
 }

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ImagePlus } from 'lucide-react';
 import { Avatar } from './ui/avatar';
 import { AvatarImage } from '@radix-ui/react-avatar';
+import { apiEndpoint } from '@/config/config';
 
 interface ImageUploaderProps {
   onImageUpload: (file: File) => void;
@@ -59,7 +60,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       maxSize: maxFileSize,
       accept: acceptedFormats,
     });
-
+  console.log('🚀 ~ preview:', preview);
   return (
     <div className="flex flex-col items-center justify-center">
       <Avatar
@@ -68,7 +69,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       >
         {preview && (
           <AvatarImage
-            src={preview as string}
+            // Check if the preview string starts with "http"
+            src={
+              preview.startsWith('http') ? preview : `${apiEndpoint}/${preview}`
+            }
             alt="Uploaded image"
             className={`h-full w-full object-cover ${className}`}
           />
@@ -76,6 +80,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         <ImagePlus className={`h-10 w-10 ${preview ? 'hidden' : 'block'}`} />
         <Input {...getInputProps()} type="file" className="hidden" />
       </Avatar>
+
       {isDragActive ? (
         <p className="mt-2 text-center">Drop the image!</p>
       ) : (

@@ -33,18 +33,18 @@ export default function QueueManagerForm({
       Email: defaultValues?.Email || '',
       PhoneNumber: defaultValues?.PhoneNumber || '',
       national_id: defaultValues?.national_id || null,
-      Profile: defaultValues?.Profile || null,
+      Profile: defaultValues?.ProfilePicture || null,
       Role: defaultValues?.Role ?? QUEUE_MANAGER_ROLE.toString(),
       ID: defaultValues?.ID || '',
     },
   });
-  console.log('profile type',typeof(defaultValues?.Profile))
+  console.log('profile type', typeof defaultValues?.Profile);
 
   const createUser = useCreateUser();
   const updateUser = useUpdateUserData();
 
   const onSubmit = async (values: z.infer<typeof queueManagerSchema>) => {
-    console.log('Form values:', values); 
+    console.log('Form values:', values);
 
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
@@ -53,8 +53,8 @@ export default function QueueManagerForm({
       }
     });
 
-     const isEdit = !!defaultValues?.ID;
-    console.log('Prepared form data for mutation:', formData); 
+    const isEdit = !!defaultValues?.ID;
+    console.log('Prepared form data for mutation:', formData);
 
     toast.promise(
       (async () => {
@@ -187,7 +187,6 @@ export default function QueueManagerForm({
               </FormItem>
             )}
           />
-
 
           <FormItem className="col-span-full">
             <FormControl>

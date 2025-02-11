@@ -34,6 +34,7 @@ class _DriverMapContainerState extends ConsumerState<DriverMapContainer> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       pathRoute = await ref.read(routeRepositoryProvider).getRoute(widget.start, widget.arrival);
+      print('Path Route: $pathRoute');
     });
   }
 
@@ -47,22 +48,19 @@ class _DriverMapContainerState extends ConsumerState<DriverMapContainer> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      final position = ref.watch(locationNotifierProvider);
-
-      /// get driver route
+      final position = ref.read(locationNotifierProvider);
 
       ref.read(routeNotifierProvider.notifier).fetchRoute(
         LatLng(position?.latitude ?? 0, position?.longitude ?? 0),
         widget.start,
       );
 
-      final driverRoute = ref.read(routeNotifierProvider);
+      final driverRoute = ref.watch(routeNotifierProvider);
 
       final location = position?.latitude != null && position?.longitude != null
           ? LatLng(position!.latitude, position.longitude)
           : widget.start;
 
-      // Get the actual path between start and arrival
       return FlutterMap(
         mapController: widget.mapController,
         options: MapOptions(
@@ -76,7 +74,6 @@ class _DriverMapContainerState extends ConsumerState<DriverMapContainer> {
           ),
           MarkerLayer(
             markers: [
-              // Start location marker
               Marker(
                 point: widget.start,
                 child: Icon(
@@ -85,7 +82,6 @@ class _DriverMapContainerState extends ConsumerState<DriverMapContainer> {
                   color: Colors.green.shade800,
                 ),
               ),
-              // Arrival location marker
               Marker(
                 point: widget.arrival,
                 child: Icon(
@@ -94,7 +90,6 @@ class _DriverMapContainerState extends ConsumerState<DriverMapContainer> {
                   color: Colors.blue,
                 ),
               ),
-              // Driver's location marker
               Marker(
                 point:
                 LatLng(position?.latitude ?? 0, position?.longitude ?? 0),
@@ -108,13 +103,11 @@ class _DriverMapContainerState extends ConsumerState<DriverMapContainer> {
           ),
           PolylineLayer(
             polylines: [
-              // Actual path line between start and arrival
               Polyline(
                 points: pathRoute,
                 strokeWidth: 4.0,
                 color: Colors.red.shade300,
               ),
-              // Line between the driver and the start location
               Polyline(
                 points: driverRoute,
                 strokeWidth: 4.0,

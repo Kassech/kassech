@@ -404,22 +404,109 @@ func (uc *UserController) ListUsers(c *gin.Context) {
 // UpdateUser method (Update User by ID)
 func (uc *UserController) UpdateUser(c *gin.Context) {
 	userId := c.Param("id")
-
-	var user models.User
-	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
 	userIdUint, err := utils.StringToUint(userId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
-	updatedUser, err := uc.Service.UpdateUser(userIdUint, &user)
+	// Bind the incoming data to the domain.User struct
+	var user domain.User
+	if err := c.ShouldBind(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Handle profile picture upload
+	uploadAndAssignPath := func(file *multipart.FileHeader, directory string, assign func(path string)) error {
+		if file != nil {
+			path, err := utils.UploadFile(file, directory)
+			if err != nil {
+				return err
+			}
+			assign(path)
+		}
+		return nil
+	}
+
+	if err := uploadAndAssignPath(user.ProfilePictureFile, constants.ProfilePictureDirectory, func(path string) {
+		user.ProfilePicture = &path
+	}); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save profile picture"})
+		return
+	}
+
+	// Convert domain user to model and update
+	userModel := mapper.ToGormUser(&user)
+	updatedUser, err := uc.Service.UpdateUser(userIdUint, userModel)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Update driver documents if the user is a driver
+	if user.Role == constants.DriverRoleID {
+		var driverDomain domain.Driver
+		if err := c.ShouldBind(&driverDomain); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		driverPaths := make(map[string]*string)
+		assignPath := func(key string, file *multipart.FileHeader, directory string) error {
+			if file != nil {
+				path, err := utils.UploadFile(file, directory)
+				if err != nil {
+					return err
+				}
+				driverPaths[key] = &path
+			}
+			return nil
+		}
+
+		// Upload and update each driver document
+		documents := []struct {
+			key       string
+			file      *multipart.FileHeader
+			directory string
+		}{
+			{"driving_license", driverDomain.DrivingLicenseFile, constants.DrivingLicenseDirectory},
+			{"national_id", driverDomain.NationalIdFile, constants.NationalIdDirectory},
+			{"insurance_document", driverDomain.InsuranceDocumentFile, constants.InsuranceDocumentDirectory},
+			{"other_document", driverDomain.OtherFile, constants.OthersDirectory},
+		}
+
+		for _, doc := range documents {
+			if err := assignPath(doc.key, doc.file, doc.directory); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to save %s", doc.key)})
+				return
+			}
+		}
+
+		// Fetch and update the driver record
+		existingDriver, err := uc.Service.GetDriverByUserID(userIdUint)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Driver record not found"})
+			return
+		}
+
+		if path, ok := driverPaths["driving_license"]; ok {
+			existingDriver.DrivingLicensePath = *path
+		}
+		if path, ok := driverPaths["national_id"]; ok {
+			existingDriver.NationalIdPath = *path
+		}
+		if path, ok := driverPaths["insurance_document"]; ok {
+			existingDriver.InsuranceDocPath = *path
+		}
+		if path, ok := driverPaths["other_document"]; ok {
+			existingDriver.OtherFilePath = *path
+		}
+
+		if _, err := uc.Service.UpdateDriver(existingDriver); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{

@@ -61,7 +61,7 @@ module.exports = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
-        customBlue: 'hsl(187.9 85.7% 53.3%)',
+        customBlue: 'hsl(217.8 91.7% 59.4%)',
       },
     },
   },

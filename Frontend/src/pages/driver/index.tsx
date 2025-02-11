@@ -61,7 +61,7 @@ export default function DriverPage({
                 LastName: defaultValues?.LastName || '',
                 Email: defaultValues?.Email || '',
                 PhoneNumber: defaultValues?.PhoneNumber || '',
-                Profile: defaultValues?.Profile || null,
+                Profile: defaultValues?.ProfilePicture || null,
                 Role: defaultValues?.Role || DRIVER_ROLE.toString(),
               }}
               switchTab={switchTab}

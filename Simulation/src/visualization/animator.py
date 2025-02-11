@@ -80,7 +80,13 @@ class Animator:
         while True:
             try:
                 logger.info("Connecting to WebSocket %s", ws_url)
-                async with websockets.connect(ws_url) as ws:
+                async with websockets.connect(
+                                ws_url,
+                                ping_interval=25,  # Send ping every 25 seconds
+                                ping_timeout=10,    # Wait 10 seconds for pong response
+                                close_timeout=15    # Wait 15 seconds for clean close
+                            ) as ws:
+
                     logger.info("Connected to WebSocket")
                     while True:
                         try:
@@ -99,7 +105,7 @@ class Animator:
                             break
             except Exception as e:
                 logger.error("Failed to connect to WebSocket: %s", e)
-                await asyncio.sleep(5)  # Wait before retrying
+                await asyncio.sleep(1)  # Wait before retrying
 
     async def send_random_path_id(self):
         logger = logging.getLogger(__name__)
@@ -107,7 +113,13 @@ class Animator:
         while True:
             try:
                 logger.info("Connecting to WebSocket %s", ws_url)
-                async with websockets.connect(ws_url) as ws:
+                async with websockets.connect(
+        ws_url,
+        ping_interval=25,  # Send ping every 25 seconds
+        ping_timeout=10,    # Wait 10 seconds for pong response
+        close_timeout=15    # Wait 15 seconds for clean close
+    ) as ws:
+
                     logger.info("Connected to WebSocket")
                     while True:
                         path_id = random.choice(list(self.station_a_projections.keys()))
@@ -117,7 +129,7 @@ class Animator:
                         await asyncio.sleep(0.1)  # Send every 1/10 a second
             except Exception as e:
                 logger.error("Failed to connect to WebSocket: %s", e)
-                await asyncio.sleep(5)  # Wait before retrying
+                await asyncio.sleep(1)  # Wait before retrying
 
     async def run_animation(self, cars):
         """Main animation loop with WebSocket integration."""
