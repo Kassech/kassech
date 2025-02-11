@@ -80,9 +80,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             body: navigationShell,
             drawer: AppDrawer(),
             bottomNavigationBar: CustomNavigationBar(
-               selectedIconColor: AppColors.black,
-               unselectedIconColor: AppColors.white,
-              backgroundColor: AppColors.black,
               height: 60,
               selectedIndex: navigationShell.currentIndex,
               icons: [

@@ -52,7 +52,7 @@ final lightThemeData = ThemeData(
     ),
   ),
   navigationBarTheme: NavigationBarThemeData(
-    backgroundColor: AppColors.lightNavBarBackground,
+    backgroundColor: AppColors.lightPrimary,
     indicatorColor: AppColors.lightSecondary,
     surfaceTintColor: Colors.transparent,
     shadowColor: Colors.red,
