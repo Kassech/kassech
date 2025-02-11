@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queue_manager_app/core/theme/app_colors.dart';
 import 'package:queue_manager_app/features/owner/models/car_model.dart';
 import 'package:queue_manager_app/features/owner/pages/trackOrDelegate/track_or_delegate.dart';
+import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
 import '../../providers/car_list_provider.dart';
-
 
 class ListOfCars extends ConsumerWidget {
   final int roleId;
@@ -23,18 +23,19 @@ class ListOfCars extends ConsumerWidget {
 
     return Consumer(builder: (context, ref, _) {
       final carListAsyncValue = ref.watch(carProvider);
-return Scaffold(
-        backgroundColor:
-            AppColors.white, // Use darkScaffoldBackground
+      return Scaffold(
+        backgroundColor: AppColors.white, // Use darkScaffoldBackground
         appBar: AppBar(
           backgroundColor: AppColors.white, // Use black
           elevation: 4.0,
-            leading: IconButton(
-            icon: const Icon(Icons.menu, color: AppColors.black), // Use white
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu, color: AppColors.black), // Use white
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
             ),
+          ),
           title: const Text(
             'List of Cars',
             style: TextStyle(
@@ -45,14 +46,15 @@ return Scaffold(
           ),
           actions: [
             IconButton(
-              icon:
-                  const Icon(Icons.notifications, color: AppColors.black), // Use white
+              icon: const Icon(Icons.notifications,
+                  color: AppColors.black), // Use white
               onPressed: () {
                 // Add search functionality
               },
             ),
           ],
         ),
+        drawer: const AppDrawer(),
         body: carListAsyncValue.when(
           data: (listOfCars) {
             if (listOfCars == null || listOfCars.isEmpty) {
@@ -83,15 +85,12 @@ return Scaffold(
 
                   return GestureDetector(
                     onTap: () {
-                   
-                        context.go(TrackOrDelegate.routeName);
-                      
+                      context.go(TrackOrDelegate.routeName, extra: car);
                     },
                     child: Card(
-                    
                       margin: const EdgeInsets.only(bottom: 16.0),
                       elevation: 4.0,
-                      color: AppColors.black, // Use black
+                      color: AppColors.lightSecondary, // Use black
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -112,12 +111,12 @@ return Scaffold(
                                   return Container(
                                     width: 100,
                                     height: 100,
-                                    color: AppColors.lightNavBarBackground, // Use darkGray
+                                    color: AppColors
+                                        .lightNavBarBackground, // Use darkGray
                                     child: const Icon(
                                       Icons.car_repair,
                                       size: 50,
-                                      color:
-                                          AppColors.black, // Use lightGray
+                                      color: AppColors.black, // Use lightGray
                                     ),
                                   );
                                 },
@@ -133,9 +132,9 @@ return Scaffold(
                                   Text(
                                     car.make,
                                     style: const TextStyle(
-                                      fontSize: 22.0,
+                                      fontSize: 20.0,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.white, // Use white
+                                      color: AppColors.black, // Use white
                                     ),
                                   ),
                                   const SizedBox(height: 8.0),
@@ -145,7 +144,7 @@ return Scaffold(
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       color:
-                                          AppColors.lightGray, // Use lightGray
+                                          AppColors.darkNavBarBackground, // Use lightGray
                                     ),
                                   ),
                                   const SizedBox(height: 4.0),
@@ -155,7 +154,7 @@ return Scaffold(
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       color:
-                                          AppColors.lightGray, // Use lightGray
+                                          AppColors.darkGray, // Use lightGray
                                     ),
                                   ),
                                   const SizedBox(height: 4.0),
@@ -167,14 +166,15 @@ return Scaffold(
                                         style: TextStyle(
                                           fontSize: 16.0,
                                           color: AppColors
-                                              .lightGray, // Use lightGray
+                                              .darkGray, // Use lightGray
                                         ),
                                       ),
                                       Container(
                                         width: 16,
                                         height: 16,
                                         decoration: BoxDecoration(
-                                            color: AppColors.getCarColor(car.color), // Use car color from AppColors
+                                          color: AppColors.getCarColor(car
+                                              .color), // Use car color from AppColors
                                           shape: BoxShape.circle,
                                         ),
                                       ),
@@ -187,9 +187,9 @@ return Scaffold(
                                       Text(
                                         'Status: ',
                                         style: TextStyle(
-                                          fontSize: 16.0,
+                                          fontSize: 12.0,
                                           color: AppColors
-                                              .lightGray, // Use lightGray
+                                              .darkGray, // Use lightGray
                                         ),
                                       ),
                                       Container(
@@ -240,7 +240,7 @@ return Scaffold(
             ),
           ),
         ),
-      );  
+      );
     });
   }
 }
