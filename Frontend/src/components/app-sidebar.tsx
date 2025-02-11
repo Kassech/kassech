@@ -4,9 +4,6 @@ import * as React from 'react';
 import {
   ClipboardList,
   Command,
-  Frame,
-  Map,
-  PieChart,
   Route,
   SatelliteIcon,
   Settings2,
@@ -16,7 +13,6 @@ import {
 } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
-import { NavProjects } from '@/components/nav-projects';
 import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
@@ -30,166 +26,103 @@ import {
 import { useUserStore } from '@/store/userStore';
 import { useNavigate } from 'react-router-dom';
 
-const data = {
-  navMain: [
-    {
-      title: 'Registration',
-      url: '#',
-      icon: ClipboardList,
-      isActive: true,
-      items: [
-        {
-          title: 'Car Owner Registration',
-          url: '/carOwnerRegistration',
-        },
-        {
-          title: 'Vehicle Registration',
-          url: '/vehicleRegistration',
-        },
-        {
-          title: 'Driver Registration',
-          url: '/driver',
-        },
-        {
-          title: 'Queue Manager Registration',
-          url: '/queueManagerForm',
-        },
-      ],
-    },
+const navMain = [
+  {
+    title: 'Registration',
+    url: '#',
+    icon: ClipboardList,
+    requiredPermissions: ['CreateUser', 'CreateVehicle'],
+    items: [
+      { title: 'Car Owner Registration', url: '/carOwnerRegistration', requiredPermissions: ['CreateUser'] },
+      { title: 'Vehicle Registration', url: '/vehicleRegistration', requiredPermissions: ['CreateVehicle'] },
+      { title: 'Driver Registration', url: '/driver', requiredPermissions: ['CreateUser'] },
+      { title: 'Queue Manager Registration', url: '/queueManagerForm', requiredPermissions: ['CreateUser'] },
+    ],
+  },
+  {
+    title: 'Users',
+    url: '/user',
+    icon: User,
+    requiredPermissions: ['ViewUser'],
+  },
+  {
+    title: 'Delegation',
+    url: '/delegation',
+    icon: Shuffle,
+    requiredPermissions: ['CreateDelegation'],
+  },
+  {
+    title: 'Route Management',
+    url: '#',
+    icon: Route,
+    requiredPermissions: ['ViewRoute', 'CreateRoute'],
+    items: [
+      { title: 'Stations', url: '/stations', requiredPermissions: ['ViewRoute'] },
+      { title: 'Route', url: '/route', requiredPermissions: ['ViewRoute'] },
+      { title: 'Paths', url: '/paths', requiredPermissions: ['CreateRoute'] },
+      { title: 'QueueManagerPaths', url: '/QueueManagerPaths', requiredPermissions: ['QueueManagerPath'] },
+    ],
+  },
+  {
+    title: 'User Administration',
+    url: '#',
+    icon: UserCog,
+    requiredPermissions: ['ViewRole'],
+    items: [
+      { title: 'Users', url: '/user', requiredPermissions: ['ViewUser'] },
+      { title: 'Role And Permission', url: '/rolepermission', requiredPermissions: ['ViewRole', 'Assign Permission'] },
+    ],
+  },
+  {
+    title: 'Real Time Monitoring',
+    url: '#',
+    icon: SatelliteIcon,
+    requiredPermissions: ['VehicleTracking'],
+    items: [
+      { title: 'Track Vehicle', url: '/vehicleTracking', requiredPermissions: ['VehicleTracking'] },
+      { title: 'Track All Vehicles', url: '/trackall', requiredPermissions: ['VehicleTracking'] },
+      { title: 'Track Nearby Vehicle', url: '/trackNearby', requiredPermissions: ['VehicleTracking'] },
+      { title: 'Track Single Vehicle', url: '/trackOne', requiredPermissions: ['VehicleTracking'] },
+      { title: 'Track Vehicle By Path', url: '/trackByPath', requiredPermissions: ['VehicleTracking'] },
+    ],
+  },
+  {
+    title: 'Settings',
+    url: '#',
+    icon: Settings2,
+    requiredPermissions: [],
+    items: [
+      { title: 'General', url: '#', requiredPermissions: [] },
+      { title: 'Team', url: '#', requiredPermissions: [] },
+      { title: 'Billing', url: '#', requiredPermissions: [] },
+      { title: 'Limits', url: '#', requiredPermissions: [] },
+    ],
+  },
+];
 
-    {
-      title: 'Users',
-      url: '/user',
-      icon: User,
-    },
-
-    {
-      title: 'Delegation',
-      url: '/delegation',
-      icon: Shuffle,
-    },
-
-    {
-      title: 'Route Management',
-      url: '#',
-      icon: Route,
-      items: [
-        {
-          title: 'Stations',
-          url: '/stations',
-        },
-        {
-          title: 'Route',
-          url: '/route',
-        },
-        {
-          title: 'Paths',
-          url: '/paths',
-        },
-        {
-          title: 'QueueManagerPaths',
-          url: '/QueueManagerPaths',
-        },
-      ],
-    },
-
-    {
-      title: 'User Administration',
-      url: '#',
-      icon: UserCog,
-      items: [
-        {
-          title: 'Users',
-          url: '/user',
-        },
-        {
-          title: 'Role And Permission',
-          url: '/rolepermission',
-        },
-      ],
-    },
-
-    {
-      title: 'Real Time Monitoring',
-      url: '#',
-      icon: SatelliteIcon,
-      items: [
-        {
-          title: 'Track Vehicle',
-          url: '/vehicleTracking',
-        },
-        {
-          title: 'Track All Vehicle',
-          url: '/trackall',
-        },
-        {
-          title: 'Track Nearby Vehicle',
-          url: '/trackNearby',
-        },
-        {
-          title: 'Track single Vehicle',
-          url: '/trackOne',
-        },
-        {
-          title: 'Track Vehicle By Path',
-          url: '/trackByPath',
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2,
-      items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
-        },
-      ],
-    },
-  ],
-
-  // projects: [
-  //   {
-  //     name: 'Delegation',
-  //     url: '#',
-  //     icon: Frame,
-  //   },
-  //   {
-  //     name: 'Active Driver',
-  //     url: '#',
-  //     icon: PieChart,
-  //   },
-  //   {
-  //     name: 'Report',
-  //     url: '#',
-  //     icon: Map,
-  //   },
-  // ],
+// Function to check if a user has any required permissions
+const hasPermission = (userPermissions: string[], requiredPermissions: string[] = []) => {
+  if (requiredPermissions.length === 0) return true;
+  return requiredPermissions.some((perm) => userPermissions.includes(perm));
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useUserStore((state) => state.user);
-  console.log('🚀 ~ AppSidebar ~ user:', user);
-  console.log('🚀 ~ AppSidebar ~ user:', user);
   const navigate = useNavigate();
 
   if (!user) {
     navigate('/login');
-    return;
+    return null;
   }
+
+  // Filter menu based on user permissions
+  const filteredMenuItems = navMain
+    .filter((item) => hasPermission(user.permissions, item.requiredPermissions))
+    .map((item) => ({
+      ...item,
+      items: item.items?.filter((subItem) => hasPermission(user.permissions, subItem.requiredPermissions)) || [],
+    }));
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -202,7 +135,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    Kassech Transportaion Managment
+                    Kassech Transportation Management
                   </span>
                   <span className="truncate text-xs">KETAS</span>
                 </div>
@@ -212,9 +145,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        <NavMain items={filteredMenuItems} />
       </SidebarContent>
       <SidebarFooter>{user ? <NavUser user={user} /> : null}</SidebarFooter>
     </Sidebar>

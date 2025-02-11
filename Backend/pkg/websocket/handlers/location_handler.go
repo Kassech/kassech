@@ -251,7 +251,7 @@ func (h *LocationHandler) processLocationUpdate(ctx context.Context, locationMsg
 	Lat       float64 `json:"lat"`
 	Lon       float64 `json:"lon"`
 	PathID    *uint   `json:"path_id"`
-}, state *connectionState) {
+}, _ *connectionState) {
 	locationData, _ := json.Marshal(locationMsg)
 	redisKey := fmt.Sprintf("vehicle_location:%d", locationMsg.VehicleID)
 

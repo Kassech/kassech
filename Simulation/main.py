@@ -17,7 +17,7 @@ from models.car import Car
 from visualization.animator import Animator
 from utils.logger import configure_logger
 
-VEHICLES_API = "http://localhost:5000/simulation/vehicle?limit=1&per_page=1"
+VEHICLES_API = "http://localhost:5000/simulation/vehicle?limit=100&per_page=100"
 WS_URL = "ws://localhost:5000/ws/location?test_id={}"
 WS_PASSENGER_URL = "ws://localhost:5000/ws/passenger?test_id={}"
 ROUTES_API = "http://localhost:5000/simulation/path?limit=1000&per_page=1000"
