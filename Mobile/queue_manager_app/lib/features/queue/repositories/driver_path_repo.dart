@@ -14,18 +14,15 @@ class DriverPathRepo {
   late WebSocketService _socketService;
 
   DriverPathRepo(this.ref) {
-    print('DriverPathRepo created');
     _socketService = WebSocketService(ApiConstants.getPathForDriver);
   }
 
   /// Listen to WebSocket messages and decode them into PathModel
   Stream<PathModel?> get pathStream => _socketService.messages.map((event) {
     try {
-      print('Received WebSocket message: $event');
       final data = jsonDecode(event);
       return PathModel.fromJson(data); 
     } catch (e) {
-      print("Error parsing WebSocket message: $e");
       return null;
     }
   });
