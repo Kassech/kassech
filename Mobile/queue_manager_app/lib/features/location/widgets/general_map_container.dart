@@ -10,13 +10,17 @@ import '../repositories/driver_tracking_repo.dart';
 
 class DriverTrackingScreen extends ConsumerStatefulWidget {
   /// [startingLocation] is the point to which a polyline will be drawn from each driver.
-  final LatLng startingLocation;
+  final LatLng? startingLocation;
   final int? pathId;
   final int? vehicleId;
   final MapController mapController;
 
   const DriverTrackingScreen(
-      {super.key, required this.startingLocation, required this.mapController, this.pathId, this.vehicleId});
+      {super.key,
+      required this.startingLocation,
+      required this.mapController,
+      this.pathId,
+      this.vehicleId});
 
   @override
   ConsumerState<DriverTrackingScreen> createState() =>
@@ -24,7 +28,6 @@ class DriverTrackingScreen extends ConsumerStatefulWidget {
 }
 
 class _DriverTrackingScreenState extends ConsumerState<DriverTrackingScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -58,7 +61,7 @@ class _DriverTrackingScreenState extends ConsumerState<DriverTrackingScreen> {
     return FlutterMap(
       mapController: widget.mapController,
       options: MapOptions(
-        initialCenter: widget.startingLocation,
+        initialCenter: widget.startingLocation ?? const LatLng(9.0331, 38.7617),
         initialZoom: 13,
       ),
       children: [
@@ -69,16 +72,17 @@ class _DriverTrackingScreenState extends ConsumerState<DriverTrackingScreen> {
         // Markers for each driver's current location.
         MarkerLayer(
           markers: [
-            Marker(
-              width: 40,
-              height: 40,
-              point: widget.startingLocation,
-              child: const Icon(
-                Icons.location_on,
-                color: Colors.green,
-                size: 40,
+            if (widget.startingLocation != null)
+              Marker(
+                width: 40,
+                height: 40,
+                point: widget.startingLocation ?? const LatLng(9.0331, 38.7617),
+                child: const Icon(
+                  Icons.location_on,
+                  color: Colors.green,
+                  size: 40,
+                ),
               ),
-            ),
             ...driverLocations.entries.map((entry) {
               final vehicleId = entry.key;
               final position = entry.value;
@@ -105,11 +109,12 @@ class _DriverTrackingScreenState extends ConsumerState<DriverTrackingScreen> {
           ],
         ),
         // For each driver, draw a polyline from their location to the starting point.
-        PolylineLayer(
+        if (widget.startingLocation != null)
+          PolylineLayer(
           polylines: driverLocations.entries.map((entry) {
             final position = entry.value;
             return Polyline(
-              points: [position, widget.startingLocation],
+              points: [position, widget.startingLocation ?? const LatLng(9.0331, 38.7617)],
               strokeWidth: 3,
               color: Colors.redAccent.withOpacity(0.6),
             );
