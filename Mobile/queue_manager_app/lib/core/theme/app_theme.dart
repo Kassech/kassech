@@ -16,6 +16,7 @@ final lightThemeData = ThemeData(
   ),
   appBarTheme: const AppBarTheme(
     centerTitle: true,
+    backgroundColor: AppColors.white
   ),
   inputDecorationTheme: InputDecorationTheme(
     enabledBorder: OutlineInputBorder(
@@ -51,7 +52,7 @@ final lightThemeData = ThemeData(
     ),
   ),
   navigationBarTheme: NavigationBarThemeData(
-    backgroundColor: AppColors.lightNavBarBackground,
+    backgroundColor: AppColors.lightPrimary,
     indicatorColor: AppColors.lightSecondary,
     surfaceTintColor: Colors.transparent,
     shadowColor: Colors.red,

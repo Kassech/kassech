@@ -93,7 +93,7 @@ class CustomNavigationBar extends StatelessWidget {
                   size: iconSize ?? 22,
                   color: i == selectedIndex
                       ? selectedIconColor ?? themeData.colorScheme.primary
-                      : unselectedIconColor ?? themeData.colorScheme.onSurface,
+                      : unselectedIconColor ?? (themeData.brightness == Brightness.light ? themeData.colorScheme.secondary : themeData.colorScheme.onSurface),
                 ),
                 label: labels != null ? labels![i] : '',
               ),

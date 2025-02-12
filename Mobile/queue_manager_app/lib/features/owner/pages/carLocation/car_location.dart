@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:queue_manager_app/features/location/widgets/general_map_container.dart';
 
 import '../../models/car_model.dart';
 import '../../widgets/driver_search_sheet.dart';
@@ -17,6 +18,7 @@ class CarLocation extends StatefulWidget {
 }
 
 class _CarLocationState extends State<CarLocation> {
+  final MapController mapController = MapController();
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -55,32 +57,7 @@ class _CarLocationState extends State<CarLocation> {
     // Using ClipRRect to round the top corners of the map area
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
-      child: FlutterMap(
-        options: MapOptions(
-          initialCenter: LatLng(9.03, 38.74),
-          // Replace with dynamic location if available
-          initialZoom: 13.0,
-        ),
-        children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          ),
-          MarkerLayer(
-            markers: [
-              Marker(
-                width: 80.0,
-                height: 80.0,
-                point: LatLng(9.03, 38.74),
-                child: Icon(
-                  Icons.location_on,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: 40.0,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      child: DriverTrackingScreen(startingLocation: null, mapController: mapController, vehicleId: widget.car.id,)
     );
   }
 

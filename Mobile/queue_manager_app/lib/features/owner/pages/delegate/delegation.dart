@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:queue_manager_app/core/theme/app_colors.dart';
+import 'package:queue_manager_app/features/queue/widgets/appDrawer.dart';
 
 class DelegationPage extends StatefulWidget {
   const DelegationPage({super.key});
@@ -56,11 +58,37 @@ class _DelegationPageState extends State<DelegationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Delegation'),
+        
+        backgroundColor: AppColors.white, // Use black
+        elevation: 4.0,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: AppColors.black), // Use white
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        ),
+        title: const Text(
+          'Delegation',
+          style: TextStyle(
+            color: AppColors.black, // Use white
+            fontWeight: FontWeight.bold,
+            fontSize: 24.0,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications,
+                color: AppColors.black), // Use white
+            onPressed: () {
+              // Add search functionality
+            },
+          ),
+        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Column(
+            mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),

@@ -3,15 +3,18 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:queue_manager_app/core/permissions/permission_wrapper.dart';
+import 'package:queue_manager_app/features/auth/providers/auth_provider.dart';
 import 'package:sliding_up_panel2/sliding_up_panel2.dart';
 
 
 import '../../../core/permissions/app_permissions.dart';
+import '../../auth/models/user.dart';
 import '../../queue/models/path_model.dart';
 import '../../queue/provider/passenger_provider.dart';
 import '../widgets/driver_map_container.dart';
+import '../widgets/general_map_container.dart';
 
-class PathDetailsPage extends StatefulWidget {
+class PathDetailsPage extends ConsumerStatefulWidget {
   const PathDetailsPage({super.key, required this.pathId, required this.path});
 
   final PathModel path;
@@ -20,19 +23,21 @@ class PathDetailsPage extends StatefulWidget {
   static const String routeName = '/pathDetailsPage';
 
   @override
-  State<PathDetailsPage> createState() => _PathDetailsPageState();
+  ConsumerState<PathDetailsPage> createState() => _PathDetailsPageState();
 }
 
-class _PathDetailsPageState extends State<PathDetailsPage> {
+class _PathDetailsPageState extends ConsumerState<PathDetailsPage> {
   final MapController mapController = MapController();
   List<LatLng> route = [];
   LatLng start = LatLng(0, 0);
   LatLng arrival = LatLng(0, 0);
+  late User? user;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    user = ref.read(authProvider).value;
     start = LatLng(
       widget.path.route.startingLocation.latitude,
       widget.path.route.startingLocation.longitude,
@@ -53,11 +58,11 @@ class _PathDetailsPageState extends State<PathDetailsPage> {
       ),
       body: SlidingUpPanel(
         panelBuilder: () => _buildPanel(themeData),
-        body: DriverMapContainer(
+        body: user!.roles.contains('Driver') ? DriverMapContainer(
           mapController: mapController,
           start: start,
           arrival: arrival,
-        ),
+        ) : DriverTrackingScreen(startingLocation: start, mapController: mapController, pathId: widget.pathId),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
