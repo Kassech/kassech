@@ -61,6 +61,8 @@ func (v *VehicleGPSLog) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// AfterFind hook to extract lat/lon from Location
+
 // Validate function
 func (v *VehicleGPSLog) Validate() error {
 	return validator.New().Struct(v)

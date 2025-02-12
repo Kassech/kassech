@@ -6,6 +6,7 @@ import (
 	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/domain"
 	models "kassech/backend/pkg/model"
+	"strconv"
 	"time"
 
 	"math"
@@ -43,7 +44,12 @@ func (rr *VehicleRepository) FindByID(vehicleID uint) (*models.Vehicle, error) {
 func (rr *VehicleRepository) GetAll(page, perPage int, search, ownerID, typeID string) ([]models.Vehicle, int64, error) {
 	var vehicles []models.Vehicle
 	var total int64
-
+	if ownerID != "" {
+		_, err := strconv.ParseInt(ownerID, 10, 64)
+		if err != nil {
+			return nil, 0, fmt.Errorf("invalid ownerID: %v", err)
+		}
+	}
 	query := database.DB.
 		Preload("Owner").
 		Preload("Type").
@@ -292,10 +298,13 @@ func (vr *VehicleRepository) FilterGPSLogs(filter domain.GPSLogFilter) ([]models
 	}
 
 	// Pagination
-	if filter.Page > 0 && filter.PerPage > 0 {
-		offset := (filter.Page - 1) * filter.PerPage
-		query = query.Offset(offset).Limit(filter.PerPage)
-	}
+	// if filter.Page > 0 && filter.PerPage > 0 {
+	// 	offset := (filter.Page - 1) * filter.PerPage
+	// 	query = query.Offset(offset).Limit(filter.PerPage)
+	// }
+
+	// Select the fields and convert location to text
+	query = query.Select("id, vehicle_id, ST_AsText(location) AS location, path_id, created_at")
 
 	// Execute query
 	if err := query.Find(&logs).Error; err != nil {

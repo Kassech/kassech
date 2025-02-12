@@ -99,9 +99,8 @@ func (h *LocationHandler) HandleConnection(w http.ResponseWriter, r *http.Reques
 		return conn.WriteControl(websocket.PongMessage, []byte(appData), time.Now().Add(10*time.Second))
 	})
 
-	state.wg.Add(2)
+	state.wg.Add(1) // Only handleWrites now
 	go h.handleWrites(conn, state)
-	go h.handleReads(conn, state)
 	log.Println("Started goroutines for handling reads and writes")
 
 	h.listenForMessages(ctx, conn, state)
@@ -172,6 +171,8 @@ func (h *LocationHandler) listenForMessages(ctx context.Context, conn *websocket
 			log.Println("Closing listenForMessages due to client close")
 			return
 		default:
+			// Set read deadline to handle timeouts
+			conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 			_, message, err := conn.ReadMessage()
 			if err != nil {
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
@@ -195,7 +196,6 @@ func (h *LocationHandler) listenForMessages(ctx context.Context, conn *websocket
 		}
 	}
 }
-
 func (h *LocationHandler) handleMessage(ctx context.Context, msg ClientMessage, state *connectionState) {
 	if msg.Action == "subscribe" {
 		h.handleSubscription(ctx, msg, state)

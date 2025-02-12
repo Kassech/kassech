@@ -228,7 +228,8 @@
         "permission_name": "sendLocation",
         "description": "Permission for Owner to send location",
         "roles": [
-            "Owner"
+            "Owner",
+            "Driver"
         ]
     },
     {
