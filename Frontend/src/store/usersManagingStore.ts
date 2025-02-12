@@ -24,5 +24,5 @@ export const userManagingStore = create<DialogState>((set) => ({
   setEditDialogClose: () =>
     set({ isEditDialogOpen: false, selectedUser: null, selectedUserRole: '' }),
 
- 
+
 }));

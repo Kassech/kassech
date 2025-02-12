@@ -9,7 +9,7 @@ type User = {
   PhoneNumber: string;
   IsOnline: boolean;
   ProfilePicture: string | null;
-  IsVerified: boolean;
+  is_verified: boolean;
   LastLoginDate: string;
   roles: string;
 };
@@ -41,9 +41,8 @@ export const useSearchUsers = ({ search, role }: SearchParams) => {
       return response.data;
     },
     {
-      enabled: search !== undefined, 
+      enabled: search !== undefined,
       keepPreviousData: true,
     }
   );
 };
-

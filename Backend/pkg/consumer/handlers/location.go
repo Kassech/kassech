@@ -6,23 +6,41 @@ import (
 	"kassech/backend/pkg/workers"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/streadway/amqp"
 )
 
 var bufferLock sync.Mutex
 
-// HandleLocationMessage processes incoming location messages
 func HandleLocationMessage(msg amqp.Delivery) {
-	var data models.VehicleGPSLog
+	var data struct {
+		VehicleID uint    `json:"vehicle_id"`
+		Lat       float64 `json:"lat"`
+		Lon       float64 `json:"lon"`
+		PathID    uint    `json:"path_id,omitempty"`
+	}
+
+	log.Printf("Received message: %s", msg.Body)
 	err := json.Unmarshal(msg.Body, &data)
 	if err != nil {
-		log.Println("Error parsing location JSON:", err)
+		log.Printf("Error unmarshalling location message: %v", err)
 		return
 	}
-	// Add to batch for PostgreSQL insert
+
+	// Create properly timestamped log entry
+	gpsLog := models.VehicleGPSLog{
+		VehicleID: data.VehicleID,
+		Latitude:  data.Lat,
+		Longitude: data.Lon,
+		PathID:    data.PathID,
+		CreatedAt: time.Now().UTC(),
+	}
+
+	log.Printf("Received location message for vehicle %d, lat: %f, lon: %f",
+		gpsLog.VehicleID, gpsLog.Latitude, gpsLog.Longitude)
+
 	bufferLock.Lock()
-	workers.LocationBuffer = append(workers.LocationBuffer, data)
-	log.Printf("Added to LocationBuffer, current size: %d", len(workers.LocationBuffer))
+	workers.LocationBuffer = append(workers.LocationBuffer, gpsLog)
 	bufferLock.Unlock()
 }

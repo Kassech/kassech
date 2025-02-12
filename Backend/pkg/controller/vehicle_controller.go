@@ -208,3 +208,24 @@ func (vc *VehicleController) GetAllVehicles(c *gin.Context) {
 		"total": total,
 	})
 }
+
+
+// UpdateVehicleStatus updates the status of a vehicle
+func (vc *VehicleController) UpdateVehicleStatus(c *gin.Context) {
+	vehicleID := c.Param("id")
+	vehicleIDUint, err := utils.StringToUint(vehicleID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid vehicle ID"})
+		return
+	}
+	status := c.Query("status")
+	if status == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Status is required"})
+		return
+	}
+	if err := vc.Service.UpdateVehicleStatus(vehicleIDUint, status); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Vehicle status updated successfully"})
+}

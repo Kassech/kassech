@@ -3,6 +3,7 @@ package event
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/streadway/amqp"
 )
@@ -18,7 +19,7 @@ func NewEventEmitter(channel *amqp.Channel) *EventEmitter {
 func (e *EventEmitter) Emit(eventType string, payload interface{}) error {
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return err
+		log.Printf("Error marshalling payload: %v", err)
 	}
 
 	err = e.channel.Publish(

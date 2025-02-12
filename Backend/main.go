@@ -6,12 +6,14 @@ import (
 	"kassech/backend/pkg/consumer"
 	"kassech/backend/pkg/consumer/handlers"
 	"kassech/backend/pkg/controller"
+	"kassech/backend/pkg/cron"
 	"kassech/backend/pkg/database"
 	"kassech/backend/pkg/repository"
 	"kassech/backend/pkg/service"
 	"kassech/backend/pkg/websocket"
 	"kassech/backend/pkg/workers"
 	"log"
+
 	"os"
 	"time"
 
@@ -45,17 +47,21 @@ func main() {
 
 	// Initialize database connection
 	database.Connect()
+
+	// Run migrations
+	scripts.HandleScriptCommands()
+
 	config.InitRedis()
 	config.InitRabbitMQ()
+	config.InitWS()
 	workers.StartBatchFlusher()
 	workers.StartLogBatchFlusher()
 
 	// Start consumers
 	go consumer.ConsumeQueue(config.RabbitMQConn, "logs", handlers.HandleLogEvent)
 	go consumer.ConsumeQueue(config.RabbitMQConn, "location_updates", handlers.HandleLocationMessage)
-
-	// Run migrations
-	scripts.HandleScriptCommands()
+	//auto assignment
+	go cron.RunAssignmentLoop()
 
 	// Setup Gin router
 	r := gin.Default()
@@ -87,8 +93,9 @@ func main() {
 	pathSvc := &service.PathService{Repo: PathRepo}
 	pathCtrl := &controller.PathController{Service: pathSvc}
 
-	r.GET("/simulation/vehicle", vehicleCtrl.GetAllVehicles) // Get all vehicles
-	r.GET("/simulation/path", pathCtrl.GetAllPaths)          // Get all vehicles
+	r.GET("/simulation/vehicle", vehicleCtrl.GetAllVehicles)                 // Get all vehicles
+	r.PUT("/simulation/vehicle/status/:id", vehicleCtrl.UpdateVehicleStatus) // Get all vehicles
+	r.GET("/simulation/path", pathCtrl.GetAllPaths)                          // Get all vehicles
 	// temporary solution for the simulation
 
 	routes.RegisterRoutes(r)

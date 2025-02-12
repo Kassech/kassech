@@ -59,18 +59,18 @@ export function CreatePathForm({ routes }) {
       console.log('Selected Route:', selectedRoute);
       useRouteStore.getState().setSelectedRoute(
         {
-          name: selectedRoute.StationA.LocationName,
-          lat: selectedRoute.StationA.Latitude,
-          lng: selectedRoute.StationA.Longitude,
+          name: selectedRoute.station_a.LocationName,
+          lat: selectedRoute.station_a.Latitude,
+          lng: selectedRoute.station_a.Longitude,
         },
         {
-          name: selectedRoute.StationB.LocationName,
-          lat: selectedRoute.StationB.Latitude,
-          lng: selectedRoute.StationB.Longitude,
+          name: selectedRoute.station_b.LocationName,
+          lat: selectedRoute.station_b.Latitude,
+          lng: selectedRoute.station_b.Longitude,
         },
-        selectedRoute.StationA.LocationName +
+        selectedRoute.station_a.LocationName +
           ' → ' +
-          selectedRoute.StationB.LocationName
+          selectedRoute.station_b.LocationName
       );
     }
   };
@@ -131,7 +131,7 @@ export function CreatePathForm({ routes }) {
                     <SelectContent>
                       {routes.map((route) => (
                         <SelectItem key={route.ID} value={String(route.ID)}>
-                          {`${route.StationA.LocationName} → ${route.StationB.LocationName}`}
+                          {`${route.station_a.LocationName} → ${route.station_b.LocationName}`}
                         </SelectItem>
                       ))}
                     </SelectContent>

@@ -385,7 +385,6 @@ func (uc *UserController) ListUsers(c *gin.Context) {
 	typ := c.DefaultQuery("type", "active")
 	search := c.DefaultQuery("search", "")
 	role := c.DefaultQuery("role", "")
-	fmt.Println("role:", role)
 
 	users, total, err := uc.Service.ListUsers(page, limit, search, typ, role)
 	if err != nil {

@@ -100,3 +100,17 @@ func (pr *PathRepository) DeleteByID(pathID uint) (*models.Path, error) {
 
 	return &path, nil
 }
+
+// Find paths by multiple IDs
+func (pr *PathRepository) GetByIDs(pathIDs []uint) ([]models.Path, error) {
+	var paths []models.Path
+	if err := database.DB.
+		Preload("Route").
+		Preload("Route.StationA").
+		Preload("Route.StationB").
+		Where("id IN ?", pathIDs).
+		Find(&paths).Error; err != nil {
+		return nil, err
+	}
+	return paths, nil
+}

@@ -6,15 +6,15 @@ import (
 	"net/http"
 	"sync"
 
+	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/websocket/middleware"
-	"kassech/backend/pkg/websocket/server"
 	"kassech/backend/pkg/websocket/service"
 
 	"github.com/gorilla/websocket"
 )
 
 type DestinationHandler struct {
-	connManager        *server.ConnectionManager
+	connManager        *config.ConnectionManager
 	destinationService *service.DestinationService
 	auth               *middleware.WebSocketAuth
 	writeChan          chan []byte // Channel for serializing WebSocket writes
@@ -23,7 +23,7 @@ type DestinationHandler struct {
 }
 
 func NewDestinationHandler(
-	connManager *server.ConnectionManager,
+	connManager *config.ConnectionManager,
 	destinationService *service.DestinationService,
 	auth *middleware.WebSocketAuth,
 ) *DestinationHandler {

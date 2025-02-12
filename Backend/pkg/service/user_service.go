@@ -188,9 +188,10 @@ func (us *UserService) LogLoginEvent(user *models.User, r *http.Request) {
 	}
 }
 
-func (us *UserService) ListUsers(page, limit int, search string, typ string, role string) ([]models.User, int64, error) {
+func (us *UserService) ListUsers(page, limit int, search string, typ string, role string) ([]*domain.User, int64, error) {
 	// Call the repository method
 	return us.Repo.ListUsers(page, limit, search, typ, role)
+
 }
 
 // UpdateUser updates a user by ID
@@ -276,11 +277,21 @@ func (us *UserService) CreateDriver(driver *models.Driver) (*models.Driver, erro
 }
 
 // GetUserById fetches a user by their unique ID
-func (us *UserService) GetUserById(userId uint) (*models.User, error) {
+func (us *UserService) GetUserById(userId uint) (*domain.User, error) {
 	user, err := us.Repo.FindByID(userId)
 	if err != nil {
 		return nil, err
 	}
+	domainUser := mapper.ToDomainUser(user)
+	userPermissions, userRole, err := us.Repo.GetPermissionsAndRolesByUserID(user.ID)
 
-	return user, nil
+	if err != nil {
+		domainUser.Permissions = []string{}
+		domainUser.Roles = []string{}
+	} else {
+		domainUser.Permissions = userPermissions
+		domainUser.Roles = userRole
+	}
+
+	return domainUser, nil
 }

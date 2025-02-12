@@ -1,10 +1,10 @@
 package websocket
 
 import (
+	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/repository"
 	"kassech/backend/pkg/websocket/handlers"
 	"kassech/backend/pkg/websocket/middleware"
-	"kassech/backend/pkg/websocket/server"
 	"kassech/backend/pkg/websocket/service"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +18,6 @@ func RegisterRoutes(router *gin.Engine, jwtSecret string) {
 	locationRepo := repository.LocationRepository{}
 	destinationRepo := repository.DestinationRepository{}
 
-	connManager := server.NewConnectionManager()
 	auth := middleware.NewWebSocketAuth(jwtSecret)
 
 	statusService := service.NewStatusService(userRepo)
@@ -26,10 +25,10 @@ func RegisterRoutes(router *gin.Engine, jwtSecret string) {
 	locationService := service.NewLocationService(locationRepo)
 	destinationService := service.NewDestinationService(destinationRepo)
 
-	statusHandler := handlers.NewStatusHandler(connManager, statusService, auth)
-	passengerHandler := handlers.NewPassengerHandler(connManager, passengerService, auth)
-	locationHandler := handlers.NewLocationHandler(connManager, locationService, auth)
-	destinationHandler := handlers.NewDestinationHandler(connManager, destinationService, auth)
+	statusHandler := handlers.NewStatusHandler(config.ConnManager, statusService, auth)
+	passengerHandler := handlers.NewPassengerHandler(config.ConnManager, passengerService, auth)
+	locationHandler := handlers.NewLocationHandler(config.ConnManager, locationService, auth)
+	destinationHandler := handlers.NewDestinationHandler(config.ConnManager, destinationService, auth)
 	// Register WebSocket routes
 	router.GET("/ws/status", func(c *gin.Context) {
 		statusHandler.HandleConnection(c.Writer, c.Request)
