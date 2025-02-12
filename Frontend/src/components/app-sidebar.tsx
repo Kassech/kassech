@@ -141,18 +141,6 @@ const navMain = [
       },
     ],
   },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings2,
-    requiredPermissions: [],
-    items: [
-      { title: 'General', url: '#', requiredPermissions: [] },
-      { title: 'Team', url: '#', requiredPermissions: [] },
-      { title: 'Billing', url: '#', requiredPermissions: [] },
-      { title: 'Limits', url: '#', requiredPermissions: [] },
-    ],
-  },
 ];
 
 // Function to check if a user has any required permissions

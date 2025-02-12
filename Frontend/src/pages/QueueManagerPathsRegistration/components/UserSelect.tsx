@@ -29,8 +29,8 @@ export const UserSelect = () => {
       </SelectTrigger>
       <SelectContent>
         {users?.data?.map((user) => (
-          <SelectItem key={user.id} value={user.ID.toString()}>
-            {user.FirstName} {user.LastName}
+          <SelectItem key={user.id} value={user.id.toString()}>
+            {user.first_name} {user.last_name}
           </SelectItem>
         ))}
       </SelectContent>

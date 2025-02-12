@@ -78,9 +78,9 @@ func SeedDB() {
 	roles := []models.Role{
 		{RoleName: "Admin", Description: "System administrator"},
 		{RoleName: "Driver", Description: "Vehicle driver"},
-		{RoleName: "Owner", Description: "Vehicle owner"},
 		{RoleName: "QueueManager", Description: "Manages queues"},
 		{RoleName: "CustomerService", Description: "Customer support"},
+		{RoleName: "Owner", Description: "Vehicle owner"},
 		{RoleName: "RouteOperator", Description: "Route operator"},
 	}
 

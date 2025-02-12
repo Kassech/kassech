@@ -6,7 +6,7 @@ const (
 	QMRoleID            = 3 // Now maps to "QueueManager"
 	CSRoleID            = 4 // Now maps to "CustomerService"
 	OwnerRoleID         = 5
-	RouteOperatorRoleID = 5
+	RouteOperatorRoleID = 6
 
 	AdminRoleName     = "Admin"
 	DriverRoleName    = "Driver"
