@@ -1,14 +1,14 @@
 export interface User {
-  ID: number;
+  id: number;
   email: string;
   password: string; // Hashed password
   first_name: string;
   last_name: string;
-  ProfilePicture?: string;
+  Profile_picture?: string;
   ProfilePictureFile?: File;
-  PhoneNumber: string;
+  Phone_number: string;
   is_verified: boolean;
-  roles: string;
+  roles: string[];
   IsOnline: boolean;
   permissions:string[];
 }

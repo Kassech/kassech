@@ -27,17 +27,19 @@ export default function AdminForm({
     resolver: zodResolver(queueManagerSchema),
     mode: 'onBlur',
     defaultValues: {
-      FirstName: defaultValues?.FirstName || '',
-      LastName: defaultValues?.LastName || '',
-      Email: defaultValues?.Email || '',
-      PhoneNumber: defaultValues?.PhoneNumber || '',
-      Profile: defaultValues?.ProfilePicture || null,
-      Role: defaultValues?.Role ?? ADMIN_ROLE.toString(),
+      first_name: defaultValues?.first_name || '',
+      last_name: defaultValues?.last_name || '',
+      email: defaultValues?.email || '',
+      phone_number: defaultValues?.phone_number || '',
+      profile_picture: defaultValues?.profile_picture || null,
+      roles: Array.isArray(defaultValues?.roles)
+        ? defaultValues?.roles
+        : [defaultValues?.roles ?? ADMIN_ROLE.toString()],
       national_id:
         defaultValues?.national_id instanceof File
           ? defaultValues.national_id
           : null,
-      ID: defaultValues?.ID || '',
+      id: defaultValues?.id || '',
     },
   });
 
@@ -50,18 +52,27 @@ export default function AdminForm({
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       if (value instanceof File || typeof value === 'string') {
-        formData.append(key, value);
+        let keyToUse = key;
+
+        if (key === 'first_name') keyToUse = 'FirstName';
+        if (key === 'last_name') keyToUse = 'LastName';
+        if (key === 'email') keyToUse = 'Email';
+        if (key === 'phone_number') keyToUse = 'PhoneNumber';
+        if (key === 'roles') keyToUse = 'Role'; // Assuming roles should be passed as a single value.
+
+        // Append the key-value pair to the FormData
+        formData.append(keyToUse, value);
       }
     });
 
-    const isEdit = !!defaultValues?.ID;
+    const isEdit = !!defaultValues?.id;
     console.log('Prepared form data for mutation:', formData);
 
     toast.promise(
       (async () => {
         if (isEdit) {
           return await updateUser.mutateAsync({
-            id: defaultValues.ID!.toString(),
+            id: defaultValues.id!.toString(),
             userData: formData,
           });
         } else {
@@ -99,9 +110,9 @@ export default function AdminForm({
         >
           <div className="col-span-full">
             <ImageUploader
-              initialPreview={form.getValues('Profile')}
+              initialPreview={form.getValues('profile_picture')}
               onImageUpload={(file: File | null) =>
-                form.setValue('Profile', file)
+                form.setValue('profile_picture', file)
               }
               maxFileSize={2000000}
               acceptedFormats={{
@@ -113,7 +124,7 @@ export default function AdminForm({
           </div>
           <FormField
             control={form.control}
-            name="FirstName"
+            name="first_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>First Name</FormLabel>
@@ -127,7 +138,7 @@ export default function AdminForm({
 
           <FormField
             control={form.control}
-            name="LastName"
+            name="last_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
@@ -141,7 +152,7 @@ export default function AdminForm({
 
           <FormField
             control={form.control}
-            name="Email"
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
@@ -155,7 +166,7 @@ export default function AdminForm({
 
           <FormField
             control={form.control}
-            name="PhoneNumber"
+            name="phone_number"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
@@ -172,7 +183,7 @@ export default function AdminForm({
             name="national_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>National Id</FormLabel>
+                <FormLabel>National id</FormLabel>
                 <FormControl>
                   <Input
                     type="file"

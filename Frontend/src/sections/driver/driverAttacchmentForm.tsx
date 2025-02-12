@@ -43,24 +43,31 @@ const updateUser = useUpdateUserData();
       other_file: defaultValues?.other_file || formData?.other_file || null,
     },
   });
-
+ console.log('aaaa',formData);
   const onSubmit = async (
     values: z.infer<typeof driverSchema & typeof driverAttachmentSchema>
   ) => {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       if (value instanceof File || typeof value === 'string') {
-        formData.append(key, value);
+        let keyToUse = key;
+        if (key === 'first_name') keyToUse = 'FirstName';
+        if (key === 'last_name') keyToUse = 'LastName';
+        if (key === 'email') keyToUse = 'Email';
+        if (key === 'phone_number') keyToUse = 'PhoneNumber';
+        if (key === 'roles') keyToUse = 'Role';
+        
+        formData.append(keyToUse, value);
       }
     });
-    const isEdit = !!defaultValues?.ID;
+    const isEdit = !!defaultValues?.id;
     console.log(formData);
 
     toast.promise(
       (async () => {
         if (isEdit) {
           return await updateUser.mutateAsync({
-            id: defaultValues.ID!.toString(),
+            id: defaultValues.id!.toString(),
             userData: formData,
           });
         } else {

@@ -69,9 +69,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       >
         {preview && (
           <AvatarImage
-            // Check if the preview string starts with "http"
             src={
-              preview.startsWith('http') ? preview : `${apiEndpoint}/${preview}`
+              typeof preview === 'string'
+                ? preview.startsWith('data:image') || preview.startsWith('http')
+                  ? preview
+                  : `${apiEndpoint}/${preview}`
+                : undefined
             }
             alt="Uploaded image"
             className={`h-full w-full object-cover ${className}`}

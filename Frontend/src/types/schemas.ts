@@ -1,40 +1,40 @@
 import { z } from "zod";
 export const userSchema = z.object({
-  FirstName: z
+  first_name: z
     .string()
     .min(3, { message: 'First name is required and cannot be empty' }),
-  LastName: z
+  last_name: z
     .string()
     .min(3, { message: 'Last name is required and cannot be empty' }),
-  Email: z
+  email: z
     .string()
     .email({
       message: 'Invalid email address format. Please enter a valid email',
     }),
-  PhoneNumber: z
+  phone_number: z
     .string()
     .regex(/^\+251\d{9}$/, {
       message:
         'Invalid phone number format. It should start with +251 followed by 9 digits',
     }),
-  Password: z
+  password: z
     .string()
     .min(6, { message: 'Password must be at least 6 characters long' }),
-  Role: z
-    .string()
+  roles: z
+    .array(z.string())
     .min(1, { message: 'Role is required and must be a positive number' }),
-  Profile: z
+  profile_picture: z
     .instanceof(File)
     .nullable()
     .refine((file) => file && file.size !== 0, {
       message: 'Please upload an image file. The file cannot be empty',
     }),
-  ID: z.union([z.string(), z.number()]).optional(),
+  id: z.union([z.string(), z.number()]).optional(),
 });
 
-export const driverSchema = userSchema.omit({ Password: true });
+export const driverSchema = userSchema.omit({ password: true });
 
-export const queueManagerSchema = userSchema.omit({ Password: true }).extend({
+export const queueManagerSchema = userSchema.omit({ password: true }).extend({
   national_id: z
     .instanceof(File).nullable()
     .refine((file) => file && file.size > 0, {
@@ -46,7 +46,7 @@ export const queueManagerSchema = userSchema.omit({ Password: true }).extend({
 });
 
 export const driverAttachmentSchema = z.object({
-  ID: z.union([z.string(), z.number()]).optional(),
+  id: z.union([z.string(), z.number()]).optional(),
   driving_license: z
     .instanceof(File)
     .nullable()
@@ -130,7 +130,7 @@ export const vehicleSchema = z.object({
   ownerID: z.string().min(1, { message: 'Owner ID is required' }),
 });
 
-export const ownerSchema = userSchema.omit({ Password: true }).extend({
+export const ownerSchema = userSchema.omit({ password: true }).extend({
   national_id: z
     .instanceof(File)
     .nullable()

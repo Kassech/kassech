@@ -30,7 +30,7 @@ import VerificationToggle from './verificationToggle';
 import { toast } from 'sonner';
 import DriverPage from '@/pages/driver';
 import AdminForm from '@/sections/Admin';
-import CarOwnerForm from '@/sections/owner/OwnerForm';
+import CarOwnerForm from '@/sections/Owner/OwnerForm';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -74,7 +74,7 @@ export const columns: ColumnDef<User>[] = [
       return (
         <VerificationToggle
           initialVerified={row.original.is_verified}
-          userId={row.original.ID}
+          userId={row.original.id}
         />
       );
     },
@@ -96,15 +96,15 @@ export const columns: ColumnDef<User>[] = [
       } = userManagingStore();
 
       const { mutate: deleteUser } = useDeleteUser();
-      const handleDelete = (userID: number) => {
-        console.log(userID);
-        console.log('🚀 ~ handleDelete ~ userID:', userID);
-        deleteUser(userID, {
+      const handleDelete = (userid: number) => {
+        console.log(userid);
+        console.log('🚀 ~ handleDelete ~ userid:', userid);
+        deleteUser(userid, {
           onSuccess: () => {
             toast('User Deletion', {
               description: 'User deleted successfully.',
             });
-            console.log(`User with ID ${userID} deleted successfully.`);
+            console.log(`User with id ${userid} deleted successfully.`);
             setDialogClose();
           },
           onError: (error) => {
@@ -128,20 +128,21 @@ export const columns: ColumnDef<User>[] = [
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() =>
-                  setEditDialogOpen(row.original.ID, row.original.roles)
+                  setEditDialogOpen(row.original.id, row.original.roles)
                 }
               >
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setDialogOpen(row.original.ID)}>
+              <DropdownMenuItem onClick={() => setDialogOpen(row.original.id)}>
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          {console.log(selectedUser, row.original.ID)}
+          {console.log(selectedUser, row.original.id)}
           {console.log('🚀 ~ selectedUser:', selectedUser)}{' '}
-          {console.log('🚀 ~ row.original.ID:', row.original.ID)}{' '}
-          {selectedUser === row.original.ID && (
+          {console.log('🚀 ~ selectedUserRole:', selectedUserRole)}{' '}
+          {console.log('🚀 ~ row.original.id:', row.original.id)}{' '}
+          {selectedUser === row.original.id && (
             <AlertDialog open={isDialogOpen} onOpenChange={setDialogClose}>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -157,7 +158,7 @@ export const columns: ColumnDef<User>[] = [
                   </AlertDialogCancel>
 
                   <AlertDialogAction
-                    onClick={() => handleDelete(row.original.ID)}
+                    onClick={() => handleDelete(row.original.id)}
                   >
                     Delete
                   </AlertDialogAction>
@@ -165,7 +166,7 @@ export const columns: ColumnDef<User>[] = [
               </AlertDialogContent>
             </AlertDialog>
           )}
-          {selectedUser === row.original.ID && (
+          {selectedUser === row.original.id && (
             <AlertDialog
               open={isEditDialogOpen}
               onOpenChange={setEditDialogClose}
@@ -175,18 +176,24 @@ export const columns: ColumnDef<User>[] = [
                   <AlertDialogTitle>Edit User</AlertDialogTitle>
                   <AlertDialogDescription>
                     Update the details of the user below.
-                    {selectedUserRole.replace(/[{}]/g, '') === 'Admin' ? (
-                      <AdminForm defaultValues={row.original} />
-                    ) : selectedUserRole.replace(/[{}]/g, '') === 'Driver' ? (
-                      <DriverPage defaultValues={row.original} />
-                    ) : selectedUserRole.replace(/[{}]/g, '') ===
-                      'QueueManager' ? (
-                      <QueueManagerForm defaultValues={row.original} />
-                    ) : selectedUserRole.replace(/[{}]/g, '') === 'Owner' ? (
-                      <CarOwnerForm defaultValues={row.original} />
+                    {Array.isArray(selectedUserRole) &&
+                    selectedUserRole.length > 0 ? (
+                      selectedUserRole[0] === 'Admin' ? (
+                        <AdminForm defaultValues={row.original} />
+                      ) : selectedUserRole[0] === 'Driver' ? (
+                        <DriverPage defaultValues={row.original} />
+                      ) : selectedUserRole[0] === 'QueueManager' ? (
+                        <QueueManagerForm defaultValues={row.original} />
+                      ) : selectedUserRole[0] === 'Owner' ? (
+                        <CarOwnerForm defaultValues={row.original} />
+                      ) : (
+                        <p className="text-red-500">
+                          Invalid role: {selectedUserRole[0]}
+                        </p>
+                      )
                     ) : (
                       <p className="text-red-500">
-                        Invalid role: {selectedUserRole}
+                        No role assigned or invalid role data.
                       </p>
                     )}
                   </AlertDialogDescription>
@@ -200,6 +207,6 @@ export const columns: ColumnDef<User>[] = [
         </>
       );
     },
-    size: 80, // Define column wIDth for actions
+    size: 80, // Define column width for actions
   },
 ];

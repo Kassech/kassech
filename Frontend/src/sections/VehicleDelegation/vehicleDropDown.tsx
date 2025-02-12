@@ -50,13 +50,13 @@ export function VehicleDropDown({ onVehicleSelect }: VehicleSearchProps) {
             <ChevronsUpDown className="opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
+        <PopoverContent className="w-full p-0 max-h-60 overflow-auto">
           <input
             type="text"
             placeholder="Search Vehicle..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded"
+            className="w-full px-2 py-1 border border-gray-300 rounded sticky top-0 bg-white"
           />
           {isLoading ? (
             <div className="p-2 text-gray-500 w-full">Loading...</div>
@@ -67,11 +67,11 @@ export function VehicleDropDown({ onVehicleSelect }: VehicleSearchProps) {
           ) : vehicleList.length === 0 ? (
             <div className="p-2 text-gray-500 w-full">No Vehicle found.</div>
           ) : (
-            <ul>
+            <ul className="divide-y">
               {vehicleList.map((vehicle: Vehicle) => (
                 <li
                   key={vehicle.ID}
-                  className="p-2 cursor-pointer hover:bg-gray-100 text-sm flex w-full"
+                  className="p-2 cursor-pointer hover:bg-gray-100 text-sm flex w-full items-center justify-between"
                   onClick={() => {
                     setSelectedVehicle(
                       `${vehicle.Make} ${vehicle.LicenseNumber}`

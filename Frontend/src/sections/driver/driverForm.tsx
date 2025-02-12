@@ -31,19 +31,19 @@ export default function DriverForm({
     resolver: zodResolver(driverSchema),
     mode: 'onBlur',
     defaultValues: {
-      FirstName: defaultValues?.FirstName || formData?.FirstName || '',
-      LastName: defaultValues?.LastName || formData?.LastName || '',
-      Email: defaultValues?.Email || formData?.Email || '',
-      PhoneNumber: defaultValues?.PhoneNumber || formData?.PhoneNumber || '',
-      Profile: defaultValues?.Profile || null,
-      Role: defaultValues?.Role ?? formData?.Role ?? DRIVER_ROLE.toString(),
+      first_name: defaultValues?.first_name || formData?.first_name || '',
+      last_name: defaultValues?.last_name || formData?.last_name || '',
+      email: defaultValues?.email || formData?.email || '',
+      phone_number: defaultValues?.phone_number || formData?.phone_number || '',
+      profile_picture: defaultValues?.profile_picture || null,
+      roles: defaultValues?.roles ?? formData?.roles ?? [DRIVER_ROLE.toString()],
     },
   });
-  console.log('🚀 ~ Profile:', defaultValues?.Profile, formData?.Profile);
-
+  console.log('🚀 ~ Profile:', defaultValues?.profile_picture, formData?.profile_picture);
+console.log('🚀 ~ Profile:', defaultValues);
   const onSubmit = (values: z.infer<typeof driverSchema>) => {
     Object.entries(values).forEach(([key, value]) => {
-      setField(key, value); // Save each field to the store
+      setField(key, value); 
     });
 
     switchTab('attachments');
@@ -58,8 +58,8 @@ export default function DriverForm({
         >
           <div className="col-span-full">
             <ImageUploader
-              initialPreview={form.getValues('Profile')}
-              onImageUpload={(file) => form.setValue('Profile', file)}
+              initialPreview={form.getValues('profile_picture')}
+              onImageUpload={(file) => form.setValue('profile_picture', file)}
               maxFileSize={2000000}
               acceptedFormats={{
                 'image/png': [],
@@ -71,7 +71,7 @@ export default function DriverForm({
 
           <FormField
             control={form.control}
-            name="FirstName"
+            name="first_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>First Name</FormLabel>
@@ -85,7 +85,7 @@ export default function DriverForm({
 
           <FormField
             control={form.control}
-            name="LastName"
+            name="last_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
@@ -99,7 +99,7 @@ export default function DriverForm({
 
           <FormField
             control={form.control}
-            name="Email"
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
@@ -113,7 +113,7 @@ export default function DriverForm({
 
           <FormField
             control={form.control}
-            name="PhoneNumber"
+            name="phone_number"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>

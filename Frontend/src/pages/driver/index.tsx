@@ -6,8 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { driverAttachmentSchema, driverSchema } from '@/types/schemas';
 import { z } from 'zod';
 import { DRIVER_ROLE } from '@/constants';
-import DriverForm from '@/sections/driver/driverForm';
-import DriverAttachmentForm from '@/sections/driver/driverAttacchmentForm';
+import DriverForm from '@/sections/Driver/driverForm';
+import DriverAttachmentForm from '@/sections/Driver/driverAttacchmentForm';
 
 export default function DriverPage({
   defaultValues = {},
@@ -56,13 +56,13 @@ export default function DriverPage({
           <TabsContent value="person">
             <DriverForm
               defaultValues={{
-                ID: defaultValues?.ID || '',
-                FirstName: defaultValues?.FirstName || '',
-                LastName: defaultValues?.LastName || '',
-                Email: defaultValues?.Email || '',
-                PhoneNumber: defaultValues?.PhoneNumber || '',
-                Profile: defaultValues?.ProfilePicture || null,
-                Role: defaultValues?.Role || DRIVER_ROLE.toString(),
+                id: defaultValues?.id || '',
+                first_name: defaultValues?.first_name || '',
+                last_name: defaultValues?.last_name || '',
+                email: defaultValues?.email || '',
+                phone_number: defaultValues?.phone_number || '',
+                profile_picture: defaultValues?.profile_picture || null,
+                roles: defaultValues?.roles ?? [DRIVER_ROLE.toString()],
               }}
               switchTab={switchTab}
             />
@@ -70,7 +70,7 @@ export default function DriverPage({
           <TabsContent value="attachments">
             <DriverAttachmentForm
               defaultValues={{
-                ID: defaultValues?.ID || '',
+                id: defaultValues?.id || '',
                 driving_license: defaultValues?.driving_license || null,
                 national_id: defaultValues?.national_id || null,
                 insurance_document: defaultValues?.insurance_document || null,

@@ -3,7 +3,7 @@ import { Loader } from "lucide-react";
 
 const LoadingSpinner = ({ className }: { className?: string }) => {
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen w-2/3">
       <Loader
         className={cn('h-16 w-16 text-primary/60 animate-spin', className)}
       />

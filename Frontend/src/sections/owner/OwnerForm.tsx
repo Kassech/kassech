@@ -30,15 +30,15 @@ export default function CarOwnerForm({
     resolver: zodResolver(ownerSchema),
     mode: 'onBlur',
     defaultValues: {
-      FirstName: defaultValues?.FirstName || '',
-      LastName: defaultValues?.LastName || '',
-      Email: defaultValues?.Email || '',
-      PhoneNumber: defaultValues?.PhoneNumber || '',
-      Profile: defaultValues?.ProfilePicture || null,
+      first_name: defaultValues?.first_name || '',
+      last_name: defaultValues?.last_name || '',
+      email: defaultValues?.email || '',
+      phone_number: defaultValues?.phone_number || '',
+      profile_picture: defaultValues?.profile_picture || null,
       national_id: defaultValues?.national_id || null,
       insurance_document: defaultValues?.insurance_document || null,
-      Role: OWNER_ROLE.toString(),
-      ID: defaultValues?.ID || '',
+      roles: [OWNER_ROLE.toString()],
+      id: defaultValues?.id || '',
     },
   });
 
@@ -50,20 +50,29 @@ export default function CarOwnerForm({
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       if (value instanceof File || typeof value === 'string') {
-        formData.append(key, value);
+        let keyToUse = key;
+
+        if (key === 'first_name') keyToUse = 'FirstName';
+        if (key === 'last_name') keyToUse = 'LastName';
+        if (key === 'email') keyToUse = 'Email';
+        if (key === 'phone_number') keyToUse = 'PhoneNumber';
+        if (key === 'roles') keyToUse = 'Role'; // Assuming roles should be passed as a single value.
+
+        // Append the key-value pair to the FormData
+        formData.append(keyToUse, value);
       }
     });
 
     for (let pair of formData.entries()) {
       console.log(`${pair[0]}:`, pair[1]);
     } // Debug log
-    const isEdit = !!defaultValues?.ID;
+    const isEdit = !!defaultValues?.id;
 
     toast.promise(
       (async () => {
         if (isEdit) {
           return await updateUser.mutateAsync({
-            id: defaultValues.ID!.toString(),
+            id: defaultValues.id!.toString(),
             userData: formData,
           });
         } else {
@@ -94,8 +103,8 @@ export default function CarOwnerForm({
           >
             <div className="col-span-full">
               <ImageUploader
-                initialPreview={form.getValues('Profile')}
-                onImageUpload={(file) => form.setValue('Profile', file)}
+                initialPreview={form.getValues('profile_picture')}
+                onImageUpload={(file) => form.setValue('profile_picture', file)}
                 maxFileSize={2000000}
                 acceptedFormats={{
                   'image/png': [],
@@ -107,7 +116,7 @@ export default function CarOwnerForm({
 
             <FormField
               control={form.control}
-              name="FirstName"
+              name="first_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>First Name</FormLabel>
@@ -121,7 +130,7 @@ export default function CarOwnerForm({
 
             <FormField
               control={form.control}
-              name="LastName"
+              name="last_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Last Name</FormLabel>
@@ -135,7 +144,7 @@ export default function CarOwnerForm({
 
             <FormField
               control={form.control}
-              name="Email"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
@@ -149,7 +158,7 @@ export default function CarOwnerForm({
 
             <FormField
               control={form.control}
-              name="PhoneNumber"
+              name="phone_number"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Phone Number</FormLabel>

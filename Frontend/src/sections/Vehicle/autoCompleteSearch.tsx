@@ -17,9 +17,9 @@ interface OwnerSearchProps {
 }
 
 interface Users {
-  ID: number;
-  FirstName: string;
-  LastName: string;
+  id: number;
+  first_name: string;
+  last_name: string;
 }
 
 export function OwnerSearch({ onOwnerSelect }: OwnerSearchProps) {
@@ -48,8 +48,8 @@ const userList: Users[] = data?.data || [];
           className="w-full justify-between"
         >
           {value
-            ? data?.data?.find((user: Users) => user.ID.toString() === value)
-                ?.FirstName ?? 'Select Owner'
+            ? data?.data?.find((user: Users) => user.id.toString() === value)
+                ?.first_name ?? 'Select Owner'
             : 'Select Owner'}
 
           <ChevronsUpDown className="opacity-50" />
@@ -81,19 +81,19 @@ const userList: Users[] = data?.data || [];
                   console.log('Rendering User:', user);
                   return (
                     <li
-                      key={user.ID}
+                      key={user.id}
                       className="p-2 cursor-pointer hover:bg-gray-100 text-sm flex"
                       onClick={() => {
-                        setValue(user.ID.toString());
+                        setValue(user.id.toString());
                         onOwnerSelect(
-                          user.ID.toString(),
-                          `${user.FirstName} ${user.LastName}`
+                          user.id.toString(),
+                          `${user.first_name} ${user.last_name}`
                         );
                         setOpen(false);
                       }}
                     >
-                      {user.FirstName} {user.LastName}
-                      {value === user.ID.toString() && (
+                      {user.first_name} {user.last_name}
+                      {value === user.id?.toString() && (
                         <Check className="ml-auto opacity-100 inline-flex" />
                       )}
                     </li>
