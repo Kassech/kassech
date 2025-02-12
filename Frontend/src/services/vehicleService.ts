@@ -2,13 +2,15 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import api from '../api/axiosInstance';
 import { Vehicle } from '@/types/vehicle';
 
-export const useGetAllVehicles = (search?: string) => {
-  return useQuery(['vehicleData', search], async () => {
-    const response = await api.get('/vehicles/', {
-      params: search ? { search } : {},
-    });
-    console.log('from the function',response); 
-    return response.data; 
+export const useGetAllVehicles = (search?: string, per_page?: number) => {
+  return useQuery(['vehicleData', search, per_page], async () => {
+    const params: Record<string, string | number | undefined> = {
+      ...(search && { search }),
+      ...(per_page && { per_page }),
+    };
+    const response = await api.get('/vehicles/', { params });
+    console.log('from the function', response);
+    return response.data;
   });
 };
 

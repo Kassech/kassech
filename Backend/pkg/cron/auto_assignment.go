@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"sync"
-	"time"
 
 	"kassech/backend/pkg/config"
 	models "kassech/backend/pkg/model"
@@ -23,16 +22,16 @@ type IgnoredPath struct {
 }
 
 func RunAssignmentLoop() {
-	passengerRepo := repository.PassengerRepository{}
-	pathRepo := repository.PathRepository{}
-	carRepo := repository.VehicleRepository{} // Assuming there's a car repository
-	for {
-		log.Println("Starting assignment loop...")
-		assignDriversToQueues(passengerRepo, pathRepo, carRepo)
+	// passengerRepo := repository.PassengerRepository{}
+	// pathRepo := repository.PathRepository{}
+	// carRepo := repository.VehicleRepository{} // Assuming there's a car repository
+	// for {
+	// 	log.Println("Starting assignment loop...")
+	// 	// assignDriversToQueues(passengerRepo, pathRepo, carRepo)
 
-		log.Println("Waiting 2 seconds before next run...")
-		time.Sleep(5 * time.Second)
-	}
+	// 	log.Println("Waiting 2 seconds before next run...")
+	// 	time.Sleep(5 * time.Second)
+	// }
 }
 func assignDriversToQueues(passengerR repository.PassengerRepository, pathR repository.PathRepository, carR repository.VehicleRepository) {
 	mutex.Lock()

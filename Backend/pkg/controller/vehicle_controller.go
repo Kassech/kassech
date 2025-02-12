@@ -186,15 +186,16 @@ func (vc *VehicleController) GetAllVehicles(c *gin.Context) {
 	search := c.Query("search")
 	ownerID := c.Query("owner_id")
 	typeID := c.Query("type_id")
-	// roles, ok := c.Get("role")
-	// if !ok {
-	// 	log.Println("Roles not found in context")
-	// 	return
-	// }
+	roles, ok := c.Get("role")
 
-	// if utils.Contains(roles.([]string), constants.DriverRoleName) || utils.Contains(roles.([]string), constants.OwnerRoleName) {
-	// 	ownerID = fmt.Sprint(c.Get("userID"))
-	// }
+	// If roles exist and the user has Driver or Owner role, set ownerID to the userID
+	if ok && (utils.Contains(roles.([]string), constants.DriverRoleName) || utils.Contains(roles.([]string), constants.OwnerRoleName)) {
+		log.Printf("Fetching vehicles with roles: %v", roles)
+		ownerID = fmt.Sprint(c.Get("userID"))
+	} else {
+		// If no valid role, completely ignore ownerID
+		ownerID = ""
+	}
 
 	log.Printf("Fetching vehicles with search: %s, ownerID: %s, typeID: %s", search, ownerID, typeID)
 	vehicles, total, err := vc.Service.GetAllVehicles(page, perPage, search, ownerID, typeID)

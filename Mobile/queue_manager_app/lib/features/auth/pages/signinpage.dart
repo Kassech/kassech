@@ -65,7 +65,7 @@ class _SignInPageState extends State<SignInPage> {
                   labelText: "Password",
                   validator: (val) =>
                       val.isEmpty ? 'Enter your password' : null,
-                  controller: passwordController..text = "test123",
+                  controller: passwordController,
                   hintText: "**********",
                   isPassword: true,
                 ),

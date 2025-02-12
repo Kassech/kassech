@@ -73,7 +73,7 @@ class LocationService {
         accuracy: LocationAccuracy.high,
         foregroundNotificationConfig:  ForegroundNotificationConfig(
           notificationTitle: 'Location Service',
-          notificationText: 'Location service is running ${_lastPosition?.latitude}, ${_lastPosition?.longitude}',
+          notificationText: 'Location service is running....',
           setOngoing: true,
           enableWakeLock: true,
           enableWifiLock: true,
