@@ -1,5 +1,5 @@
 import Header from '@/components/header';
-import CarOwnerForm from '@/sections/Owner';
+import Owner from '@/sections/owner';
 
 export default function OwnerRegistration() {
   const paths = [
@@ -10,7 +10,7 @@ export default function OwnerRegistration() {
     <>
       <Header paths={paths} />
       <div className="w-full">
-        <CarOwnerForm />
+        <Owner />
       </div>
     </>
   );

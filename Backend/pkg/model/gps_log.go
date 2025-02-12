@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -62,6 +63,39 @@ func (v *VehicleGPSLog) UnmarshalJSON(data []byte) error {
 }
 
 // AfterFind hook to extract lat/lon from Location
+func (v *VehicleGPSLog) AfterFind(tx *gorm.DB) error {
+	if v.Location != "" {
+		var lon, lat float64
+		// Log the location value for debugging
+		fmt.Printf("Raw Location: %s\n", v.Location)
+
+		// Ensure the format is "POINT(lon lat)" without any extra characters
+		trimmed := strings.TrimSpace(v.Location)
+		if strings.HasPrefix(trimmed, "POINT(") && strings.HasSuffix(trimmed, ")") {
+			trimmed = trimmed[6 : len(trimmed)-1] // Remove "POINT(" and ")"
+			coords := strings.Split(trimmed, " ")
+			if len(coords) == 2 {
+				// Convert to float values
+				var err error
+				lon, err = strconv.ParseFloat(coords[0], 64)
+				if err != nil {
+					return fmt.Errorf("failed to parse longitude: %v", err)
+				}
+				lat, err = strconv.ParseFloat(coords[1], 64)
+				if err != nil {
+					return fmt.Errorf("failed to parse latitude: %v", err)
+				}
+
+				v.Longitude = lon
+				v.Latitude = lat
+				return nil
+			}
+		}
+
+		return fmt.Errorf("failed to parse Location: invalid format")
+	}
+	return nil
+}
 
 // Validate function
 func (v *VehicleGPSLog) Validate() error {
