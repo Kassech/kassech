@@ -83,7 +83,7 @@ const navMain = [
       {
         title: 'Stations',
         url: '/stations',
-        requiredPermissions: ['ViewRoute'],
+        requiredPermissions: ['CreateStation'],
       },
       { title: 'Route', url: '/route', requiredPermissions: ['ViewRoute'] },
       { title: 'Paths', url: '/paths', requiredPermissions: ['CreateRoute'] },
