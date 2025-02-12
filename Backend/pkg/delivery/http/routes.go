@@ -151,12 +151,13 @@ func pathRoutes(api *gin.RouterGroup, ctrl *controller.PathController) {
 func vehicleRoutes(api *gin.RouterGroup, ctrl *controller.VehicleController) {
 	vehicleApi := api.Group("/vehicles")
 	{
-		vehicleApi.POST("/", ctrl.CreateVehicle)      // Create a vehicle
-		vehicleApi.GET("/:id", ctrl.FindVehicleByID)  // Get vehicle by ID
-		vehicleApi.GET("/", ctrl.GetAllVehicles)      // Get all vehicles
-		vehicleApi.PUT("/status/:id", ctrl.UpdateVehicleStatus)    // Update a vehicle by ID
-		vehicleApi.PUT("/:id", ctrl.UpdateVehicle)    // Update a vehicle by ID
-		vehicleApi.DELETE("/:id", ctrl.DeleteVehicle) // Delete a vehicle by ID
+		vehicleApi.POST("/", ctrl.CreateVehicle)                // Create a vehicle
+		vehicleApi.GET("/:id", ctrl.FindVehicleByID)            // Get vehicle by ID
+		vehicleApi.GET("/", ctrl.GetAllVehicles)                // Get all vehicles
+		vehicleApi.PUT("/status/:id", ctrl.UpdateVehicleStatus) // Update a vehicle by ID
+		vehicleApi.PUT("/:id", ctrl.UpdateVehicle)              // Update a vehicle by ID
+		vehicleApi.DELETE("/:id", ctrl.DeleteVehicle)           // Delete a vehicle by ID
+		vehicleApi.GET("/gps-logs", ctrl.FilterGPSLogs)         // New endpoint
 
 	}
 }

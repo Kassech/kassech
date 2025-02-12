@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"kassech/backend/pkg/domain"
 	models "kassech/backend/pkg/model"
 	"kassech/backend/pkg/repository"
 )
@@ -71,4 +72,12 @@ func (vs *VehicleService) UpdateVehicleStatus(vehicleID uint, status string) err
 		return err
 	}
 	return nil
+}
+
+func (vs *VehicleService) FilterGPSLogs(filter domain.GPSLogFilter) ([]models.VehicleGPSLog, int64, error) {
+	logs, total, err := vs.Repo.FilterGPSLogs(filter)
+	if err != nil {
+		return nil, 0, err
+	}
+	return logs, total, nil
 }

@@ -5,9 +5,9 @@ import { useEffect, useState } from 'react';
 import { useAuthCheck } from '@/hooks/useAuth';
 import LoadingSpinner from '@/components/loading-spinner';
 import { Toaster } from '@/components/ui/toaster';
-import { getMessaging, getToken } from 'firebase/messaging';
+import { getToken } from 'firebase/messaging';
 import { usePushNotificaiton } from './../services/pushNotification';
-
+import { messaging } from '../firebase-messaging-sw';
 export default function DashboardLayout() {
   const { mutate, isLoading, isError } = useAuthCheck(); // Using the hook
   const navigate = useNavigate(); // For redirection
@@ -53,7 +53,7 @@ export default function DashboardLayout() {
       try {
         Notification.requestPermission().then(async (permission) => {
           if (permission === 'granted') {
-            const messaging = getMessaging();
+            // const messaging = getMessaging();
 
             const token = await getToken(messaging, {
               vapidKey:

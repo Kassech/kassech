@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"kassech/backend/pkg/database"
+	"kassech/backend/pkg/domain"
 	models "kassech/backend/pkg/model"
 	"time"
 
@@ -259,4 +260,47 @@ func GetLatestNearbyLocation(db *gorm.DB, currentLat, currentLon float64, maxDis
 	}
 
 	return &latestLog, nil
+}
+
+func (vr *VehicleRepository) FilterGPSLogs(filter domain.GPSLogFilter) ([]models.VehicleGPSLog, int64, error) {
+	var logs []models.VehicleGPSLog
+	var total int64
+
+	query := database.DB.Model(&models.VehicleGPSLog{})
+
+	// Apply filters
+	if len(filter.VehicleIDs) > 0 {
+		query = query.Where("vehicle_id IN (?)", filter.VehicleIDs)
+	}
+	if len(filter.PathIDs) > 0 {
+		query = query.Where("path_id IN (?)", filter.PathIDs)
+	}
+	if !filter.StartTime.IsZero() {
+		query = query.Where("created_at >= ?", filter.StartTime)
+	}
+	if !filter.EndTime.IsZero() {
+		query = query.Where("created_at <= ?", filter.EndTime)
+	}
+	if filter.Radius > 0 && filter.CenterLat != 0 && filter.CenterLon != 0 {
+		query = query.Where("ST_DWithin(location::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)",
+			filter.CenterLon, filter.CenterLat, filter.Radius)
+	}
+
+	// Count total records
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Pagination
+	if filter.Page > 0 && filter.PerPage > 0 {
+		offset := (filter.Page - 1) * filter.PerPage
+		query = query.Offset(offset).Limit(filter.PerPage)
+	}
+
+	// Execute query
+	if err := query.Find(&logs).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return logs, total, nil
 }

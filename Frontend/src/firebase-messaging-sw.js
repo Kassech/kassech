@@ -11,5 +11,5 @@ const firebaseConfig = {
   measurementId: 'G-X8R338TESC',
 };
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig, 'kassechtransportaion');
 export const messaging = getMessaging(app);

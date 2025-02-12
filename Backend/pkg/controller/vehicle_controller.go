@@ -11,6 +11,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -209,7 +210,6 @@ func (vc *VehicleController) GetAllVehicles(c *gin.Context) {
 	})
 }
 
-
 // UpdateVehicleStatus updates the status of a vehicle
 func (vc *VehicleController) UpdateVehicleStatus(c *gin.Context) {
 	vehicleID := c.Param("id")
@@ -228,4 +228,93 @@ func (vc *VehicleController) UpdateVehicleStatus(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Vehicle status updated successfully"})
+}
+
+func (vc *VehicleController) FilterGPSLogs(c *gin.Context) {
+	var filter domain.GPSLogFilter
+
+	// Parse vehicle IDs
+	if vehicleIDs := c.QueryArray("vehicle_id"); len(vehicleIDs) > 0 {
+		for _, idStr := range vehicleIDs {
+			id, err := strconv.ParseUint(idStr, 10, 32)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid vehicle ID"})
+				return
+			}
+			filter.VehicleIDs = append(filter.VehicleIDs, uint(id))
+		}
+	}
+
+	// Parse path IDs
+	if pathIDs := c.QueryArray("path_id"); len(pathIDs) > 0 {
+		for _, idStr := range pathIDs {
+			id, err := strconv.ParseUint(idStr, 10, 32)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid path ID"})
+				return
+			}
+			filter.PathIDs = append(filter.PathIDs, uint(id))
+		}
+	}
+
+	// Parse time range
+	if startTime := c.Query("start_time"); startTime != "" {
+		st, err := time.Parse(time.RFC3339, startTime)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid start_time format"})
+			return
+		}
+		filter.StartTime = st
+	}
+	if endTime := c.Query("end_time"); endTime != "" {
+		et, err := time.Parse(time.RFC3339, endTime)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid end_time format"})
+			return
+		}
+		filter.EndTime = et
+	}
+
+	// Parse location filter
+	if lat := c.Query("lat"); lat != "" {
+		if lat, err := strconv.ParseFloat(lat, 64); err == nil {
+			filter.CenterLat = lat
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid latitude"})
+			return
+		}
+	}
+	if lon := c.Query("lon"); lon != "" {
+		if lon, err := strconv.ParseFloat(lon, 64); err == nil {
+			filter.CenterLon = lon
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid longitude"})
+			return
+		}
+	}
+	if radius := c.Query("radius"); radius != "" {
+		if radius, err := strconv.ParseFloat(radius, 64); err == nil {
+			filter.Radius = radius
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid radius"})
+			return
+		}
+	}
+
+	// Pagination
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	perPage, _ := strconv.Atoi(c.DefaultQuery("per_page", "10"))
+	filter.Page = page
+	filter.PerPage = perPage
+
+	logs, total, err := vc.Service.FilterGPSLogs(filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data":  logs,
+		"total": total,
+	})
 }
