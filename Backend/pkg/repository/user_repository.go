@@ -3,7 +3,10 @@ package repository
 import (
 	"fmt"
 	"kassech/backend/pkg/database"
+	"kassech/backend/pkg/domain"
+	"kassech/backend/pkg/mapper"
 	models "kassech/backend/pkg/model"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -137,7 +140,7 @@ func (ur *UserRepository) Delete(user *models.User, isForce bool) error {
 }
 
 // ListUsers fetches users with pagination, optional search filter, and active/deleted filter
-func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) ([]models.User, int64, error) {
+func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) ([]*domain.User, int64, error) {
 	fmt.Printf("🔍 ListUsers: page=%d, limit=%d, search=%s, typ=%s, role=%s\n", page, limit, search, typ, role)
 	var users []models.User
 	var total int64
@@ -180,7 +183,7 @@ func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) (
 	// Get the total number of users matching the filters
 	err := query.Count(&total).Error
 	if err != nil {
-		return []models.User{}, 0, err
+		return []*domain.User{}, 0, err
 	}
 
 	fmt.Printf("📊 Total users: %d\n", total)
@@ -188,12 +191,19 @@ func (ur *UserRepository) ListUsers(page, limit int, search, typ, role string) (
 	// Retrieve the users with roles and pagination
 	err = query.Offset((page - 1) * limit).Limit(limit).Scan(&users).Error
 	if err != nil {
-		return []models.User{}, 0, err
+		return []*domain.User{}, 0, err
 	}
 
 	fmt.Printf("📝 Retrieved %d users with pagination\n", len(users))
-
-	return users, total, nil
+	// Convert to domain.User
+	domainUsers := make([]*domain.User, len(users))
+	for i, u := range users {
+		domainUsers[i] = mapper.ToDomainUser(&u)
+		fmt.Println("		fmt", u.Roles)
+		roles := strings.Split(strings.Trim(u.Roles, "{}"), ",")
+		domainUsers[i].Roles = roles
+	}
+	return domainUsers, total, nil
 }
 func (ur *UserRepository) SaveNotificationToken(userID uint, token string, deviceID string) error {
 	var existingToken models.NotificationToken

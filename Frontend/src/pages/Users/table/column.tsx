@@ -34,46 +34,46 @@ import CarOwnerForm from '@/sections/owner/OwnerForm';
 
 export const columns: ColumnDef<User>[] = [
   {
-    accessorKey: 'FirstName',
+    accessorKey: 'first_name',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="First Name" />
     ),
   },
   {
-    accessorKey: 'LastName',
+    accessorKey: 'last_name',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Last Name" />
     ),
   },
   {
-    accessorKey: 'Email',
+    accessorKey: 'email',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
   },
   {
-    accessorKey: 'PhoneNumber',
+    accessorKey: 'phone_number',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Phone Number" />
     ),
   },
   {
-    accessorKey: 'IsOnline',
+    accessorKey: 'is_online',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Online Status" />
     ),
     cell: ({ row }) => (row.original.IsOnline ? 'Online' : 'Offline'),
   },
   {
-    accessorKey: 'IsVerified',
+    accessorKey: 'is_verified',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Verified" />
     ),
     cell: ({ row }) => {
-      console.log('is verified: ', row.original.IsVerified);
+      console.log('is verified: ', row.original.is_verified);
       return (
         <VerificationToggle
-          initialVerified={row.original.IsVerified}
+          initialVerified={row.original.is_verified}
           userId={row.original.ID}
         />
       );
@@ -165,44 +165,41 @@ export const columns: ColumnDef<User>[] = [
               </AlertDialogContent>
             </AlertDialog>
           )}
-                    {selectedUser === row.original.ID && (
-
-          <AlertDialog
-            open={isEditDialogOpen}
-            onOpenChange={setEditDialogClose}
-          >
-            <AlertDialogContent className="overflow-y-auto max-h-[80vh]">
-              <AlertDialogHeader>
-                <AlertDialogTitle>Edit User</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Update the details of the user below.
-                  {selectedUserRole.replace(/[{}]/g, '') === 'Admin' ? (
-                    <AdminForm defaultValues={row.original} />
-                  ) : selectedUserRole.replace(/[{}]/g, '') === 'Driver' ? (
-                    <DriverPage defaultValues={row.original} />
-                  ) : selectedUserRole.replace(/[{}]/g, '') ===
-                    'QueueManager' ? (
-                    <QueueManagerForm defaultValues={row.original} />
-                  ) : selectedUserRole.replace(/[{}]/g, '') === 'Owner' ? (
-                    <CarOwnerForm defaultValues={row.original} />
-                  ) : (
-                    <p className="text-red-500">
-                      Invalid role: {selectedUserRole}
-                    </p>
-                  )}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          {selectedUser === row.original.ID && (
+            <AlertDialog
+              open={isEditDialogOpen}
+              onOpenChange={setEditDialogClose}
+            >
+              <AlertDialogContent className="overflow-y-auto max-h-[80vh]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Edit User</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Update the details of the user below.
+                    {selectedUserRole.replace(/[{}]/g, '') === 'Admin' ? (
+                      <AdminForm defaultValues={row.original} />
+                    ) : selectedUserRole.replace(/[{}]/g, '') === 'Driver' ? (
+                      <DriverPage defaultValues={row.original} />
+                    ) : selectedUserRole.replace(/[{}]/g, '') ===
+                      'QueueManager' ? (
+                      <QueueManagerForm defaultValues={row.original} />
+                    ) : selectedUserRole.replace(/[{}]/g, '') === 'Owner' ? (
+                      <CarOwnerForm defaultValues={row.original} />
+                    ) : (
+                      <p className="text-red-500">
+                        Invalid role: {selectedUserRole}
+                      </p>
+                    )}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
-
         </>
       );
     },
     size: 80, // Define column wIDth for actions
   },
-
 ];

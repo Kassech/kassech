@@ -8,45 +8,85 @@ import (
 	"github.com/streadway/amqp"
 )
 
-// ConsumeQueue listens to a queue and reconnects if the channel is closed.
+// ConsumeQueue listens to a queue with proper error handling and reconnection logic
 func ConsumeQueue(conn *amqp.Connection, queue string, handler func(amqp.Delivery)) {
 	for {
 		ch, err := conn.Channel()
 		if err != nil {
-			log.Printf("Failed to open channel: %v. Retrying in 5 seconds...", err)
+			log.Printf("Failed to open channel: %v. Retrying in 5 seconds...\n", err)
 			time.Sleep(5 * time.Second)
 			continue
 		}
 
-		// Monitor channel close notifications.
-		notifyClose := ch.NotifyClose(make(chan *amqp.Error))
-		msgs, err := ch.Consume(queue, "", true, false, false, false, nil)
+		// 1. Declare queue first to ensure existence
+		_, err = ch.QueueDeclare(
+			queue,
+			true,  // Durable
+			false, // AutoDelete
+			false, // Exclusive
+			false, // NoWait
+			nil,
+		)
 		if err != nil {
-			log.Printf("Failed to consume queue %s: %v. Retrying in 5 seconds...", queue, err)
+			log.Printf("Failed to declare queue: %v", err)
 			ch.Close()
 			time.Sleep(5 * time.Second)
 			continue
 		}
 
-		log.Printf("Listening to queue: %s", queue)
-
-		// Process messages in a separate goroutine.
-		done := make(chan bool)
-		go func() {
-			for msg := range msgs {
-				handler(msg)
-			}
-			done <- true
-		}()
-
-		// Wait for a channel close or errors.
-		select {
-		case err := <-notifyClose:
-			log.Printf("Channel closed: %v. Reconnecting...", err)
-		case <-done:
-			log.Printf("Consumer for queue %s ended unexpectedly. Reconnecting...", queue)
+		// 2. Set QoS to prevent overwhelming consumer
+		err = ch.Qos(
+			1,     // Prefetch count
+			0,     // Prefetch size
+			false, // Global
+		)
+		if err != nil {
+			log.Printf("Failed to set QoS: %v", err)
+			ch.Close()
+			time.Sleep(5 * time.Second)
+			continue
 		}
 
+		// 3. Start consuming with manual acknowledgments
+		msgs, err := ch.Consume(
+			queue,
+			"",    // Consumer tag
+			false, // Auto-ack (MUST set to false)
+			false, // Exclusive
+			false, // NoLocal
+			false, // NoWait
+			nil,
+		)
+		if err != nil {
+			log.Printf("Failed to consume queue %s: %v. Retrying...\n", queue, err)
+			ch.Close()
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		log.Printf("Successfully started consuming queue: %s", queue)
+
+		// 4. Process messages with recovery mechanism
+		for msg := range msgs {
+			func() {
+				defer func() {
+					if r := recover(); r != nil {
+						log.Printf("Recovered from panic in handler: %v", r)
+					}
+				}()
+
+				// Process message
+				handler(msg)
+
+				// Manual acknowledgment after successful processing
+				if err := msg.Ack(false); err != nil {
+					log.Printf("Failed to acknowledge message: %v", err)
+				}
+			}()
+		}
+
+		// 5. Handle channel closure
+		log.Printf("Message channel closed for queue %s. Reconnecting...", queue)
 		ch.Close()
 		time.Sleep(5 * time.Second)
 	}

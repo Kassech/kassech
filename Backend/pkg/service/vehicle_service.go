@@ -63,3 +63,12 @@ func (vs *VehicleService) GetAllVehicles(page, perPage int, search, ownerID, typ
 	}
 	return vehicles, total, nil
 }
+
+// UpdateVehicleStatus updates the status of a vehicle
+func (vs *VehicleService) UpdateVehicleStatus(vehicleID uint, status string) error {
+	err := vs.Repo.UpdateVehicleStatus(vehicleID, status)
+	if err != nil {
+		return err
+	}
+	return nil
+}

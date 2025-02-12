@@ -34,3 +34,33 @@ func InitRabbitMQ() {
 	}
 	EventEmitter = event.NewEventEmitter(conn)
 }
+func PublishToQueue(queueName string, body []byte) error {
+	ch, err := RabbitMQConn.Channel()
+	if err != nil {
+		return err
+	}
+	defer ch.Close()
+
+	_, err = ch.QueueDeclare(
+		queueName,
+		false, // Durable
+		false, // Delete when unused
+		false, // Exclusive
+		false, // No-wait
+		nil,   // Arguments
+	)
+	if err != nil {
+		return err
+	}
+
+	return ch.Publish(
+		"",        // Exchange
+		queueName, // Routing key
+		false,     // Mandatory
+		false,     // Immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        body,
+		},
+	)
+}

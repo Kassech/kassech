@@ -61,6 +61,15 @@ func SeedDB() {
 		log.Fatalf("❌ Failed to get working directory: %v", err)
 	}
 
+	// configs
+	// number of vehicles to seed
+	numberOfVehicles := 20
+	// number of paths to seed
+	numberOfPath := 3 //MAX 83
+	// number of users to seed
+	numberOfUsers := 25
+	// configs
+
 	//--------------------------------------------------
 	// 1. Seed Roles
 	//--------------------------------------------------
@@ -194,7 +203,7 @@ func SeedDB() {
 	log.Println("🟢 Seeding vehicle owners...")
 
 	var owners []models.User
-	for i := 0; i < 5000; i++ {
+	for i := 0; i < numberOfUsers; i++ {
 		owner := models.User{
 			FirstName:      fmt.Sprintf("Owner%d", i+1),
 			LastName:       "Owner",
@@ -245,7 +254,7 @@ func SeedDB() {
 
 	var driverIDs []uint
 	imageIndex := 0
-	for i := 0; i < 5000; i++ {
+	for i := 0; i < numberOfUsers; i++ {
 		imgURL := imageEntries[imageIndex%len(imageEntries)].Image
 		imageIndex++
 
@@ -360,7 +369,7 @@ func SeedDB() {
 
 	const averageSpeed = 50.0 // Assume average speed of 50 km/h
 
-	for _, route := range routes {
+	for _, route := range routes[:numberOfPath] {
 		// Check if path already exists for this route
 		var existingPath models.Path
 		if err := DB.Where("route_id = ?", route.ID).First(&existingPath).Error; err == nil {
@@ -446,12 +455,12 @@ func SeedDB() {
 
 	makes := []string{"Toyota", "Honda", "Ford", "BMW", "Mercedes"}
 	colors := []string{"Red", "Blue", "Black", "White", "Silver"}
-	statuses := []string{"active", "inactive", "maintenance"}
+	statuses := []string{"active"}
 
 	existingVINs := make(map[string]bool)
 	var vehicles []models.Vehicle
 
-	for i := 0; i < 5000; i++ {
+	for i := 0; i < numberOfVehicles; i++ {
 		vehicleType := vehicleTypes[rand.Intn(len(vehicleTypes))]
 		owner := owners[rand.Intn(len(owners))]
 

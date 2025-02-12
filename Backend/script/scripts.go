@@ -18,10 +18,16 @@ func HandleScriptCommands() {
 	switch os.Args[1] {
 	case "migrate":
 		database.Migrate("auto")
+		log.Println("Migration completed. Stopping application.")
+		os.Exit(0)
 	case "fresh":
 		database.Migrate("clean")
+		log.Println("Clean migration completed. Stopping application.")
+		os.Exit(0)
 	case "seed":
 		database.SeedDB()
+		log.Println("Seeding completed. Stopping application.")
+		os.Exit(0)
 
 	default:
 		log.Fatal("Unknown command. Use 'migrate' or 'seed'.")

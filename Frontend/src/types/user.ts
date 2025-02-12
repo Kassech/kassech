@@ -7,7 +7,7 @@ export interface User {
   ProfilePicture?: string;
   ProfilePictureFile?: File;
   PhoneNumber: string;
-  IsVerified: boolean;
+  is_verified: boolean;
   roles: string;
   IsOnline: boolean;
   permissions:string[];

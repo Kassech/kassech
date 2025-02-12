@@ -11,7 +11,7 @@ type User struct {
 	FirstName          string                `json:"first_name" form:"FirstName" binding:"required"`
 	LastName           string                `json:"last_name" form:"LastName" binding:"required"`
 	ProfilePicture     *string               `json:"profile_picture" form:"ProfilePicture"`
-	ProfilePictureFile *multipart.FileHeader `form:"Profile"`
+	ProfilePictureFile *multipart.FileHeader `form:"Profile" json:"-"`
 	PhoneNumber        string                `json:"phone_number" form:"PhoneNumber"`
 	IsVerified         bool                  `json:"is_verified" form:"IsVerified"`
 	Role               uint                  `json:"role" form:"Role"`

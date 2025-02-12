@@ -10,7 +10,6 @@ func ToDomainUser(dbUser *models.User) *domain.User {
 	return &domain.User{
 		ID:             dbUser.ID,
 		Email:          dbUser.Email,
-		Password:       dbUser.Password,
 		FirstName:      dbUser.FirstName,
 		LastName:       dbUser.LastName,
 		ProfilePicture: dbUser.ProfilePicture,

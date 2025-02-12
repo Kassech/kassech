@@ -4,21 +4,21 @@ import (
 	"log"
 	"net/http"
 
+	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/websocket/middleware"
-	"kassech/backend/pkg/websocket/server"
 	"kassech/backend/pkg/websocket/service"
 
 	"github.com/gorilla/websocket"
 )
 
 type StatusHandler struct {
-	connManager   *server.ConnectionManager
+	connManager   *config.ConnectionManager
 	statusService *service.StatusService
 	auth          *middleware.WebSocketAuth
 }
 
 func NewStatusHandler(
-	connManager *server.ConnectionManager,
+	connManager *config.ConnectionManager,
 	statusService *service.StatusService,
 	auth *middleware.WebSocketAuth,
 ) *StatusHandler {

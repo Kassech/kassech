@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 type Vehicle struct {
 	gorm.Model
@@ -36,4 +40,21 @@ func (v *Vehicle) SetInsurance(path string) {
 
 func (v *Vehicle) SetLibre(path string) {
 	v.Libre = path
+}
+
+func (v *Vehicle) SetStatus(status string) error {
+	validStatuses := map[string]bool{
+		"un-assigned": true,
+		"assigned":    true,
+		"maintenance": true,
+		"active":      true,
+		"inactive":    true,
+	}
+
+	if !validStatuses[status] {
+		return fmt.Errorf("invalid status: %s", status)
+	}
+
+	v.Status = status
+	return nil
 }

@@ -1,8 +1,9 @@
 import MapComponent from '@/sections/RealTimeMonitoring/MapComponent';
 import useWebSocketData from '@/services/useWebSocketData';
 
-export default function TrackAllVehicle(){
+export default function TrackAllVehicle() {
   const { data } = useWebSocketData();
+  console.log('🚀 ~ TrackAllVehicle ~ data:', data);
 
   return (
     <div>
@@ -14,6 +15,4 @@ export default function TrackAllVehicle(){
       />
     </div>
   );
-};
-
-
+}

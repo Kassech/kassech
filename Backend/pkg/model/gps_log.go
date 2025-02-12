@@ -13,11 +13,12 @@ import (
 // VehicleGPSLog stores GPS coordinates using PostgreSQL's PostGIS extension
 type VehicleGPSLog struct {
 	gorm.Model
-	VehicleID uint    `gorm:"not null" validate:"required" json:"vehicle_id"`
-	Latitude  float64 `gorm:"-" json:"lat"`                       // Ignored in DB, used for JSON
-	Longitude float64 `gorm:"-" json:"lon"`                       // Ignored in DB, used for JSON
-	Location  string  `gorm:"type:geometry(Point,4326);not null"` // Stores lat/lon as PG geo data
-	PathID    uint    `validate:"omitempty" json:"path_id,omitempty"`
+	VehicleID uint      `gorm:"not null" json:"vehicle_id"`
+	Latitude  float64   `gorm:"-" json:"lat"`
+	Longitude float64   `gorm:"-" json:"lon"`
+	Location  string    `gorm:"type:geometry(Point,4326);not null"`
+	PathID    uint      `json:"path_id,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // BeforeCreate hook to store lat/lon as PostGIS POINT

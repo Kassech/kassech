@@ -12,14 +12,13 @@ import (
 
 	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/websocket/middleware"
-	"kassech/backend/pkg/websocket/server"
 	"kassech/backend/pkg/websocket/service"
 
 	"github.com/gorilla/websocket"
 )
 
 type PassengerHandler struct {
-	connManager      *server.ConnectionManager
+	connManager      *config.ConnectionManager
 	passengerService *service.PassengerService
 	auth             *middleware.WebSocketAuth
 }
@@ -31,7 +30,7 @@ type passengerConnectionState struct {
 }
 
 func NewPassengerHandler(
-	connManager *server.ConnectionManager,
+	connManager *config.ConnectionManager,
 	passengerService *service.PassengerService,
 	auth *middleware.WebSocketAuth,
 ) *PassengerHandler {

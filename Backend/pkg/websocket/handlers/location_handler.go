@@ -12,7 +12,6 @@ import (
 
 	"kassech/backend/pkg/config"
 	"kassech/backend/pkg/websocket/middleware"
-	"kassech/backend/pkg/websocket/server"
 	"kassech/backend/pkg/websocket/service"
 
 	"github.com/gorilla/websocket"
@@ -20,7 +19,7 @@ import (
 )
 
 type LocationHandler struct {
-	connManager     *server.ConnectionManager
+	connManager     *config.ConnectionManager
 	locationService *service.LocationService
 	auth            *middleware.WebSocketAuth
 	mu              sync.Mutex
@@ -49,7 +48,7 @@ type ClientMessage struct {
 }
 
 func NewLocationHandler(
-	connManager *server.ConnectionManager,
+	connManager *config.ConnectionManager,
 	locationService *service.LocationService,
 	auth *middleware.WebSocketAuth,
 ) *LocationHandler {
@@ -170,6 +169,7 @@ func (h *LocationHandler) listenForMessages(ctx context.Context, conn *websocket
 	for {
 		select {
 		case <-state.closeChan:
+			log.Println("Closing listenForMessages due to client close")
 			return
 		default:
 			_, message, err := conn.ReadMessage()
@@ -177,14 +177,19 @@ func (h *LocationHandler) listenForMessages(ctx context.Context, conn *websocket
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
 					log.Printf("Unexpected close: %v", err)
 				}
+				log.Println("Closing listenForMessages due to error")
 				return
 			}
+
+			log.Println("Received message")
 
 			var msg ClientMessage
 			if err := json.Unmarshal(message, &msg); err != nil {
 				log.Printf("Error unmarshalling message: %v", err)
 				continue
 			}
+
+			log.Printf("Handling message of type: %s", msg.Action)
 
 			h.handleMessage(ctx, msg, state)
 		}
@@ -224,6 +229,7 @@ func (h *LocationHandler) handleMessage(ctx context.Context, msg ClientMessage, 
 		}
 	}
 
+	log.Printf("Handling location update for vehicle %d, lat: %f, lon: %f", locationMsg.VehicleID, locationMsg.Lat, locationMsg.Lon)
 	h.processLocationUpdate(ctx, locationMsg, state)
 }
 
@@ -255,10 +261,12 @@ func (h *LocationHandler) processLocationUpdate(ctx context.Context, locationMsg
 	locationData, _ := json.Marshal(locationMsg)
 	redisKey := fmt.Sprintf("vehicle_location:%d", locationMsg.VehicleID)
 
+	log.Printf("Saving location to Redis for vehicle %d", locationMsg.VehicleID)
 	if err := config.RedisClient.Set(ctx, redisKey, locationData, 0).Err(); err != nil {
 		log.Printf("Error saving location to Redis: %v", err)
 	}
 
+	log.Printf("Updating GEO set for vehicle %d", locationMsg.VehicleID)
 	if err := config.RedisClient.GeoAdd(
 		ctx,
 		"vehicle_locations",
@@ -271,6 +279,13 @@ func (h *LocationHandler) processLocationUpdate(ctx context.Context, locationMsg
 		log.Printf("Error updating GEO set: %v", err)
 	}
 
+	log.Printf("Publishing location update to all_vehicles and vehicle:%d channels", locationMsg.VehicleID)
+	err := config.EventEmitter.Emit("location_updates", locationMsg)
+
+	if err != nil {
+		log.Printf("Failed to emit log event: %v", err)
+	}
+
 	allVehiclesChannel := "all_vehicles"
 	vehicleChannel := fmt.Sprintf("vehicle:%d", locationMsg.VehicleID)
 	config.RedisClient.Publish(ctx, vehicleChannel, locationData)
@@ -278,6 +293,7 @@ func (h *LocationHandler) processLocationUpdate(ctx context.Context, locationMsg
 
 	if locationMsg.PathID != nil {
 		pathChannel := fmt.Sprintf("path:%d", *locationMsg.PathID)
+		log.Printf("Publishing location update to path:%d channel", *locationMsg.PathID)
 		config.RedisClient.Publish(ctx, pathChannel, locationData)
 	}
 }
