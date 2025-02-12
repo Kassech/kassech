@@ -53,7 +53,7 @@ class Car:
                 'length': self.graph[u][v][0]['length']
             })
 
-    def set_destination(self, station_a, station_b):
+    def set_destination(self, station_a, station_b, path_id):
         try:
             start = ox.distance.nearest_nodes(self.graph, station_a["Longitude"], station_a["Latitude"])
             end = ox.distance.nearest_nodes(self.graph, station_b["Longitude"], station_b["Latitude"])
@@ -64,6 +64,7 @@ class Car:
             self.forward = True
             self.destination_mode = True
             self.arrived = False
+            self.path_id = path_id
         except Exception as e:
             logger.error(f"Route error: {e}")
             self._route_segments = []

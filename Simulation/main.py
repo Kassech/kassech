@@ -54,6 +54,7 @@ async def send_location(car):
                     if car.current_position and car.has_valid_route:
                         await ws.send(json.dumps({
                             'vehicle_id': car.vehicle_id,
+                            'path_id': car.vehicle_id,
                             'lat': car.current_position[1],
                             'lon': car.current_position[0],
                             'created_at': time.time()
@@ -75,7 +76,7 @@ async def listen_destination(car):
                     data = json.loads(message)
                     if "route" in data:
                         car.reset_for_new_route()
-                        car.set_destination(data["route"]["station_a"], data["route"]["station_b"])
+                        car.set_destination(data["route"]["station_a"], data["route"]["station_b"],data['ID'])
         except Exception as e:
             logger.error(f"WebSocket error for driver {car.driver_id}: {e}")
             await asyncio.sleep(2)
