@@ -31,18 +31,18 @@ export const columns: ColumnDef<Path>[] = [
     ),
   },
   {
-    accessorKey: 'route.StationA.LocationName',
+    accessorKey: 'route.station_a.LocationName',
     header: 'Start Station',
     cell: ({ row }) => (
-      <div>{row.original.route?.StationA?.LocationName || 'N/A'}</div>
+      <div>{row.original.route?.station_a?.LocationName || 'N/A'}</div>
     ),
   },
   {
-    accessorKey: 'route.StationB.LocationName',
+    accessorKey: 'route.station_b.LocationName',
     header: 'End Station',
     cell: ({ row }) => {
       console.log('🚀 ~ row.original.route:', row.original.route);
-      return <div>{row.original.route?.StationB?.LocationName || 'N/A'}</div>;
+      return <div>{row.original.route?.station_b?.LocationName || 'N/A'}</div>;
     },
   },
   {

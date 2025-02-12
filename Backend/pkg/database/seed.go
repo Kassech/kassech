@@ -63,11 +63,11 @@ func SeedDB() {
 
 	// configs
 	// number of vehicles to seed
-	numberOfVehicles := 20
+	numberOfVehicles := 300
 	// number of paths to seed
-	numberOfPath := 3 //MAX 83
+	numberOfPath := 30 //MAX 83
 	// number of users to seed
-	numberOfUsers := 25
+	numberOfUsers := 300
 	// configs
 
 	//--------------------------------------------------
