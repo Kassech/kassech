@@ -12,6 +12,19 @@
         ]
     },
     {
+        "permission_name": "ViewDashboard",
+        "description": "Permission to view dashboard",
+        "roles": [
+            "Admin",
+            "Driver",
+            "QueueManager",
+            "CustomerService",
+            "Owner",
+            "RouteOperator"
+        ]
+    },
+
+    {
         "permission_name": "CreateUser",
         "description": "Permission to create users",
         "roles": [

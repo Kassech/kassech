@@ -69,10 +69,10 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder="Filter by LocationName..."
           value={
-            (table.getColumn('LocationName')?.getFilterValue() as string) ?? ''
+            (table.getColumn('path_name')?.getFilterValue() as string) ?? ''
           }
           onChange={(event) =>
-            table.getColumn('LocationName')?.setFilterValue(event.target.value)
+            table.getColumn('path_name')?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

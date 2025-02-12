@@ -46,7 +46,7 @@ export default function RouteMap() {
       <MapContainer
         center={[51.505, -0.09]}
         zoom={3}
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%', zIndex: '40' }}
         touchZoom={false}
         dragging={!L.Browser.mobile}
         doubleClickZoom={false}
